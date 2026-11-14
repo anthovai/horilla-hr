@@ -316,10 +316,13 @@ COMPONENT_LIBRARY = [
         "kind": DEDUCTION,
         "name": "Social Security Fund (SSO)",
         "summary": _(
-            "5% of gross pay, on a wage base held between 1,650 and 15,000 "
-            "(so 82.50 to 750 a month). The employer pays the same 5%."
+            "5% of gross pay, on a wage base held between 1,650 and 17,500 "
+            "(so 82.50 to 875 a month). The employer pays the same 5%."
         ),
         "note": _(
+            "The 1,650-17,500 base applies 1 Jan 2026 - 31 Dec 2028 (Ministerial "
+            "Regulation B.E. 2568, Royal Gazette 12 Dec 2025); it rises to 20,000 "
+            "in 2029 and 23,000 in 2032, so update the component then. "
             "Verify the rate and the wage base against current law. Assign it "
             "only to employees registered with the Social Security Office. "
             "Taken after tax: Thai income tax allows the contribution as a "
@@ -336,7 +339,7 @@ COMPONENT_LIBRARY = [
             "employer_rate": 5.0,
             "is_pretax": False,
             "contribution_base_min": 1650.0,
-            "contribution_base_max": 15000.0,
+            "contribution_base_max": 17500.0,
         },
     },
     {

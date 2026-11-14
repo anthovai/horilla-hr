@@ -140,9 +140,9 @@ class SocialSecurityThroughTheEngineTests(TestCase):
         self.assertIn(lines[0], data["post_tax_deductions"])
         return data, lines[0]
 
-    def test_capped_at_750_above_the_ceiling(self):
+    def test_capped_at_875_above_the_ceiling(self):
         _data, line = self._sso_line(30000.0)
-        self.assertAlmostEqual(line["amount"], 750.0, places=2)
+        self.assertAlmostEqual(line["amount"], 875.0, places=2)
 
     def test_five_percent_inside_the_band(self):
         _data, line = self._sso_line(10000.0)
@@ -160,7 +160,7 @@ class SocialSecurityThroughTheEngineTests(TestCase):
             for l in data["post_tax_deductions"]
             if l["title"] == "Social Security Fund (SSO)"
         )
-        self.assertAlmostEqual(line["employer_contribution_amount"], 750.0, places=2)
+        self.assertAlmostEqual(line["employer_contribution_amount"], 875.0, places=2)
 
 
 # ------------------------------------------------------------------ overtime

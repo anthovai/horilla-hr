@@ -750,9 +750,14 @@ mod tests {
     #[test]
     fn sso_is_clamped_to_floor_and_ceiling() {
         let r = rules();
+        // Base ceiling 17,500 from 1 Jan 2026 (Ministerial Regulation B.E. 2568).
         assert_eq!(
             social_security(&r, 30_000 * BAHT).unwrap().employee,
-            750 * BAHT
+            875 * BAHT
+        );
+        assert_eq!(
+            social_security(&r, 17_500 * BAHT).unwrap().employee,
+            875 * BAHT
         );
         assert_eq!(
             social_security(&r, 15_000 * BAHT).unwrap().employee,

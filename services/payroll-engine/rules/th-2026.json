@@ -36,10 +36,11 @@
     ]
   },
   "social_security": {
+    "_source": "Wage base 1,650-17,500 baht/month for 1 Jan 2569 - 31 Dec 2571 per กฎกระทรวงกำหนดค่าจ้างขั้นต่ำและขั้นสูงที่ใช้เป็นฐานในการคำนวณเงินสมทบของผู้ประกันตนตามมาตรา 33 พ.ศ. 2568 (Royal Gazette vol. 142 part 81 Kor, 12 Dec 2568, https://ratchakitcha.soc.go.th/documents/98728.pdf). Next steps in the same regulation: 20,000 from 1 Jan 2572, 23,000 from 1 Jan 2575 - add rule files for those dates. The 5% rate is NOT in that regulation; verify it separately.",
     "rate_bp": 500,
     "base_min": 165000,
-    "base_max": 1500000,
+    "base_max": 1750000,
     "rounding_satang": 100,
-    "employee_deduction_cap_per_year": 900000
+    "employee_deduction_cap_per_year": 1050000
   }
 }

@@ -157,7 +157,7 @@ mod tests {
     async fn sso_endpoint_applies_the_ceiling() {
         let (s, v) = post_json("/v1/sso", serde_json::json!({ "wage": 3_000_000 })).await;
         assert_eq!(s, StatusCode::OK);
-        assert_eq!(v["employee"], 75_000);
+        assert_eq!(v["employee"], 87_500);
     }
 
     #[tokio::test]
@@ -217,7 +217,7 @@ mod tests {
         let (s, v) = call(two_year_book(), q("2026-06-01")).await;
         assert_eq!(
             (s, &v["employee"]),
-            (StatusCode::OK, &serde_json::json!(75_000))
+            (StatusCode::OK, &serde_json::json!(87_500))
         );
         let (s, v) = call(two_year_book(), q("2027-06-01")).await;
         assert_eq!(
