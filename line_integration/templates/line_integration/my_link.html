@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden my-5 p-4" style="max-width: 640px">
+        <h2 class="text-base font-semibold mb-3">{% trans "LINE Notifications" %}</h2>
+
+        {% if not enabled or not channel %}
+            <p>{% trans "LINE notifications are not set up for your company yet." %}</p>
+        {% elif link and link.is_active %}
+            <p>{% trans "Status" %}: <strong>{% trans "Connected" %}</strong> ({{ link.linked_at|date:"d/m/Y H:i" }})</p>
+            <p class="text-xs text-gray-500">{% trans "You will receive leave request updates in LINE." %}</p>
+        {% elif link %}
+            <p>{% trans "Status" %}: <strong>{% trans "Paused" %}</strong></p>
+            <p class="text-xs text-gray-500">{% trans "You blocked or removed the OrvaHR LINE account. Add it as a friend again to resume." %}</p>
+        {% else %}
+            <p>{% trans "Status" %}: <strong>{% trans "Not connected" %}</strong></p>
+        {% endif %}
+
+        {% if enabled and channel %}
+            {% if channel.add_friend_url %}
+                <p class="mt-2">
+                    1. {% trans "Add our LINE account as a friend" %}:
+                    <a href="{{ channel.add_friend_url }}" target="_blank" rel="noopener">{{ channel.basic_id }}</a>
+                </p>
+            {% endif %}
+
+            {% if new_code %}
+                <p class="mt-2">2. {% trans "Send this code to the LINE account" %}:</p>
+                <p class="text-2xl font-bold my-2" style="letter-spacing: .15em"><code>{{ new_code }}</code></p>
+                <p class="text-xs text-gray-500">
+                    {% blocktrans %}It can be used once and expires in {{ ttl_minutes }} minutes.{% endblocktrans %}
+                </p>
+            {% endif %}
+
+            <div class="flex gap-2 mt-3">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="generate" />
+                    <button type="submit" class="oh-btn oh-btn--secondary">
+                        {% if link %}{% trans "Connect a different LINE account" %}{% else %}{% trans "Create link code" %}{% endif %}
+                    </button>
+                </form>
+                {% if link %}
+                    <form method="post" onsubmit="return confirm('{% trans "Disconnect LINE?" %}')">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="unlink" />
+                        <button type="submit" class="oh-btn oh-btn--light-bkg">{% trans "Disconnect" %}</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

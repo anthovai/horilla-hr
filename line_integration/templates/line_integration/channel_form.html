@@ -1,0 +1,29 @@
+{% extends 'settings.html' %}
+{% load i18n %}
+{% block settings %}
+<div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5" id="line-settings-view">
+    <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">
+        {% if instance %}{% trans "Edit LINE channel" %}{% else %}{% trans "Add LINE channel" %}{% endif %}
+    </h2>
+    <form method="post" class="p-4" autocomplete="off">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="oh-input__group mb-3">
+                <label class="oh-input__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="text-xs text-gray-500">{{ field.help_text }}</small>{% endif %}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        {% if instance %}
+            <p class="text-xs text-gray-500 mb-3">
+                {% trans "Stored access token" %}: <code>{{ instance.masked_access_token|default:"-" }}</code> ·
+                {% trans "Stored channel secret" %}: <code>{{ instance.masked_channel_secret|default:"-" }}</code>
+            </p>
+        {% endif %}
+        <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Save" %}</button>
+        <a href="{% url 'line-settings' %}" class="oh-btn oh-btn--light-bkg">{% trans "Cancel" %}</a>
+    </form>
+</div>
+{% endblock settings %}

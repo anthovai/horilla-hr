@@ -1,0 +1,112 @@
+{% extends 'settings.html' %}
+{% load i18n %}
+{% block settings %}
+<div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5" id="line-settings-view">
+    <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "LINE Official Account" %}</h2>
+    <div class="p-4">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-sm font-medium">{% trans "Enable LINE" %}</h3>
+                <p class="text-xs text-gray-500">
+                    {% trans "Send leave notifications to employees and approvers through your LINE Official Account (Messaging API)." %}
+                </p>
+            </div>
+            <label class="toggle-label" for="is_enabled">
+                <input type="checkbox" class="toggle-input" name="is_enabled" id="is_enabled"
+                    hx-post="{% url 'enable-integration' %}?app_label=line_integration" hx-trigger="change"
+                    {% if enabled %}checked{% endif %} />
+                <div class="toggle-switch"></div>
+            </label>
+        </div>
+
+        {% if perms.line_integration.add_linechannel %}
+            <a href="{% url 'line-channel-create' %}" class="oh-btn oh-btn--secondary mb-3">{% trans "Add channel" %}</a>
+        {% endif %}
+
+        <div class="oh-sticky-table">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left">
+                        <th class="p-2">{% trans "Name" %}</th>
+                        <th class="p-2">{% trans "Company" %}</th>
+                        <th class="p-2">{% trans "Access token" %}</th>
+                        <th class="p-2">{% trans "Channel secret" %}</th>
+                        <th class="p-2">{% trans "Webhook URL" %}</th>
+                        <th class="p-2">{% trans "Linked employees" %}</th>
+                        <th class="p-2">{% trans "Active" %}</th>
+                        <th class="p-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr class="border-t">
+                            <td class="p-2">{{ row.channel.name }}</td>
+                            <td class="p-2">{{ row.channel.company|default:_("All (default)") }}</td>
+                            <td class="p-2"><code>{{ row.token|default:"-" }}</code></td>
+                            <td class="p-2"><code>{{ row.secret|default:"-" }}</code></td>
+                            <td class="p-2">
+                                <input type="text" class="oh-input w-100" readonly value="{{ row.webhook_url }}" onclick="this.select()" />
+                            </td>
+                            <td class="p-2">{{ row.channel.linked }}</td>
+                            <td class="p-2">{% if row.channel.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                            <td class="p-2 whitespace-nowrap">
+                                {% if perms.line_integration.change_linechannel %}
+                                    <a class="oh-btn oh-btn--light-bkg" href="{% url 'line-channel-update' row.channel.pk %}">{% trans "Edit" %}</a>
+                                {% endif %}
+                                {% if perms.line_integration.delete_linechannel %}
+                                    <form method="post" action="{% url 'line-channel-delete' row.channel.pk %}" style="display:inline"
+                                        onsubmit="return confirm('{% trans "Delete this LINE channel? All LINE links for it are removed." %}')">
+                                        {% csrf_token %}
+                                        <button class="oh-btn oh-btn--danger" type="submit">{% trans "Delete" %}</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="p-2" colspan="8">{% trans "No LINE channel yet." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-sm font-medium">{% trans "Test message" %}</h3>
+            {% if my_link and my_link.is_active %}
+                <form method="post" action="{% url 'line-test-message' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="oh-btn oh-btn--secondary mt-2">{% trans "Send a test message to my LINE" %}</button>
+                </form>
+            {% else %}
+                <p class="text-xs text-gray-500">
+                    {% trans "Link your own LINE account first" %}: <a href="{% url 'line-my-link' %}">{% trans "LINE Notifications" %}</a>
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-sm font-medium">{% trans "Recent deliveries" %}</h3>
+            <table class="w-full text-xs">
+                <thead><tr class="text-left">
+                    <th class="p-1">{% trans "Time" %}</th><th class="p-1">{% trans "Employee" %}</th>
+                    <th class="p-1">{% trans "Type" %}</th><th class="p-1">{% trans "Event" %}</th>
+                    <th class="p-1">{% trans "Status" %}</th><th class="p-1">{% trans "Error" %}</th>
+                </tr></thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr class="border-t">
+                            <td class="p-1">{{ log.created_at }}</td>
+                            <td class="p-1">{{ log.employee|default:"-" }}</td>
+                            <td class="p-1">{{ log.kind }}</td>
+                            <td class="p-1">{{ log.event }}</td>
+                            <td class="p-1">{{ log.get_status_display }}</td>
+                            <td class="p-1">{{ log.error }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="p-1" colspan="6">-</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock settings %}
