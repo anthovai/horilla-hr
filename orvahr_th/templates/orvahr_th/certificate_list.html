@@ -1,0 +1,101 @@
+{% extends 'index.html' %}
+{% load i18n thai %}
+{% block content %}
+<div class="oh-wrapper">
+    <div class="flex items-center justify-between my-5">
+        <h2 class="text-base font-semibold">{% trans "Employment & Salary Certificates" %}</h2>
+        <div class="flex gap-2">
+            {% if request.user.employee_get %}
+                <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr-th-certificate-request' %}">{% trans "Request a certificate" %}</a>
+            {% endif %}
+            {% if can_generate %}
+                <a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr-th-certificate-generate' %}">{% trans "Generate a certificate" %}</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "My certificates" %}</h3>
+        <div class="p-4 overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left">
+                        <th class="p-2">{% trans "Certificate" %}</th>
+                        <th class="p-2">{% trans "Language" %}</th>
+                        <th class="p-2">{% trans "Purpose" %}</th>
+                        <th class="p-2">{% trans "Status" %}</th>
+                        <th class="p-2">{% trans "Reference number" %}</th>
+                        <th class="p-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cert in own %}
+                        <tr class="border-t">
+                            <td class="p-2">{{ cert.get_kind_display }}</td>
+                            <td class="p-2">{{ cert.get_language_display }}</td>
+                            <td class="p-2">{{ cert.purpose }}</td>
+                            <td class="p-2">
+                                {{ cert.get_status_display }}
+                                {% if cert.reject_reason %}<div class="text-xs text-gray-500">{{ cert.reject_reason }}</div>{% endif %}
+                            </td>
+                            <td class="p-2">{{ cert.reference_no|default:"-" }}</td>
+                            <td class="p-2">
+                                {% if cert.is_issued %}
+                                    <a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr-th-certificate-pdf' cert.token %}" target="_blank" rel="noopener">{% trans "Download PDF" %}</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="p-2" colspan="6">{% trans "No certificates yet." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if hr_rows is not None %}
+        <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+            <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "All requests" %}</h3>
+            <div class="p-4 overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="p-2">{% trans "Employee" %}</th>
+                            <th class="p-2">{% trans "Certificate" %}</th>
+                            <th class="p-2">{% trans "Language" %}</th>
+                            <th class="p-2">{% trans "Purpose" %}</th>
+                            <th class="p-2">{% trans "Requested on" %}</th>
+                            <th class="p-2">{% trans "Status" %}</th>
+                            <th class="p-2">{% trans "Reference number" %}</th>
+                            <th class="p-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cert in hr_rows %}
+                            <tr class="border-t">
+                                <td class="p-2">{{ cert.employee.get_full_name }}</td>
+                                <td class="p-2">{{ cert.get_kind_display }}</td>
+                                <td class="p-2">{{ cert.get_language_display }}</td>
+                                <td class="p-2">{{ cert.purpose }}</td>
+                                <td class="p-2">{{ cert.requested_at|local_date }}</td>
+                                <td class="p-2">{{ cert.get_status_display }}</td>
+                                <td class="p-2">{{ cert.reference_no|default:"-" }}</td>
+                                <td class="p-2 whitespace-nowrap">
+                                    {% if cert.is_issued %}
+                                        <a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr-th-certificate-pdf' cert.token %}" target="_blank" rel="noopener">{% trans "Download PDF" %}</a>
+                                    {% elif cert.status == "requested" and can_decide %}
+                                        <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr-th-certificate-approve' cert.token %}">{% trans "Approve" %}</a>
+                                        <a class="oh-btn oh-btn--danger" href="{% url 'orvahr-th-certificate-reject' cert.token %}">{% trans "Reject" %}</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td class="p-2" colspan="8">{% trans "No certificate requests." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

@@ -1,0 +1,113 @@
+{% load thai %}<!DOCTYPE html>
+{% comment %}
+    Employment / salary certificate, Thai (doc.cert.language == "th") or
+    English. The document text is in the certificate's own language, not the
+    viewer's, so it is not run through gettext.
+
+    Rendered by xhtml2pdf for the PDF (pdf_engine == "xhtml2pdf"): tables
+    and plain CSS only, Sarabun throughout. xhtml2pdf only breaks lines at
+    spaces, so the Thai sentences keep a space between phrases.
+{% endcomment %}
+{% with cert=doc.cert %}
+<html lang="{{ cert.language }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex">
+        <title>{% if cert.language == "th" %}{% if cert.is_salary %}หนังสือรับรองเงินเดือน{% else %}หนังสือรับรองการทำงาน{% endif %}{% else %}{% if cert.is_salary %}Salary Certificate{% else %}Employment Certificate{% endif %}{% endif %} {{ cert.reference_no }}</title>
+        <style>
+            {% thai_font_face pdf_engine %}
+            @page { size: A4; margin: 18mm 20mm 18mm 20mm; }
+            html, body, table, td, th, p, h1, div, span { font-family: 'Sarabun'; }
+            body { margin: 0; color: #111; font-size: 13pt; background: #fff; }
+            .sheet { max-width: 170mm; margin: 0 auto; }
+            .letterhead td { vertical-align: middle; padding: 0 0 6px 0; }
+            .logo { width: 22mm; }
+            .logo img { width: 20mm; }
+            .company { font-size: 15pt; font-weight: bold; }
+            .company-sub { font-size: 10.5pt; color: #444; }
+            .rule { border-bottom: 1px solid #777; margin: 4px 0 14px 0; }
+            .meta td { padding: 2px 0; font-size: 12pt; }
+            .right { text-align: right; }
+            h1 { font-size: 17pt; text-align: center; margin: 18px 0 18px 0; }
+            p.body { text-indent: 18mm; line-height: 1.6; margin: 0 0 10px 0; text-align: justify; }
+            .sign { margin-top: 36px; width: 100%; }
+            .sign td { text-align: center; padding: 3px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="sheet">
+            <table class="letterhead">
+                <tr>
+                    {% if doc.logo_url %}<td class="logo"><img src="{{ doc.logo_url }}" alt=""></td>{% endif %}
+                    <td>
+                        <div class="company">{{ doc.company_name }}</div>
+                        {% if doc.company_address %}<div class="company-sub">{{ doc.company_address }}</div>{% endif %}
+                        {% if doc.company_tax_id %}
+                            <div class="company-sub">
+                                {% if cert.language == "th" %}เลขประจำตัวผู้เสียภาษีอากร{% else %}Tax ID{% endif %}
+                                {{ doc.company_tax_id }}
+                                {% if doc.company_branch_no == "00000" %}{% if cert.language == "th" %}(สำนักงานใหญ่){% else %}(Head office){% endif %}{% elif doc.company_branch_no %}{% if cert.language == "th" %}(สาขาที่ {{ doc.company_branch_no }}){% else %}(Branch {{ doc.company_branch_no }}){% endif %}{% endif %}
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <div class="rule"></div>
+
+            <table class="meta">
+                <tr>
+                    <td>{% if cert.language == "th" %}ที่ {{ cert.reference_no }}{% else %}Ref. {{ cert.reference_no }}{% endif %}</td>
+                    <td class="right">{% if cert.language == "th" %}วันที่ {{ doc.issue_date }}{% else %}Date: {{ doc.issue_date }}{% endif %}</td>
+                </tr>
+            </table>
+
+            {% if cert.language == "th" %}
+                <h1>{% if cert.is_salary %}หนังสือรับรองเงินเดือน{% else %}หนังสือรับรองการทำงาน{% endif %}</h1>
+                <p class="body">
+                    หนังสือฉบับนี้ให้ไว้เพื่อรับรองว่า {{ doc.employee_name }}
+                    เป็นพนักงานของ {{ doc.company_name }}
+                    {% if doc.joining_date %}ตั้งแต่วันที่ {{ doc.joining_date }} จนถึงปัจจุบัน{% endif %}
+                    {% if doc.position %}ปัจจุบันดำรงตำแหน่ง {{ doc.position }}{% endif %}
+                    {% if doc.department %}สังกัด {{ doc.department }}{% endif %}
+                    {% if cert.is_salary %}
+                        {% if doc.wage_type == "daily" %}ได้รับค่าจ้าง วันละ{% elif doc.wage_type == "hourly" %}ได้รับค่าจ้าง ชั่วโมงละ{% else %}ได้รับเงินเดือน เดือนละ{% endif %}
+                        {{ doc.wage|floatformat:"2g" }} บาท ({{ doc.wage_text }})
+                    {% endif %}
+                </p>
+                <p class="body">ออกให้ไว้เพื่อใช้ประกอบ {{ cert.purpose }}</p>
+                <p class="body">ให้ไว้ ณ วันที่ {{ doc.issue_date }}</p>
+                <table class="sign">
+                    <tr><td>ขอแสดงความนับถือ</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>( {{ cert.signer_name }} )</td></tr>
+                    <tr><td>{{ cert.signer_title }}</td></tr>
+                    <tr><td>{{ doc.company_name }}</td></tr>
+                </table>
+            {% else %}
+                <h1>{% if cert.is_salary %}SALARY CERTIFICATE{% else %}EMPLOYMENT CERTIFICATE{% endif %}</h1>
+                <p>To whom it may concern,</p>
+                <p class="body">
+                    This is to certify that {{ doc.employee_name }} is employed by {{ doc.company_name }}{% if doc.joining_date %}
+                    and has been employed since {{ doc.joining_date }}{% endif %}.{% if doc.position %}
+                    The employee currently holds the position of {{ doc.position }}{% if doc.department %} in the {{ doc.department }} department{% endif %}.{% endif %}
+                    {% if cert.is_salary %}
+                        The employee's current {% if doc.wage_type == "daily" %}daily wage{% elif doc.wage_type == "hourly" %}hourly wage{% else %}monthly salary{% endif %}
+                        is THB {{ doc.wage|floatformat:"2g" }}.
+                    {% endif %}
+                </p>
+                <p class="body">This certificate is issued at the employee's request for the purpose of: {{ cert.purpose }}.</p>
+                <table class="sign">
+                    <tr><td>Yours faithfully,</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>( {{ cert.signer_name }} )</td></tr>
+                    <tr><td>{{ cert.signer_title }}</td></tr>
+                    <tr><td>{{ doc.company_name }}</td></tr>
+                </table>
+            {% endif %}
+        </div>
+    </body>
+</html>
+{% endwith %}

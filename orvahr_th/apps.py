@@ -1,4 +1,4 @@
-"""OrvaHR Thai localisation: formatting, Thai PDF font, 50 ทวิ draft."""
+"""OrvaHR Thai localisation: formatting, Thai PDF font, 50 ทวิ draft, certificates."""
 
 from django.apps import AppConfig
 
@@ -14,4 +14,6 @@ class OrvahrThConfig(AppConfig):
         from horilla.urls import urlpatterns
 
         urlpatterns.append(path("orvahr-th/", include("orvahr_th.urls")))
+
+        from orvahr_th import sidebar  # noqa: F401  (adds a submenu)
         return super().ready()

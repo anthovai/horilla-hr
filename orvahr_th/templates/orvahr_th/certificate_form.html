@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden my-5" style="max-width: 640px">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{{ title }}</h2>
+        <form method="post" class="p-4" autocomplete="off">
+            {% csrf_token %}
+            {% if cert %}
+                <p class="text-sm mb-3">
+                    {{ cert.employee.get_full_name }} &middot; {{ cert.get_kind_display }} &middot; {{ cert.get_language_display }}<br>
+                    <span class="text-xs text-gray-500">{% trans "Purpose" %}: {{ cert.purpose }}</span>
+                </p>
+            {% endif %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="oh-input__group mb-3">
+                    <label class="oh-input__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<small class="text-xs text-gray-500">{{ field.help_text }}</small>{% endif %}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Save" %}</button>
+            <a href="{% url 'orvahr-th-certificates' %}" class="oh-btn oh-btn--light-bkg">{% trans "Cancel" %}</a>
+        </form>
+    </div>
+</div>
+{% endblock content %}
