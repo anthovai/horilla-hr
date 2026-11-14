@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Sarabun", "Noto Sans Thai", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #eefbf6;
+  --color-brand-600: #0f766e;
+  --color-brand-700: #115e59;
+}
