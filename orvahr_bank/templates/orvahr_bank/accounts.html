@@ -1,0 +1,46 @@
+{% extends 'index.html' %}
+{% load i18n %}
+
+{% block content %}
+<main :class="sidebarOpen ? 'oh-main__sidebar-visible' : ''">
+  <section class="oh-wrapper">
+    <div class="oh-main__titlebar oh-main__titlebar--left mb-3 d-flex justify-content-between">
+      <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Company bank accounts" %}</h1>
+      {% if perms.orvahr_bank.add_companybankaccount %}
+        <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_bank:account-create' %}">{% trans "Add account" %}</a>
+      {% endif %}
+    </div>
+    <div class="oh-card p-3">
+      {% if accounts %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{% trans "Name" %}</th><th>{% trans "Company" %}</th><th>{% trans "Bank" %}</th>
+            <th>{% trans "Account" %}</th><th>{% trans "File format" %}</th><th>{% trans "Active" %}</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for account in accounts %}
+          <tr>
+            <td>{{ account.name }}</td>
+            <td>{{ account.company_id }}</td>
+            <td>{{ account.get_bank_code_display }}</td>
+            <td>{{ account.masked_account }}</td>
+            <td>{{ account.get_default_exporter_display }}</td>
+            <td>{% if account.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+            <td>
+              {% if perms.orvahr_bank.change_companybankaccount %}
+                <a href="{% url 'orvahr_bank:account-update' account.pk %}">{% trans "Edit" %}</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="text-muted mb-0">{% trans "No company bank account is set up yet." %}</p>
+      {% endif %}
+    </div>
+  </section>
+</main>
+{% endblock content %}

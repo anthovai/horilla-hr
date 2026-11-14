@@ -40,9 +40,27 @@ this service does not know statutory caps or rates.
 - PND.1 and PND.1 Kor e-filing: Revenue Department's current upload/RD Prep
   file specification and code tables (income type codes, title/prefix codes,
   conditions-of-withholding codes).
-- KBank, SCB, BBL, KTB (and others) payroll / bulk-transfer files: each bank's
-  corporate-channel file spec, plus the company's agreement/service codes,
-  header/trailer/checksum rules, and sample files for acceptance testing.
+- KBank, SCB, BBL, KTB, Krungsri payroll / bulk-transfer files, and the
+  ITMX "SMART" credit / PromptPay bulk formats: each bank's corporate-channel
+  file spec, plus the company's agreement/service codes, header/trailer/
+  checksum rules, and sample files for acceptance testing.
+
+  **Searched 2026-11-14, none obtained.** Public web searches (English and
+  Thai) and the banks' product pages turned up no published file layout:
+
+  | Bank | What is public | Spec obtained? |
+  |---|---|---|
+  | KBank (K-Cash Connect Plus) | product page; third-party tools name a "PCT - KBANK PAYROLL" upload type | No |
+  | SCB (Business Net / e-Integration) | product page only ("payment file in your preferred format") | No |
+  | Bangkok Bank (BIZ iBanking, Bualuang Payroll, SMART) | help page links an Excel template behind a "Download the file format" link (site refused automated fetches); SMART terms PDFs carry no layout | No |
+  | Krungthai (Corporate Online) | user manuals for portal screens, no file layout | No |
+  | Krungsri (CashLink / Payroll) | product page, no download; spec is given to clients on onboarding | No |
+  | ITMX SMART / PromptPay bulk | nothing public | No |
+
+  So there are **no bank-specific exporters**: `generic_bank_csv` stays the
+  only bank file. To add one, get the PDF/spec (with version and date) from
+  the bank's cash-management team, cite it in the exporter's doc comment, and
+  test against the bank's own sample file or validator.
 - Likely also: Thai-to-bank-code table, and any required Thai-vs-English name
   handling, per bank.
 

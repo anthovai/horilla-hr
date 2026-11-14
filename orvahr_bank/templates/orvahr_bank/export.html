@@ -1,0 +1,137 @@
+{% extends 'index.html' %}
+{% load i18n %}
+
+{% block content %}
+<main :class="sidebarOpen ? 'oh-main__sidebar-visible' : ''">
+  <section class="oh-wrapper">
+    <div class="oh-main__titlebar oh-main__titlebar--left mb-3">
+      <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Bank transfer file" %}</h1>
+    </div>
+
+    <div class="oh-alert oh-alert--warning mb-3" role="note">
+      {% trans "The only file available is a generic transfer list (CSV). It is not any bank's official upload format; use it for checking or manual entry." %}
+    </div>
+
+    {% if not has_accounts %}
+      <div class="oh-alert oh-alert--info mb-3">
+        {% trans "No company bank account is set up yet." %}
+        {% if perms.orvahr_bank.add_companybankaccount %}
+          <a href="{% url 'orvahr_bank:account-create' %}">{% trans "Add one" %}</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="oh-card p-3 mb-3">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="row">
+        <div class="col-12 col-md-4 mb-2">
+          <label class="oh-label" for="{{ form.payroll_batch.id_for_label }}">{{ form.payroll_batch.label }}</label>
+          {{ form.payroll_batch }}{{ form.payroll_batch.errors }}
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <label class="oh-label" for="{{ form.bank_account.id_for_label }}">{{ form.bank_account.label }}</label>
+          {{ form.bank_account }}{{ form.bank_account.errors }}
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <label class="oh-label" for="{{ form.effective_date.id_for_label }}">{{ form.effective_date.label }}</label>
+          {{ form.effective_date }}{{ form.effective_date.errors }}
+          <small class="text-muted">{{ form.effective_date.help_text }}</small>
+        </div>
+      </div>
+      {{ form.fingerprint }}
+
+      {% if built %}
+        <hr>
+        {% if error %}<div class="oh-alert oh-alert--danger mb-2">{{ error }}</div>{% endif %}
+        {% if service_problems %}
+          <ul class="text-danger">{% for p in service_problems %}<li>{{ p }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% for p in built.batch_problems %}
+          <div class="oh-alert oh-alert--danger mb-2">{{ p }}</div>
+        {% endfor %}
+
+        <p class="fw-bold" id="bank-export-summary">
+          {% blocktrans count counter=built.line_count with total=built.total_baht %}{{ counter }} transfer, total {{ total }} THB{% plural %}{{ counter }} transfers, total {{ total }} THB{% endblocktrans %}
+          {% if built.problem_rows %}
+            &middot; <span class="text-danger">{% blocktrans count counter=built.problem_rows|length %}{{ counter }} employee cannot be paid by file{% plural %}{{ counter }} employees cannot be paid by file{% endblocktrans %}</span>
+          {% endif %}
+        </p>
+
+        <div class="oh-sticky-table mb-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{% trans "Employee" %}</th>
+                <th>{% trans "Bank" %}</th>
+                <th>{% trans "Account" %}</th>
+                <th class="text-end">{% trans "Net pay (THB)" %}</th>
+                <th>{% trans "Status" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in built.rows %}
+              <tr>
+                <td>{{ row.employee.get_full_name }}{% if row.employee.badge_id %} ({{ row.employee.badge_id }}){% endif %}</td>
+                <td>{{ row.bank_name|default:"-" }}</td>
+                <td>{{ row.masked_account|default:"-" }}</td>
+                <td class="text-end">{{ row.net_baht }}</td>
+                <td>
+                  {% if row.problem %}<span class="text-danger">{{ row.problem }}</span>
+                  {% elif row.note %}<span class="text-muted">{{ row.note }}</span>
+                  {% else %}{% trans "OK" %}{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if built.problem_rows %}
+          <label class="d-block mb-2">{{ form.exclude_problems }} {{ form.exclude_problems.label }}</label>
+        {% endif %}
+      {% elif error %}
+        <div class="oh-alert oh-alert--danger mt-2">{{ error }}</div>
+      {% endif %}
+
+      <div class="d-flex gap-2 mt-2">
+        <button type="submit" name="action" value="preview" class="oh-btn oh-btn--secondary">{% trans "Preview" %}</button>
+        {% if built and not built.batch_problems and built.line_count %}
+          <button type="submit" name="action" value="download" class="oh-btn oh-btn--primary">{% trans "Download file" %}</button>
+        {% endif %}
+      </div>
+    </form>
+
+    <div class="oh-card p-3">
+      <h2 class="h6 fw-bold">{% trans "Recent exports" %}</h2>
+      {% if logs %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{% trans "When" %}</th><th>{% trans "By" %}</th><th>{% trans "Payroll run" %}</th>
+            <th>{% trans "Period" %}</th><th>{% trans "Transfers" %}</th><th>{% trans "Excluded" %}</th>
+            <th class="text-end">{% trans "Total (THB)" %}</th><th>{% trans "File" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ log.created_by|default:"-" }}</td>
+            <td>{{ log.payroll_batch.batch_name|default:"-" }}</td>
+            <td>{{ log.period }}</td>
+            <td>{{ log.line_count }}</td>
+            <td>{{ log.excluded_count }}</td>
+            <td class="text-end">{{ log.total_baht }}</td>
+            <td>{{ log.filename }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="text-muted mb-0">{% trans "No exports yet." %}</p>
+      {% endif %}
+    </div>
+  </section>
+</main>
+{% endblock content %}
