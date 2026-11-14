@@ -142,6 +142,19 @@ def _render_tab(request, employee, year=None, status=200):
         | {this_year - 1, this_year, this_year + 1, year},
         reverse=True,
     )
+    if can_edit and profile is not None:
+        # PDPA: record who saw the unmasked identifiers (field names only).
+        from django.apps import apps as django_apps
+
+        if django_apps.is_installed("orvahr_pdpa"):
+            from orvahr_pdpa.access_log import log_sensitive_access
+
+            log_sensitive_access(
+                request,
+                employee,
+                EmployeeThaiProfile.SENSITIVE_FIELDS,
+                context="thai_info_tab",
+            )
     return render(
         request,
         TAB_TEMPLATE,

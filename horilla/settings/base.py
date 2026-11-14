@@ -499,6 +499,8 @@ SIDEBARS = [
     "asset",
     "helpdesk",
     "report",
+    "orvahr_benefits",
+    "orvahr_pdpa",
 ]
 
 # Audit logging is opt-in: the horilla_audit app registers models explicitly

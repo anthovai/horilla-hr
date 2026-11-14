@@ -82,6 +82,14 @@
                     >{% trans "Change Password" %}</a>
                 </button>
             </li>
+            {% url 'orvahr_pdpa:my-privacy' as my_privacy_url %}
+            {% if my_privacy_url %}
+                <li>
+                    <button class="py-1.5 hover:text-primary-600 transition duration-300 text-sm gap-4 items-center flex w-full">
+                        <a class="text-[13px]" href="{{ my_privacy_url }}">{% trans "My privacy" %}</a>
+                    </button>
+                </li>
+            {% endif %}
             {% url 'line-my-link' as line_my_link_url %}
             {% if line_my_link_url %}
                 <li>
