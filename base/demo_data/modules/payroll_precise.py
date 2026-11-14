@@ -133,14 +133,15 @@ def _ensure_calendar(company):
 
 
 def _ensure_leave_types():
+    # LeaveType.name is max_length=30; PostgreSQL enforces it (SQLite does not).
     from leave.models import LeaveType
 
     paid_type, _c = LeaveType._base_manager.get_or_create(
-        name="Precise Payroll Demo — Paid Leave",
+        name="Demo Payroll — Paid Leave",
         defaults={"payment": "paid", "limit_leave": False},
     )
     unpaid_type, _c = LeaveType._base_manager.get_or_create(
-        name="Precise Payroll Demo — Unpaid Leave",
+        name="Demo Payroll — Unpaid Leave",
         defaults={"payment": "unpaid", "limit_leave": False},
     )
     return paid_type, unpaid_type

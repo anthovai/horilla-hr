@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 
 from django.apps import apps
@@ -14,13 +15,27 @@ from base.demo_data.catalog import STRING_REPLACEMENTS
 logger = logging.getLogger(__name__)
 
 
+def _replace_once(text: str, old: str, new: str) -> str:
+    """
+    Replace ``old`` with ``new`` only where ``old`` stands as whole words.
+
+    Plain substring replacement corrupted the demo data and, because
+    scrub_side_fixture_files writes the result back into the fixture files on
+    disk, kept corrupting them on every load: "Sales Man" turned "Sales
+    Manager" into "Sales Associateager", and "System Admin" grew into
+    "System Administratoristrator...". Matching whole words makes every pair
+    idempotent.
+    """
+    return re.sub(rf"(?<!\w){re.escape(old)}(?!\w)", lambda _m: new, text)
+
+
 def apply_replacements(text: str | None) -> str | None:
     if text is None:
         return None
     result = text
     for old, new in STRING_REPLACEMENTS:
         if old in result:
-            result = result.replace(old, new)
+            result = _replace_once(result, old, new)
     return result
 
 
@@ -139,8 +154,8 @@ def sanitize_loaded_records() -> dict[str, int]:
 
         n = 0
         for project in Project.objects.filter(
-            Q(title__icontains="Horilla")
-            | Q(description__icontains="Horilla")
+            Q(title__icontains="OrvaHR")
+            | Q(description__icontains="OrvaHR")
             | Q(title__icontains="Odoo")
         ):
             project.title = apply_replacements(project.title) or project.title
@@ -163,7 +178,7 @@ def sanitize_loaded_records() -> dict[str, int]:
         try:
             from pms.models import Meetings
 
-            for meeting in Meetings.objects.filter(title__icontains="Horilla"):
+            for meeting in Meetings.objects.filter(title__icontains="OrvaHR"):
                 meeting.title = apply_replacements(meeting.title) or meeting.title
                 meeting.save(update_fields=["title"])
                 n += 1
@@ -174,7 +189,7 @@ def sanitize_loaded_records() -> dict[str, int]:
 
             for model in (Objective, EmployeeObjective):
                 for obj in model.objects.filter(
-                    Q(title__icontains="Horilla") | Q(title__icontains="Odoo")
+                    Q(title__icontains="OrvaHR") | Q(title__icontains="Odoo")
                 ):
                     obj.title = apply_replacements(obj.title) or obj.title
                     obj.save(update_fields=["title"])
