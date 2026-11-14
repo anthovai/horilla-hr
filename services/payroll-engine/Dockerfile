@@ -12,7 +12,13 @@ RUN mkdir src && echo 'fn main() {}' > src/main.rs && touch src/lib.rs \
 
 COPY src ./src
 COPY rules ./rules
-RUN cargo build --release --locked --bin payroll-engine
+# The copied sources can carry older mtimes than the stub build above, and
+# cargo would then reuse the stub: an image that starts and exits 0. Touching
+# them forces the real build, and the check below fails the build if the stub
+# ever ships again.
+RUN touch src/main.rs src/lib.rs \
+    && cargo build --release --locked --bin payroll-engine \
+    && grep -q "payroll-engine listening" target/release/payroll-engine
 
 # Runtime: debian-slim ships bash, which the HEALTHCHECK uses (/dev/tcp), so
 # no curl/wget is installed and the Rust code needs no health subcommand.
