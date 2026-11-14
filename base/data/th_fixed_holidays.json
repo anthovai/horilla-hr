@@ -1,0 +1,26 @@
+{
+  "_comment": "Fixed-date Thai public holidays used by `manage.py load_thai_holidays`. UNVERIFIED STARTING POINT: the Thai Cabinet announces the official list every year and may add, move or cancel days (including special holidays). Verify every entry against the current announcement before relying on it. Names are English and must be <= 30 characters (Holidays.name max_length). Lunar/variable days (Makha/Visakha/Asarnha Bucha, Khao Phansa, ...) and substitution days are deliberately NOT here: they must be supplied via --file.",
+  "holidays": [
+    {"month": 1,  "day": 1,  "name": "New Year's Day"},
+    {"month": 4,  "day": 6,  "name": "Chakri Memorial Day"},
+    {"month": 4,  "day": 13, "name": "Songkran Festival"},
+    {"month": 4,  "day": 14, "name": "Songkran Festival"},
+    {"month": 4,  "day": 15, "name": "Songkran Festival"},
+    {"month": 5,  "day": 1,  "name": "National Labour Day"},
+    {"month": 5,  "day": 4,  "name": "Coronation Day"},
+    {"month": 6,  "day": 3,  "name": "Queen Suthida Birthday"},
+    {"month": 7,  "day": 28, "name": "King Vajiralongkorn Birthday"},
+    {"month": 8,  "day": 12, "name": "Mother's Day"},
+    {"month": 10, "day": 13, "name": "King Bhumibol Memorial Day"},
+    {"month": 10, "day": 23, "name": "Chulalongkorn Day"},
+    {"month": 12, "day": 5,  "name": "Father's Day"},
+    {"month": 12, "day": 10, "name": "Constitution Day"},
+    {"month": 12, "day": 31, "name": "New Year's Eve"}
+  ],
+  "variable_holidays_expected": [
+    {"label": "Makha Bucha", "match": ["makha"]},
+    {"label": "Visakha Bucha", "match": ["visakha", "wisakha"]},
+    {"label": "Asarnha Bucha", "match": ["asarnha", "asanha", "asalha"]},
+    {"label": "Khao Phansa", "match": ["khao phansa", "buddhist lent"]}
+  ]
+}
