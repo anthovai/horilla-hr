@@ -65,6 +65,10 @@
                     <td class="lbl">เลขประจำตัวผู้เสียภาษีอากร</td>
                     <td>{{ cert.payer_tax_id|default:"........................................ (ยังไม่มีในระบบ กรอกเอง)" }}</td>
                 </tr>
+                <tr>
+                    <td class="lbl">สาขาที่</td>
+                    <td>{% if cert.payer_branch %}{{ cert.payer_branch }}{% if cert.payer_branch == "00000" %} (สำนักงานใหญ่){% endif %}{% else %}..........{% endif %}</td>
+                </tr>
             </table>
 
             <table class="party">

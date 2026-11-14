@@ -1,0 +1,158 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% load thai filing %}
+
+{% block content %}
+<main :class="sidebarOpen ? 'oh-main__sidebar-visible' : ''">
+  {% include "payroll/batch/_batch.css.html" %}
+  <section class="oh-wrapper pb">
+    {% with tab=kind %}{% include "orvahr_filing/_nav.html" %}{% endwith %}
+
+    {% if report %}
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <h2 style="font-size:1.05rem;font-weight:600;margin:0;">
+          {% if kind == 'pnd1' %}
+            {% blocktrans with month=report.month_name_th year=report.be_year %}PND 1 for {{ month }} {{ year }}{% endblocktrans %}
+          {% else %}
+            {% blocktrans with year=report.be_year %}PND 1 Kor for tax year {{ year }}{% endblocktrans %}
+          {% endif %}
+        </h2>
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="oh-btn oh-btn--light" target="_blank" rel="noopener"
+             href="{% if kind == 'pnd1' %}{% url 'orvahr_filing:pnd1-pdf' %}{% else %}{% url 'orvahr_filing:pnd1k-pdf' %}{% endif %}?{{ query }}">
+            <ion-icon name="document-outline" class="me-1"></ion-icon>{% trans "Attachment PDF (draft)" %}
+          </a>
+          {% if efiling_url %}
+            <a class="oh-btn oh-btn--light" href="{{ efiling_url }}?{{ query }}">
+              <ion-icon name="download-outline" class="me-1"></ion-icon>{% trans "RD data file (FORMAT V2.0)" %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="pb__problem" style="margin-bottom:.6rem;">
+        {% blocktrans with title=spec.SPEC_TITLE version=spec.SPEC_VERSION %}The data file follows the Revenue Department's "{{ title }}", version {{ version }}. It is filed through the RD's electronic-media / file-deposit channel or converted with RD Prep; New e-Filing does not take the .txt directly.{% endblocktrans %}
+        <a href="{{ spec.SPEC_URL }}" target="_blank" rel="noopener noreferrer">{% trans "Specification" %}</a>
+      </div>
+
+      {% if file_problems %}
+        <div class="pb__panel mb-3" style="border-left:4px solid #b00020;">
+          <div class="pb__panel-head"><span>{% trans "The RD data file cannot be made yet" %}</span></div>
+          <div class="pb__scroll">
+            <table class="pb__table">
+              <tbody>
+                {% for problem in file_problems %}
+                  <tr>
+                    <td>{% if problem.payee %}{{ problem.payee.employee.get_full_name }}{% else %}{{ company.company }}{% endif %}</td>
+                    <td><span class="pb__problem pb__problem--blocking">{{ problem.code|rd_file_problem }}</span></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="pb__kpis">
+        <div class="pb__kpi">
+          <div class="pb__kpi-label">{% trans "Payees" %}</div>
+          <div class="pb__kpi-value">{{ report.payee_count }}</div>
+        </div>
+        <div class="pb__kpi">
+          <div class="pb__kpi-label">{% trans "Income paid" %}</div>
+          <div class="pb__kpi-value">{{ report.total_income|floatformat:"2g" }}</div>
+          <div class="pb__kpi-note">{% trans "gross pay, section 40(1)" %}</div>
+        </div>
+        <div class="pb__kpi">
+          <div class="pb__kpi-label">{% trans "Tax withheld" %}</div>
+          <div class="pb__kpi-value" style="font-weight:700;">{{ report.total_tax|floatformat:"2g" }}</div>
+        </div>
+        <div class="pb__kpi">
+          <div class="pb__kpi-label">{% trans "Employer tax ID" %}</div>
+          <div class="pb__kpi-value" style="font-size:1rem;">
+            {% if report.profile %}{{ report.profile.tax_id|thai_id }} / {{ report.profile.branch_no }}{% else %}—{% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if report.issues %}
+        <div class="pb__panel mb-3">
+          <div class="pb__panel-head">
+            <span>{% trans "To fix before filing" %}</span>
+            <span style="text-transform:none;font-weight:400;">{{ report.issues|length }}</span>
+          </div>
+          <div class="pb__scroll">
+            <table class="pb__table">
+              <thead><tr><th>{% trans "Employee" %}</th><th>{% trans "Problem" %}</th></tr></thead>
+              <tbody>
+                {% for line in report.issues %}
+                  <tr>
+                    <td>{{ line.payee.employee.get_full_name }}</td>
+                    <td>
+                      {% for code in line.payee.problems %}
+                        <span class="pb__problem {% if code == 'missing_tax_id' or code == 'invalid_tax_id' %}pb__problem--blocking{% else %}pb__problem--warning{% endif %}">{{ code|filing_problem }}</span>
+                      {% endfor %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="pb__panel">
+        <div class="pb__panel-head">
+          <span>{% trans "Payees" %}</span>
+          <span style="text-transform:none;font-weight:400;">
+            {% trans "Condition 1: withheld at source. IDs are masked on screen; the PDF carries them in full." %}
+          </span>
+        </div>
+        {% if report.lines %}
+          <div class="pb__scroll">
+            <table class="pb__table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{% trans "Tax ID" %}</th>
+                  <th>{% trans "Name" %}</th>
+                  <th class="pb__num">{% trans "Payslips" %}</th>
+                  <th class="pb__num">{% trans "Income" %}</th>
+                  <th class="pb__num">{% trans "Tax withheld" %}</th>
+                  <th>{% trans "Condition" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for line in report.lines %}
+                  <tr>
+                    <td>{{ line.seq }}</td>
+                    <td><code>{{ line.payee.tax_id_display|default:"—" }}</code></td>
+                    <td>{{ line.payee.full_name }}</td>
+                    <td class="pb__num">{{ line.payslips }}</td>
+                    <td class="pb__num">{{ line.income|floatformat:"2g" }}</td>
+                    <td class="pb__num">{{ line.tax|floatformat:"2g" }}</td>
+                    <td>{{ line.condition }}</td>
+                  </tr>
+                {% endfor %}
+                <tr style="font-weight:700;">
+                  <td colspan="4">{% trans "Total" %}</td>
+                  <td class="pb__num">{{ report.total_income|floatformat:"2g" }}</td>
+                  <td class="pb__num">{{ report.total_tax|floatformat:"2g" }}</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="pb__empty">{% trans "No issued payslips in this period." %}</div>
+        {% endif %}
+        {% if report.excluded %}
+          <div class="pb__problem" style="padding:.6rem 1rem;">
+            {% blocktrans count n=report.excluded|length %}{{ n }} payee paid with no tax withheld is left off.{% plural %}{{ n }} payees paid with no tax withheld are left off.{% endblocktrans %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock content %}

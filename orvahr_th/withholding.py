@@ -49,6 +49,7 @@ class Certificate:
     payer_name: str = ""
     payer_address: str = ""
     payer_tax_id: str = ""
+    payer_branch: str = ""
     payee_name: str = ""
     payee_address: str = ""
     payee_tax_id: str = ""
@@ -81,6 +82,16 @@ def _company_for(employee):
     return company or Company.objects.filter(hq=True).first()
 
 
+def _company_tax_profile(company):
+    from django.apps import apps
+
+    if company is None or not apps.is_installed("orvahr_filing"):
+        return None
+    from orvahr_filing.models import profile_for
+
+    return profile_for(company)
+
+
 def _thai_profile(employee):
     try:
         return employee.thai_profile
@@ -110,7 +121,15 @@ def build_certificate(employee, year):
         cert.payer_address = _join(
             company.address, company.city, company.state, company.zip, company.country
         )
-    # No company tax ID field exists in OrvaHR yet: left blank to fill by hand.
+    # Employer legal name / tax ID / branch / address from the company tax
+    # profile (orvahr_filing.CompanyTaxProfile); left blank to fill by hand
+    # when it has not been entered.
+    tax_profile = _company_tax_profile(company)
+    if tax_profile is not None:
+        cert.payer_name = tax_profile.legal_name_th or cert.payer_name
+        cert.payer_address = tax_profile.address or cert.payer_address
+        cert.payer_tax_id = formatting.format_thai_id(tax_profile.tax_id or "")
+        cert.payer_branch = tax_profile.branch_no or ""
 
     profile = _thai_profile(employee)
     thai_name = ""

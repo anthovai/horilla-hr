@@ -1,0 +1,31 @@
+{% load i18n thai %}
+{% if rows %}
+  <div class="pb__scroll">
+    <table class="pb__table">
+      <thead>
+        <tr>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "ID number" %}</th>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "From" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.date|local_date:"short" }}</td>
+            <td><code>{{ row.id_digits|mask_thai_id|default:"—" }}</code></td>
+            <td>{{ row.payee.full_name }}</td>
+            <td>
+              {% if row.source == 'joining' %}{% trans "Joining date" %}
+              {% elif row.source == 'offboarding' %}{% trans "Offboarding" %}
+              {% else %}{% trans "Contract end (archived)" %}{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="pb__empty">{% trans "None." %}</div>
+{% endif %}

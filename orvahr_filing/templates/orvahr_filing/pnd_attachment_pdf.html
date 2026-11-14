@@ -1,0 +1,106 @@
+{% load thai %}<!DOCTYPE html>
+{% comment %}
+    Attachment to PND 1 / PND 1 Kor -- DRAFT. Laid out after the "ใบแนบ"
+    (per-payee list) of the return, but NOT the Revenue Department's form:
+    we have no official layout spec for the printed attachment. Every page
+    carries the draft notice. Use it to check the figures and to key them into
+    the official form / RD e-Filing; do not submit it as the form.
+
+    Rendered by xhtml2pdf: tables and plain CSS only, Sarabun throughout. Full
+    tax IDs are printed: this is what the return is made from (payroll
+    viewers only, served no-store).
+{% endcomment %}
+<html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <title>{% if report.kind == 'pnd1' %}ใบแนบ ภ.ง.ด.1 (ร่าง){% else %}ใบแนบ ภ.ง.ด.1ก (ร่าง){% endif %}</title>
+        <style>
+            {% thai_font_face pdf_engine %}
+            @page { size: A4 landscape; margin: 10mm 10mm 12mm 10mm;
+                @frame footer { -pdf-frame-content: footer; bottom: 4mm; margin-left: 10mm; margin-right: 10mm; height: 8mm; } }
+            html, body, table, td, th, p, h1, div, span { font-family: 'Sarabun'; }
+            body { color: #111; font-size: 10pt; }
+            .draft { border: 2px solid #b00020; color: #b00020; padding: 4px 6px; text-align: center; font-weight: bold; margin-bottom: 6px; }
+            .draft .en { font-weight: normal; font-size: 8.5pt; }
+            h1 { font-size: 14pt; text-align: center; margin: 2px 0; }
+            .sub { text-align: center; font-size: 10pt; margin: 0 0 6px 0; }
+            table { width: 100%; border-collapse: collapse; }
+            .payer td { padding: 2px 4px; vertical-align: top; }
+            .lines th, .lines td { border: 1px solid #555; padding: 3px 4px; }
+            .lines th { background: #eeeeee; text-align: center; font-weight: bold; }
+            .num { text-align: right; }
+            .center { text-align: center; }
+            .total td { font-weight: bold; }
+            .note { font-size: 8.5pt; color: #444; }
+        </style>
+    </head>
+    <body>
+        <div id="footer" class="note">{{ draft_notice_th }} — {{ draft_notice_en }} — หน้า <pdf:pagenumber> / <pdf:pagecount></div>
+        <div class="draft">
+            {{ draft_notice_th }}<br><span class="en">{{ draft_notice_en }}</span>
+        </div>
+        {% if report.kind == 'pnd1' %}
+            <h1>ใบแนบ ภ.ง.ด.1 (ร่าง)</h1>
+            <p class="sub">เงินได้ตามมาตรา 40 (1) เงินเดือน ค่าจ้าง ฯลฯ &middot; เดือน {{ report.month_name_th }} พ.ศ. {{ report.be_year }}</p>
+        {% else %}
+            <h1>ใบแนบ ภ.ง.ด.1ก (ร่าง)</h1>
+            <p class="sub">เงินได้ตามมาตรา 40 (1) เงินเดือน ค่าจ้าง ฯลฯ &middot; ปีภาษี พ.ศ. {{ report.be_year }}</p>
+        {% endif %}
+
+        <table class="payer">
+            <tr>
+                <td style="width: 22%;">ผู้มีหน้าที่หักภาษี ณ ที่จ่าย</td>
+                <td style="width: 38%;">{{ report.profile.legal_name_th|default:report.company.company }}</td>
+                <td style="width: 20%;">เลขประจำตัวผู้เสียภาษีอากร</td>
+                <td>{% if report.profile %}{{ report.profile.tax_id|thai_id }}{% else %}........................................{% endif %}</td>
+            </tr>
+            <tr>
+                <td>ที่อยู่</td>
+                <td>{{ report.profile.address|default:"—" }}</td>
+                <td>สาขาที่</td>
+                <td>{% if report.profile %}{{ report.profile.branch_no }}{% if report.profile.is_head_office %} (สำนักงานใหญ่){% endif %}{% else %}..........{% endif %}</td>
+            </tr>
+        </table>
+
+        <table class="lines" style="margin-top: 6px;">
+            <thead>
+                <tr>
+                    <th style="width: 6%;">ลำดับที่</th>
+                    <th style="width: 17%;">เลขประจำตัวผู้เสียภาษีอากร</th>
+                    <th style="width: 31%;">ชื่อผู้มีเงินได้</th>
+                    {% if report.kind == 'pnd1' %}<th style="width: 10%;">จำนวนสลิป</th>{% endif %}
+                    <th style="width: 14%;">จำนวนเงินได้ที่จ่าย</th>
+                    <th style="width: 14%;">ภาษีที่หักและนำส่ง</th>
+                    <th style="width: 8%;">เงื่อนไข</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in report.lines %}
+                    <tr>
+                        <td class="center">{{ line.seq }}</td>
+                        <td class="center">{{ line.payee.tax_id_formatted|default:"—" }}</td>
+                        <td>{{ line.payee.full_name }}</td>
+                        {% if report.kind == 'pnd1' %}<td class="center">{{ line.payslips }}</td>{% endif %}
+                        <td class="num">{{ line.income|floatformat:"2g" }}</td>
+                        <td class="num">{{ line.tax|floatformat:"2g" }}</td>
+                        <td class="center">{{ line.condition }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="center">ไม่มีสลิปเงินเดือนที่ออกแล้วในงวดนี้</td></tr>
+                {% endfor %}
+                <tr class="total">
+                    <td colspan="{% if report.kind == 'pnd1' %}4{% else %}3{% endif %}">รวม ({{ report.payee_count }} ราย)</td>
+                    <td class="num">{{ report.total_income|floatformat:"2g" }}</td>
+                    <td class="num">{{ report.total_tax|floatformat:"2g" }}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="note">รวมภาษีที่หักนำส่ง (ตัวอักษร): ({{ report.total_tax_text }})</p>
+        <p class="note">เงื่อนไข: 1 = หัก ณ ที่จ่าย &middot; จำนวนเงินได้ = เงินได้รวม (gross pay) จากสลิปเงินเดือนที่ยืนยันแล้ว / จ่ายแล้ว</p>
+        {% if report.blocking_issues %}
+            <p class="note" style="color:#b00020;">มีผู้มีเงินได้ {{ report.blocking_issues|length }} ราย ที่ไม่มีหรือเลขประจำตัวผู้เสียภาษีไม่ถูกต้อง — แก้ไขก่อนยื่นแบบ</p>
+        {% endif %}
+    </body>
+</html>

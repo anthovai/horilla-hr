@@ -1,0 +1,166 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% load thai filing %}
+
+{% block content %}
+<main :class="sidebarOpen ? 'oh-main__sidebar-visible' : ''">
+  {% include "payroll/batch/_batch.css.html" %}
+  <section class="oh-wrapper pb">
+    {% with tab='sso' %}{% include "orvahr_filing/_nav.html" %}{% endwith %}
+
+    {% if report %}
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <h2 style="font-size:1.05rem;font-weight:600;margin:0;">
+          {% blocktrans with month=report.month_name_th year=report.be_year %}SSO 1-10 for {{ month }} {{ year }}{% endblocktrans %}
+        </h2>
+        <div class="d-flex gap-2 flex-wrap">
+          {% if sso_file_url %}
+            <a class="oh-btn oh-btn--light" href="{{ sso_file_url }}?{{ query }}">
+              <ion-icon name="download-outline" class="me-1"></ion-icon>{{ sso_file_label }}
+            </a>
+          {% endif %}
+          <a class="oh-btn oh-btn--light" href="{% url 'orvahr_filing:sso-movements-csv' %}?{{ query }}">
+            <ion-icon name="download-outline" class="me-1"></ion-icon>{% trans "Joiners and leavers (CSV)" %}
+          </a>
+        </div>
+      </div>
+
+      {% if report.rules_error %}
+        <div class="pb__alert pb__alert--danger mb-3" style="padding:.75rem 1rem;">
+          {% trans "No social security rules file could be read; contributions not on a payslip are shown as zero." %}
+        </div>
+      {% endif %}
+
+      <div class="pb__panel mb-3">
+        <div class="pb__panel-head">
+          <span>{% trans "Part 1: summary" %}</span>
+          <span style="text-transform:none;font-weight:400;">
+            {% if report.profile and report.profile.sso_account_no %}
+              {% trans "Employer account" %} {{ report.profile.sso_account_no }} / {% trans "branch" %} {{ report.profile.sso_branch_no|default:"000000" }}
+            {% else %}
+              {% trans "No SSO employer account number in the company tax profile." %}
+            {% endif %}
+          </span>
+        </div>
+        <div class="pb__kpis" style="margin:0;">
+          <div class="pb__kpi">
+            <div class="pb__kpi-label">{% trans "Insured persons" %}</div>
+            <div class="pb__kpi-value">{{ report.insured_count }}</div>
+          </div>
+          <div class="pb__kpi">
+            <div class="pb__kpi-label">{% trans "Total wages" %}</div>
+            <div class="pb__kpi-value">{{ report.total_wage|floatformat:"2g" }}</div>
+            <div class="pb__kpi-note">{% trans "contribution base" %} {{ report.total_base|floatformat:"2g" }}</div>
+          </div>
+          <div class="pb__kpi">
+            <div class="pb__kpi-label">{% trans "Employee contributions" %}</div>
+            <div class="pb__kpi-value">{{ report.total_employee|floatformat:"2g" }}</div>
+          </div>
+          <div class="pb__kpi">
+            <div class="pb__kpi-label">{% trans "Employer contributions" %}</div>
+            <div class="pb__kpi-value">{{ report.total_employer|floatformat:"2g" }}</div>
+          </div>
+          <div class="pb__kpi">
+            <div class="pb__kpi-label">{% trans "To remit" %}</div>
+            <div class="pb__kpi-value" style="font-weight:700;">{{ report.total|floatformat:"2g" }}</div>
+          </div>
+        </div>
+        {% if report.rules %}
+          <div class="pb__problem" style="padding:.5rem 1rem;">
+            {% blocktrans with rate=report.rules.rate_percent min=report.rules.base_min_baht|floatformat:"2g" max=report.rules.base_max_baht|floatformat:"2g" src=report.rules.source %}Rules: {{ rate }}% of the wage, clamped to {{ min }}–{{ max }} ({{ src }}). Lines marked "payslip" use the social security deduction as it was paid.{% endblocktrans %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if report.issues or report.not_enrolled %}
+        <div class="pb__panel mb-3">
+          <div class="pb__panel-head"><span>{% trans "To fix before filing" %}</span></div>
+          <div class="pb__scroll">
+            <table class="pb__table">
+              <thead><tr><th>{% trans "Employee" %}</th><th>{% trans "Problem" %}</th></tr></thead>
+              <tbody>
+                {% for line in report.issues %}
+                  <tr>
+                    <td>{{ line.payee.employee.get_full_name }}</td>
+                    <td>{% for code in line.payee.problems %}<span class="pb__problem pb__problem--warning">{{ code|filing_problem }}</span> {% endfor %}</td>
+                  </tr>
+                {% endfor %}
+                {% for payee in report.not_enrolled %}
+                  <tr>
+                    <td>{{ payee.employee.get_full_name }}</td>
+                    <td><span class="pb__problem pb__problem--blocking">{% trans "Paid this month but has no social security number and no social security deduction: not on the return." %}</span></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="pb__panel mb-3">
+        <div class="pb__panel-head"><span>{% trans "Part 2: insured persons" %}</span></div>
+        {% if report.lines %}
+          <div class="pb__scroll">
+            <table class="pb__table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{% trans "SSO number" %}</th>
+                  <th>{% trans "Name" %}</th>
+                  <th class="pb__num">{% trans "Wage" %}</th>
+                  <th class="pb__num">{% trans "Contribution base" %}</th>
+                  <th class="pb__num">{% trans "Employee" %}</th>
+                  <th class="pb__num">{% trans "Employer" %}</th>
+                  <th>{% trans "Source" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for line in report.lines %}
+                  <tr>
+                    <td>{{ line.seq }}</td>
+                    <td><code>{{ line.payee.sso_no_display|default:"—" }}</code></td>
+                    <td>{{ line.payee.full_name }}</td>
+                    <td class="pb__num">{{ line.wage|floatformat:"2g" }}</td>
+                    <td class="pb__num">{{ line.base|floatformat:"2g" }}</td>
+                    <td class="pb__num">{{ line.employee_amount|floatformat:"2g" }}</td>
+                    <td class="pb__num">{{ line.employer_amount|floatformat:"2g" }}</td>
+                    <td>{% if line.source == 'payslip' %}{% trans "payslip" %}{% else %}{% trans "rules" %}{% endif %}</td>
+                  </tr>
+                {% endfor %}
+                <tr style="font-weight:700;">
+                  <td colspan="3">{% trans "Total" %}</td>
+                  <td class="pb__num">{{ report.total_wage|floatformat:"2g" }}</td>
+                  <td class="pb__num">{{ report.total_base|floatformat:"2g" }}</td>
+                  <td class="pb__num">{{ report.total_employee|floatformat:"2g" }}</td>
+                  <td class="pb__num">{{ report.total_employer|floatformat:"2g" }}</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="pb__empty">{% trans "No insured persons with issued payslips this month." %}</div>
+        {% endif %}
+      </div>
+
+      <div class="pb__panel mb-3">
+        <div class="pb__panel-head">
+          <span>{% trans "Joined this month (SSO 1-03)" %}</span>
+          <span style="text-transform:none;font-weight:400;">{{ joined|length }}</span>
+        </div>
+        {% include "orvahr_filing/_movements.html" with rows=joined %}
+      </div>
+      <div class="pb__panel">
+        <div class="pb__panel-head">
+          <span>{% trans "Left this month (SSO 6-09)" %}</span>
+          <span style="text-transform:none;font-weight:400;">{{ left|length }}</span>
+        </div>
+        {% include "orvahr_filing/_movements.html" with rows=left %}
+        <div class="pb__problem" style="padding:.5rem 1rem;">
+          {% trans "Leavers come from the offboarding notice-period end, or the contract end date of archived employees. Employees archived without either date are not listed." %}
+        </div>
+      </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock content %}
