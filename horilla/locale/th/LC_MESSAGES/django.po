@@ -30842,3 +30842,2950 @@ msgstr "หมายเลขโทรศัพท์"
 
 msgid "Message templates and flows created successfully."
 msgstr "สร้างแม่แบบข้อความและโฟลว์เรียบร้อยแล้ว"
+
+msgid "My Assets"
+msgstr "ทรัพย์สินของฉัน"
+
+msgid "No attendances selected."
+msgstr "ไม่ได้เลือกรายการเข้างาน"
+
+msgid "You don't have permission to validate this attendance."
+msgstr "คุณไม่มีสิทธิ์ตรวจสอบรายการเข้างานนี้"
+
+msgid "You don't have permission to approve this overtime."
+msgstr "คุณไม่มีสิทธิ์อนุมัติค่าล่วงเวลานี้"
+
+msgid ""
+"How Many People This Position Is Planned To Have. Recruitments For It Can Only Open As Many Vacancies As Are Still Free. 0 Means No Limit."
+msgstr ""
+"จำนวนคนที่วางแผนไว้สำหรับตำแหน่งนี้ การสรรหาสำหรับตำแหน่งนี้จะเปิดรับได้ไม่เกินจำนวนที่ยังว่างอยู่ 0 หมายถึงไม่จำกัด"
+
+msgid "Check your username and password, then try again."
+msgstr "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่าน แล้วลองอีกครั้ง"
+
+msgid "Invalid time format."
+msgstr "รูปแบบเวลาไม่ถูกต้อง"
+
+msgid "Unknown integration"
+msgstr "ไม่รู้จักการเชื่อมต่อระบบนี้"
+
+msgid ""
+"Invalid Thai ID number: the check digit does not match. Please re-check all 13 digits."
+msgstr ""
+"เลขประจำตัวประชาชนไม่ถูกต้อง: หลักตรวจสอบไม่ตรงกัน กรุณาตรวจสอบทั้ง 13 หลักอีกครั้ง"
+
+msgid "The selected subdistrict was not found. Pick it again."
+msgstr "ไม่พบตำบล/แขวงที่เลือก กรุณาเลือกใหม่"
+
+#, python-format
+msgid "Postcode %(postcode)s does not serve %(subdistrict)s (%(valid)s)."
+msgstr "รหัสไปรษณีย์ %(postcode)s ไม่ครอบคลุม %(subdistrict)s (%(valid)s)"
+
+msgid ""
+"Enter the tax year in the Gregorian calendar (e.g. 2026), not the Buddhist Era year."
+msgstr "กรุณากรอกปีภาษีเป็นปีคริสต์ศักราช (เช่น 2026) ไม่ใช่ปีพุทธศักราช"
+
+msgid "Mr. (นาย)"
+msgstr "นาย"
+
+msgid "Miss (นางสาว)"
+msgstr "นางสาว"
+
+msgid "Mrs. (นาง)"
+msgstr "นาง"
+
+msgid "Bangkok Bank (BBL)"
+msgstr "ธนาคารกรุงเทพ (BBL)"
+
+msgid "Kasikornbank (KBank)"
+msgstr "ธนาคารกสิกรไทย (KBank)"
+
+msgid "Krungthai Bank (KTB)"
+msgstr "ธนาคารกรุงไทย (KTB)"
+
+msgid "TMBThanachart Bank (TTB)"
+msgstr "ธนาคารทหารไทยธนชาต (TTB)"
+
+msgid "Siam Commercial Bank (SCB)"
+msgstr "ธนาคารไทยพาณิชย์ (SCB)"
+
+msgid "CIMB Thai Bank"
+msgstr "ธนาคารซีไอเอ็มบี ไทย"
+
+msgid "United Overseas Bank (Thai) (UOB)"
+msgstr "ธนาคารยูโอบี (UOB)"
+
+msgid "Bank of Ayudhya (Krungsri)"
+msgstr "ธนาคารกรุงศรีอยุธยา (กรุงศรี)"
+
+msgid "Government Savings Bank (GSB)"
+msgstr "ธนาคารออมสิน"
+
+msgid "Bank for Agriculture and Agricultural Cooperatives (BAAC)"
+msgstr "ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร (ธ.ก.ส.)"
+
+msgid "First name (Thai)"
+msgstr "ชื่อ (ภาษาไทย)"
+
+msgid "Last name (Thai)"
+msgstr "นามสกุล (ภาษาไทย)"
+
+msgid "Defaults to the National ID for individuals."
+msgstr "ค่าเริ่มต้นคือเลขประจำตัวประชาชนสำหรับบุคคลธรรมดา"
+
+msgid "Subdistrict (tambon/khwaeng)"
+msgstr "ตำบล/แขวง"
+
+msgid "District (amphoe/khet)"
+msgstr "อำเภอ/เขต"
+
+msgid "Province"
+msgstr "จังหวัด"
+
+msgid "Postcode"
+msgstr "รหัสไปรษณีย์"
+
+msgid "Employee Thai Profile"
+msgstr "ข้อมูลพนักงาน (ไทย)"
+
+msgid "Employee Thai Profiles"
+msgstr "ข้อมูลพนักงาน (ไทย)"
+
+msgid "Employee Tax Claim"
+msgstr "รายการลดหย่อนภาษีของพนักงาน"
+
+msgid "Employee Tax Claims"
+msgstr "รายการลดหย่อนภาษีของพนักงาน"
+
+msgid "Unknown allowance code."
+msgstr "ไม่รู้จักรหัสค่าลดหย่อนนี้"
+
+msgid "Enter the number of people (1 or more)."
+msgstr "กรุณากรอกจำนวนคน (1 คนขึ้นไป)"
+
+msgid "This allowance is per person; leave the amount empty."
+msgstr "ค่าลดหย่อนนี้คิดตามจำนวนคน กรุณาเว้นช่องจำนวนเงินว่างไว้"
+
+msgid "Enter the amount claimed, more than zero."
+msgstr "กรุณากรอกจำนวนเงินที่ขอลดหย่อน ซึ่งต้องมากกว่าศูนย์"
+
+msgid "This allowance is an amount; leave the number of people empty."
+msgstr "ค่าลดหย่อนนี้คิดเป็นจำนวนเงิน กรุณาเว้นช่องจำนวนคนว่างไว้"
+
+msgid "Spouse"
+msgstr "คู่สมรส"
+
+msgid "Additional children (second child onward, born 2018 or later)"
+msgstr "บุตรคนที่สองเป็นต้นไป (เกิดตั้งแต่ปี 2018 / พ.ศ. 2561)"
+
+msgid "Parents"
+msgstr "บิดามารดา"
+
+msgid "Life insurance premiums"
+msgstr "เบี้ยประกันชีวิต"
+
+msgid "Health insurance premiums"
+msgstr "เบี้ยประกันสุขภาพ"
+
+msgid "Provident fund contributions"
+msgstr "เงินสะสมกองทุนสำรองเลี้ยงชีพ"
+
+msgid "RMF investment"
+msgstr "การลงทุนใน RMF"
+
+msgid "Home loan interest"
+msgstr "ดอกเบี้ยเงินกู้ยืมเพื่อที่อยู่อาศัย"
+
+msgid "No employees selected."
+msgstr "ไม่ได้เลือกพนักงาน"
+
+msgid "My privacy"
+msgstr "ความเป็นส่วนตัวของฉัน"
+
+msgid "Connect LINE"
+msgstr "เชื่อมต่อ LINE"
+
+msgid "Probation End Date"
+msgstr "วันที่สิ้นสุดการทดลองงาน"
+
+msgid "Please select the date of joining"
+msgstr "กรุณาเลือกวันที่เริ่มงาน"
+
+msgid "This request can no longer be edited"
+msgstr "คำขอนี้ไม่สามารถแก้ไขได้อีกต่อไป"
+
+msgid "Cancel Request"
+msgstr "ยกเลิกคำขอ"
+
+msgid "This request can no longer be cancelled"
+msgstr "คำขอนี้ไม่สามารถยกเลิกได้อีกต่อไป"
+
+msgid "More details"
+msgstr "รายละเอียดเพิ่มเติม"
+
+#, python-format
+msgid ""
+"A leave request from %(employee)s is waiting for your approval: %(summary)s."
+msgstr "คำขอลาของ %(employee)s กำลังรอการอนุมัติจากคุณ: %(summary)s"
+
+#, python-format
+msgid ""
+"%(employee)s asked to cancel an approved leave: %(summary)s. Please review it in OrvaHR."
+msgstr ""
+"%(employee)s ขอยกเลิกการลาที่อนุมัติแล้ว: %(summary)s กรุณาตรวจสอบใน OrvaHR"
+
+#, python-format
+msgid "Your leave cancellation was approved: %(summary)s."
+msgstr "คำขอยกเลิกการลาของคุณได้รับการอนุมัติแล้ว: %(summary)s"
+
+#, python-format
+msgid ""
+"Your leave cancellation was rejected; the leave stays approved: %(summary)s."
+msgstr "คำขอยกเลิกการลาของคุณถูกปฏิเสธ การลายังคงได้รับอนุมัติ: %(summary)s"
+
+#, python-format
+msgid "Your leave request was cancelled: %(summary)s."
+msgstr "คำขอลาของคุณถูกยกเลิกแล้ว: %(summary)s"
+
+msgid ""
+"Welcome to OrvaHR notifications. To connect your account, open OrvaHR > LINE Notifications, create a link code and send it here."
+msgstr ""
+"ยินดีต้อนรับสู่การแจ้งเตือนของ OrvaHR หากต้องการเชื่อมต่อบัญชี ให้เปิด OrvaHR > การแจ้งเตือน LINE สร้างรหัสเชื่อมต่อ แล้วส่งรหัสนั้นมาที่นี่"
+
+msgid "Notice Period Start"
+msgstr "วันที่เริ่มระยะเวลาแจ้งล่วงหน้า"
+
+msgid "Notice Period End"
+msgstr "วันที่สิ้นสุดระยะเวลาแจ้งล่วงหน้า"
+
+msgid "Notice period start"
+msgstr "วันที่เริ่มระยะเวลาแจ้งล่วงหน้า"
+
+msgid "Cancellation Reason"
+msgstr "เหตุผลการยกเลิก"
+
+msgid "Offboarding Title"
+msgstr "ชื่อรายการออกจากงาน"
+
+msgid "Basic Information"
+msgstr "ข้อมูลพื้นฐาน"
+
+msgid "Title, description, managers and status."
+msgstr "ชื่อ คำอธิบาย ผู้จัดการ และสถานะ"
+
+msgid ""
+"Drag the stages to reorder them, rename them, change their type or remove the ones you do not need. Changes are saved with the offboarding."
+msgstr ""
+"ลากขั้นตอนเพื่อจัดลำดับใหม่ เปลี่ยนชื่อ เปลี่ยนประเภท หรือนำขั้นตอนที่ไม่ต้องการออก การเปลี่ยนแปลงจะถูกบันทึกพร้อมกับรายการออกจากงาน"
+
+msgid ""
+"Choose the stages employees move through for this offboarding. You can always add, rename or reorder stages later from the pipeline."
+msgstr ""
+"เลือกขั้นตอนที่พนักงานจะผ่านสำหรับรายการออกจากงานนี้ คุณสามารถเพิ่ม เปลี่ยนชื่อ หรือจัดลำดับขั้นตอนใหม่ได้ภายหลังจากไปป์ไลน์"
+
+msgid ""
+"This stage has employees or tasks. Move or remove them before deleting it."
+msgstr "ขั้นตอนนี้มีพนักงานหรืองานอยู่ กรุณาย้ายหรือนำออกก่อนลบ"
+
+#, python-format
+msgid "Stage names can be at most %(max)s characters."
+msgstr "ชื่อขั้นตอนต้องมีความยาวไม่เกิน %(max)s ตัวอักษร"
+
+msgid ""
+"A stage that still has employees or tasks cannot be deleted. Move or remove them first."
+msgstr "ไม่สามารถลบขั้นตอนที่ยังมีพนักงานหรืองานอยู่ได้ กรุณาย้ายหรือนำออกก่อน"
+
+msgid "Resignation request not found."
+msgstr "ไม่พบคำขอลาออก"
+
+msgid "Only a request in 'Requested' status can be cancelled."
+msgstr "ยกเลิกได้เฉพาะคำขอที่อยู่ในสถานะ 'ส่งคำขอแล้ว' เท่านั้น"
+
+msgid "A cancellation request is already pending for this resignation."
+msgstr "มีคำขอยกเลิกการลาออกนี้ที่รอดำเนินการอยู่แล้ว"
+
+msgid "A cancellation can only be requested for an approved resignation."
+msgstr "ขอยกเลิกได้เฉพาะการลาออกที่อนุมัติแล้วเท่านั้น"
+
+msgid "This resignation request has no pending cancellation request."
+msgstr "คำขอลาออกนี้ไม่มีคำขอยกเลิกที่รอดำเนินการ"
+
+msgid "Reject Reason"
+msgstr "เหตุผลที่ปฏิเสธ"
+
+msgid "A cancelled resignation letter cannot be modified."
+msgstr "ไม่สามารถแก้ไขหนังสือลาออกที่ถูกยกเลิกแล้วได้"
+
+msgid ""
+"A resignation letter for this employee is already in 'Requested', 'Approved' or 'Cancellation Requested' status."
+msgstr ""
+"พนักงานคนนี้มีหนังสือลาออกที่อยู่ในสถานะ 'ส่งคำขอแล้ว' 'อนุมัติแล้ว' หรือ 'ขอยกเลิก' อยู่แล้ว"
+
+msgid "Do you really want to reject this cancellation request?"
+msgstr "คุณต้องการปฏิเสธคำขอยกเลิกนี้จริงหรือไม่?"
+
+msgid "'s resignation letter"
+msgstr " (หนังสือลาออก)"
+
+msgid "No comments have been added for this resignation letter"
+msgstr "ยังไม่มีความคิดเห็นสำหรับหนังสือลาออกนี้"
+
+msgid "Please provide a reason for rejecting the request"
+msgstr "กรุณาระบุเหตุผลในการปฏิเสธคำขอ"
+
+#, python-format
+msgid ""
+"%(name)s's resignation letter is %(status)s and cannot be approved or rejected here."
+msgstr ""
+"หนังสือลาออกของ %(name)s อยู่ในสถานะ %(status)s และไม่สามารถอนุมัติหรือปฏิเสธที่นี่ได้"
+
+msgid "You can only cancel your own resignation request."
+msgstr "คุณยกเลิกได้เฉพาะคำขอลาออกของตนเองเท่านั้น"
+
+#, python-format
+msgid "You can't cancel a %(status)s resignation request."
+msgstr "ไม่สามารถยกเลิกคำขอลาออกที่อยู่ในสถานะ %(status)s ได้"
+
+msgid "Resignation request cancelled"
+msgstr "ยกเลิกคำขอลาออกแล้ว"
+
+msgid "Resignation cancellation requested"
+msgstr "ส่งคำขอยกเลิกการลาออกแล้ว"
+
+#, python-format
+msgid "%(employee)s has requested to cancel an approved resignation."
+msgstr "%(employee)s ได้ขอยกเลิกการลาออกที่อนุมัติแล้ว"
+
+msgid "You cannot decide on the cancellation of your own resignation."
+msgstr "คุณไม่สามารถพิจารณาคำขอยกเลิกการลาออกของตนเองได้"
+
+#, python-format
+msgid ""
+"Resignation cancellation approved. %(name)s was removed from offboarding."
+msgstr "อนุมัติการยกเลิกการลาออกแล้ว นำ %(name)s ออกจากกระบวนการออกจากงานแล้ว"
+
+msgid "Resignation cancellation rejected"
+msgstr "ปฏิเสธการยกเลิกการลาออกแล้ว"
+
+msgid "Your resignation cancellation request has been approved."
+msgstr "คำขอยกเลิกการลาออกของคุณได้รับการอนุมัติแล้ว"
+
+msgid "Your resignation cancellation request has been rejected."
+msgstr "คำขอยกเลิกการลาออกของคุณถูกปฏิเสธ"
+
+msgid "Your resignation letter has received a comment."
+msgstr "หนังสือลาออกของคุณมีความคิดเห็นใหม่"
+
+#, python-format
+msgid "%(employee)s's resignation letter has received a comment."
+msgstr "หนังสือลาออกของ %(employee)s มีความคิดเห็นใหม่"
+
+msgid "Invalid date"
+msgstr "วันที่ไม่ถูกต้อง"
+
+msgid "Probation end date cannot be before the date of joining"
+msgstr "วันที่สิ้นสุดการทดลองงานต้องไม่ก่อนวันที่เริ่มงาน"
+
+#, python-format
+msgid "Stored as %(masked)s. Leave empty to keep it."
+msgstr "จัดเก็บเป็น %(masked)s เว้นว่างไว้หากต้องการใช้ค่าเดิม"
+
+msgid "Payroll run"
+msgstr "รอบการจ่ายเงินเดือน"
+
+msgid "Pay from"
+msgstr "จ่ายจาก"
+
+msgid "Effective date"
+msgstr "วันที่มีผล"
+
+msgid "Defaults to the run's pay date."
+msgstr "ค่าเริ่มต้นคือวันที่จ่ายเงินของรอบนี้"
+
+msgid "Export without the employees listed as problems"
+msgstr "ส่งออกโดยไม่รวมพนักงานที่มีปัญหา"
+
+msgid "The payroll run and the bank account belong to different companies."
+msgstr "รอบการจ่ายเงินเดือนและบัญชีธนาคารเป็นของบริษัทที่ต่างกัน"
+
+msgid "Generic transfer list (CSV) - not an official bank format"
+msgstr "รายการโอนเงินทั่วไป (CSV) - ไม่ใช่รูปแบบทางการของธนาคาร"
+
+msgid "Enter 10 to 15 digits (dashes and spaces are ignored)."
+msgstr "กรุณากรอกตัวเลข 10 ถึง 15 หลัก (ไม่นับขีดและช่องว่าง)"
+
+msgid "A label to recognise the account, e.g. 'Payroll - KBank'."
+msgstr "ชื่อเรียกเพื่อใช้จดจำบัญชี เช่น 'เงินเดือน - KBank'"
+
+msgid "Bank-assigned company code"
+msgstr "รหัสบริษัทที่ธนาคารกำหนด"
+
+msgid "The customer / service code the bank gave for payroll uploads."
+msgstr "รหัสลูกค้า/รหัสบริการที่ธนาคารให้ไว้สำหรับการอัปโหลดไฟล์เงินเดือน"
+
+msgid "File format"
+msgstr "รูปแบบไฟล์"
+
+msgid "Company Bank Account"
+msgstr "บัญชีธนาคารของบริษัท"
+
+msgid "Company Bank Accounts"
+msgstr "บัญชีธนาคารของบริษัท"
+
+msgid "Payroll batch"
+msgstr "ชุดการจ่ายเงินเดือน"
+
+msgid "Paid from"
+msgstr "จ่ายจาก"
+
+msgid "Transfers"
+msgstr "รายการโอน"
+
+msgid "Excluded employees"
+msgstr "พนักงานที่ไม่รวม"
+
+msgid "Total (satang)"
+msgstr "ยอดรวม (สตางค์)"
+
+msgid "Bank Export Log"
+msgstr "บันทึกการส่งออกไฟล์ธนาคาร"
+
+msgid "Bank Export Logs"
+msgstr "บันทึกการส่งออกไฟล์ธนาคาร"
+
+msgid ""
+"The company has no valid 13-digit tax ID. Set it in the company's Thai tax profile."
+msgstr ""
+"บริษัทยังไม่มีเลขประจำตัวผู้เสียภาษี 13 หลักที่ถูกต้อง กรุณากำหนดในข้อมูลภาษีไทยของบริษัท"
+
+msgid "More than one issued payslip in this run."
+msgstr "มีสลิปเงินเดือนที่ออกแล้วมากกว่าหนึ่งใบในรอบนี้"
+
+msgid "Net pay is negative."
+msgstr "เงินเดือนสุทธิติดลบ"
+
+msgid "Nothing to transfer (net pay is zero)."
+msgstr "ไม่มียอดที่ต้องโอน (เงินเดือนสุทธิเป็นศูนย์)"
+
+msgid "No bank account number. PromptPay is not supported by this file."
+msgstr "ไม่มีเลขที่บัญชีธนาคาร ไฟล์นี้ไม่รองรับพร้อมเพย์"
+
+msgid "No bank account number."
+msgstr "ไม่มีเลขที่บัญชีธนาคาร"
+
+msgid "The bank account number is not 10 to 15 digits."
+msgstr "เลขที่บัญชีธนาคารไม่ได้มี 10 ถึง 15 หลัก"
+
+msgid "No bank selected in the Thai profile."
+msgstr "ยังไม่ได้เลือกธนาคารในข้อมูลพนักงาน (ไทย)"
+
+msgid "No valid national ID in the Thai profile."
+msgstr "ไม่มีเลขประจำตัวประชาชนที่ถูกต้องในข้อมูลพนักงาน (ไทย)"
+
+msgid "This run has no confirmed or paid payslips."
+msgstr "รอบนี้ไม่มีสลิปเงินเดือนที่ยืนยันหรือจ่ายแล้ว"
+
+msgid "The export service rejected the data."
+msgstr "บริการส่งออกปฏิเสธข้อมูล"
+
+msgid "The export service does not know this file format."
+msgstr "บริการส่งออกไม่รู้จักรูปแบบไฟล์นี้"
+
+#, python-format
+msgid "The export service failed (HTTP %(code)s)."
+msgstr "บริการส่งออกทำงานล้มเหลว (HTTP %(code)s)"
+
+msgid "The export service could not be reached. Try again later."
+msgstr "ไม่สามารถติดต่อบริการส่งออกได้ กรุณาลองใหม่ภายหลัง"
+
+msgid "The export failed unexpectedly."
+msgstr "การส่งออกล้มเหลวโดยไม่คาดคิด"
+
+msgid "Company bank account"
+msgstr "บัญชีธนาคารของบริษัท"
+
+msgid "Company bank accounts"
+msgstr "บัญชีธนาคารของบริษัท"
+
+msgid "Add account"
+msgstr "เพิ่มบัญชี"
+
+msgid "Account"
+msgstr "บัญชี"
+
+msgid "No company bank account is set up yet."
+msgstr "ยังไม่ได้ตั้งค่าบัญชีธนาคารของบริษัท"
+
+msgid "Bank transfer file"
+msgstr "ไฟล์โอนเงินผ่านธนาคาร"
+
+msgid ""
+"The only file available is a generic transfer list (CSV). It is not any bank's official upload format; use it for checking or manual entry."
+msgstr ""
+"ไฟล์ที่มีให้ใช้มีเพียงรายการโอนเงินทั่วไป (CSV) ซึ่งไม่ใช่รูปแบบอัปโหลดทางการของธนาคารใด ใช้สำหรับตรวจสอบหรือกรอกข้อมูลด้วยตนเอง"
+
+msgid "Add one"
+msgstr "เพิ่ม"
+
+#, python-format
+msgid "%(counter)s transfer, total %(total)s THB"
+msgid_plural "%(counter)s transfers, total %(total)s THB"
+msgstr[0] "โอน %(counter)s รายการ รวม %(total)s บาท"
+
+#, python-format
+msgid "%(counter)s employee cannot be paid by file"
+msgid_plural "%(counter)s employees cannot be paid by file"
+msgstr[0] "พนักงาน %(counter)s คนไม่สามารถจ่ายผ่านไฟล์ได้"
+
+msgid "Net pay (THB)"
+msgstr "เงินเดือนสุทธิ (บาท)"
+
+msgid "Download file"
+msgstr "ดาวน์โหลดไฟล์"
+
+msgid "Recent exports"
+msgstr "การส่งออกล่าสุด"
+
+msgid "Total (THB)"
+msgstr "ยอดรวม (บาท)"
+
+msgid "No exports yet."
+msgstr "ยังไม่มีการส่งออก"
+
+msgid "The run changed since the preview. Check the new totals."
+msgstr "รอบการจ่ายมีการเปลี่ยนแปลงหลังจากแสดงตัวอย่าง กรุณาตรวจสอบยอดรวมใหม่"
+
+msgid ""
+"Some employees cannot be paid by file. Fix them, or confirm exporting without them."
+msgstr ""
+"พนักงานบางคนไม่สามารถจ่ายผ่านไฟล์ได้ กรุณาแก้ไข หรือยืนยันการส่งออกโดยไม่รวมพนักงานเหล่านั้น"
+
+msgid "There is nobody to transfer to."
+msgstr "ไม่มีผู้รับโอน"
+
+msgid "Bank account saved."
+msgstr "บันทึกบัญชีธนาคารแล้ว"
+
+#, python-format
+msgid "Stored: %(masked)s. Leave blank to keep it."
+msgstr "จัดเก็บไว้: %(masked)s เว้นว่างไว้หากต้องการใช้ค่าเดิม"
+
+msgid "Verify against current law before relying on this figure."
+msgstr "กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ตัวเลขนี้"
+
+msgid "Years of employment (from joining date)"
+msgstr "อายุงาน (ปี นับจากวันที่เริ่มงาน)"
+
+msgid "Years of fund membership"
+msgstr "อายุสมาชิกกองทุน (ปี)"
+
+msgid "Plan name"
+msgstr "ชื่อแผน"
+
+msgid "Fund manager"
+msgstr "บริษัทจัดการกองทุน"
+
+msgid "Investment policy"
+msgstr "นโยบายการลงทุน"
+
+msgid "Fund registration number"
+msgstr "เลขทะเบียนกองทุน"
+
+msgid "Minimum employee rate (%)"
+msgstr "อัตราเงินสะสมขั้นต่ำของลูกจ้าง (%)"
+
+#, python-format
+msgid ""
+"Commonly cited statutory range is 2%-15% of wages. Verify against current law before relying on this figure."
+msgstr ""
+"ช่วงตามกฎหมายที่อ้างอิงกันทั่วไปคือ 2%-15% ของค่าจ้าง กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ตัวเลขนี้"
+
+msgid "Maximum employee rate (%)"
+msgstr "อัตราเงินสะสมสูงสุดของลูกจ้าง (%)"
+
+msgid "Default employee rate (%)"
+msgstr "อัตราเงินสะสมเริ่มต้นของลูกจ้าง (%)"
+
+msgid "Default employer rate (%)"
+msgstr "อัตราเงินสมทบเริ่มต้นของนายจ้าง (%)"
+
+msgid ""
+"Commonly cited rule: the employer contributes no less than the employee. Verify against current law before relying on this figure."
+msgstr ""
+"หลักเกณฑ์ที่อ้างอิงกันทั่วไป: นายจ้างจ่ายเงินสมทบไม่น้อยกว่าเงินสะสมของลูกจ้าง กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ตัวเลขนี้"
+
+msgid "Vesting counts"
+msgstr "การนับสิทธิ์รับเงินสมทบ"
+
+msgid "Provident Fund Plan"
+msgstr "แผนกองทุนสำรองเลี้ยงชีพ"
+
+msgid "Provident Fund Plans"
+msgstr "แผนกองทุนสำรองเลี้ยงชีพ"
+
+msgid "The maximum must not be below the minimum."
+msgstr "ค่าสูงสุดต้องไม่ต่ำกว่าค่าต่ำสุด"
+
+msgid "The default must be within the range."
+msgstr "ค่าเริ่มต้นต้องอยู่ภายในช่วงที่กำหนด"
+
+msgid "Years of service (at least)"
+msgstr "อายุงาน (อย่างน้อย ปี)"
+
+msgid "Employer share vested (%)"
+msgstr "สิทธิ์ในเงินสมทบของนายจ้าง (%)"
+
+msgid "Vesting step"
+msgstr "ขั้นสิทธิ์รับเงินสมทบ"
+
+msgid "Vesting steps"
+msgstr "ขั้นสิทธิ์รับเงินสมทบ"
+
+msgid "Plan"
+msgstr "แผน"
+
+msgid "Employee rate (%)"
+msgstr "อัตราเงินสะสมของลูกจ้าง (%)"
+
+msgid "Employer rate (%)"
+msgstr "อัตราเงินสมทบของนายจ้าง (%)"
+
+msgid "Joined fund on"
+msgstr "วันที่เข้ากองทุน"
+
+msgid "Left fund on"
+msgstr "วันที่ออกจากกองทุน"
+
+msgid "Opening employee balance"
+msgstr "ยอดยกมาเงินสะสมของลูกจ้าง"
+
+msgid ""
+"Contributions made before OrvaHR payroll was used (from the fund manager's statement). Leave 0 for new members."
+msgstr ""
+"เงินที่นำส่งก่อนเริ่มใช้ระบบเงินเดือนของ OrvaHR (ตามรายงานของบริษัทจัดการกองทุน) ใส่ 0 สำหรับสมาชิกใหม่"
+
+msgid "Opening employer balance"
+msgstr "ยอดยกมาเงินสมทบของนายจ้าง"
+
+msgid "Provident Fund Member"
+msgstr "สมาชิกกองทุนสำรองเลี้ยงชีพ"
+
+msgid "Provident Fund Members"
+msgstr "สมาชิกกองทุนสำรองเลี้ยงชีพ"
+
+#, python-format
+msgid ""
+"The employee rate must be between %(min)s%% and %(max)s%% for this plan."
+msgstr ""
+"อัตราเงินสะสมของลูกจ้างต้องอยู่ระหว่าง %(min)s%% ถึง %(max)s%% สำหรับแผนนี้"
+
+msgid "The leaving date is before the joining date."
+msgstr "วันที่ออกจากกองทุนอยู่ก่อนวันที่เข้ากองทุน"
+
+msgid "Service from (days)"
+msgstr "อายุงานตั้งแต่ (วัน)"
+
+msgid "Service below (days)"
+msgstr "อายุงานต่ำกว่า (วัน)"
+
+msgid "Leave empty for no upper limit."
+msgstr "เว้นว่างไว้หากไม่มีขีดจำกัดสูงสุด"
+
+msgid "Days of wages"
+msgstr "จำนวนวันของค่าจ้าง"
+
+msgid "Effective from"
+msgstr "มีผลตั้งแต่"
+
+msgid "Legal reference"
+msgstr "อ้างอิงทางกฎหมาย"
+
+msgid "Severance Rule"
+msgstr "หลักเกณฑ์ค่าชดเชย"
+
+msgid "Severance Rules"
+msgstr "หลักเกณฑ์ค่าชดเชย"
+
+msgid "The upper limit must be above the lower limit."
+msgstr "ขีดจำกัดสูงสุดต้องมากกว่าขีดจำกัดต่ำสุด"
+
+msgid "Annual leave type"
+msgstr "ประเภทวันลาพักร้อน"
+
+msgid "Annual leave types"
+msgstr "ประเภทวันลาพักร้อน"
+
+msgid "Termination without cause"
+msgstr "เลิกจ้างโดยไม่มีความผิด"
+
+msgid "Termination with cause"
+msgstr "เลิกจ้างโดยมีความผิด"
+
+msgid "Retirement"
+msgstr "เกษียณอายุ"
+
+msgid "End of contract"
+msgstr "สิ้นสุดสัญญาจ้าง"
+
+msgid "Last working day"
+msgstr "วันทำงานวันสุดท้าย"
+
+msgid "Reason for leaving"
+msgstr "เหตุผลที่ออกจากงาน"
+
+msgid "Notice given (days)"
+msgstr "การบอกกล่าวล่วงหน้าที่ให้ไว้ (วัน)"
+
+msgid "Required notice (days)"
+msgstr "การบอกกล่าวล่วงหน้าที่กำหนด (วัน)"
+
+msgid "Leave empty to use the contract's notice period."
+msgstr "เว้นว่างไว้เพื่อใช้ระยะเวลาแจ้งล่วงหน้าตามสัญญาจ้าง"
+
+msgid "Daily wage (override)"
+msgstr "ค่าจ้างรายวัน (กำหนดเอง)"
+
+msgid ""
+"Set this when the wage for severance must include regular allowances, or for hourly contracts. Empty: worked out from the contract (monthly wage / 30, or the daily wage)."
+msgstr ""
+"ตั้งค่านี้เมื่อค่าจ้างสำหรับคำนวณค่าชดเชยต้องรวมเบี้ยเลี้ยงที่จ่ายเป็นประจำ หรือสำหรับสัญญาจ้างรายชั่วโมง หากเว้นว่าง: คำนวณจากสัญญาจ้าง (ค่าจ้างรายเดือน / 30 หรือค่าจ้างรายวัน)"
+
+msgid "Unused annual leave days (override)"
+msgstr "จำนวนวันลาพักร้อนคงเหลือ (กำหนดเอง)"
+
+msgid "Daily wage"
+msgstr "ค่าจ้างรายวัน"
+
+msgid "Last wages (pro-rata)"
+msgstr "ค่าจ้างงวดสุดท้าย (ตามสัดส่วน)"
+
+msgid "Severance pay"
+msgstr "ค่าชดเชย"
+
+msgid "Payment in lieu of notice"
+msgstr "ค่าจ้างแทนการบอกกล่าวล่วงหน้า"
+
+msgid "Unused annual leave payout"
+msgstr "เงินชดเชยวันลาพักร้อนคงเหลือ"
+
+msgid "Provident fund employer balance"
+msgstr "ยอดเงินสมทบของนายจ้างในกองทุนสำรองเลี้ยงชีพ"
+
+msgid "Provident fund vested employer share"
+msgstr "เงินสมทบของนายจ้างในกองทุนสำรองเลี้ยงชีพที่ได้รับสิทธิ์"
+
+msgid "Paid out by the fund, not by the company; not in the total."
+msgstr "จ่ายโดยกองทุน ไม่ใช่โดยบริษัท จึงไม่รวมในยอดรวม"
+
+msgid "Other additions"
+msgstr "รายการเพิ่มอื่นๆ"
+
+msgid "Other deductions"
+msgstr "รายการหักอื่นๆ"
+
+msgid "Other items (description)"
+msgstr "รายการอื่นๆ (คำอธิบาย)"
+
+msgid "Taxable amount"
+msgstr "จำนวนเงินที่ต้องเสียภาษี"
+
+msgid ""
+"Severance has special tax rules. Enter the split as advised by your accountant; OrvaHR does not calculate it."
+msgstr ""
+"ค่าชดเชยมีหลักเกณฑ์ภาษีเฉพาะ กรุณากรอกการแยกยอดตามคำแนะนำของผู้สอบบัญชี/นักบัญชี OrvaHR ไม่ได้คำนวณให้"
+
+msgid "Tax-exempt amount"
+msgstr "จำนวนเงินที่ได้รับยกเว้นภาษี"
+
+msgid "Tax note"
+msgstr "หมายเหตุภาษี"
+
+msgid "Total payable by the company"
+msgstr "ยอดรวมที่บริษัทต้องจ่าย"
+
+msgid "Final Settlement"
+msgstr "การจ่ายเงินครั้งสุดท้าย"
+
+msgid "Final Settlements"
+msgstr "การจ่ายเงินครั้งสุดท้าย"
+
+msgid "Can approve final settlements"
+msgstr "สามารถอนุมัติการจ่ายเงินครั้งสุดท้ายได้"
+
+msgid "Student loan (กยศ.)"
+msgstr "เงินกู้ยืมเพื่อการศึกษา (กยศ.)"
+
+msgid "Court garnishment"
+msgstr "การอายัดเงินเดือนตามคำสั่งศาล"
+
+msgid "Suspended"
+msgstr "ระงับชั่วคราว"
+
+msgid "Order type"
+msgstr "ประเภทคำสั่ง"
+
+msgid "Reference / case number"
+msgstr "เลขที่อ้างอิง / เลขคดี"
+
+msgid "Personal data: shown masked in lists and exports."
+msgstr "ข้อมูลส่วนบุคคล: แสดงแบบปิดบังในรายการและไฟล์ส่งออก"
+
+msgid "Issuer"
+msgstr "ผู้ออกคำสั่ง"
+
+msgid "The fund or court that issued the order, and who is paid."
+msgstr "กองทุนหรือศาลที่ออกคำสั่ง และผู้รับเงิน"
+
+msgid "Amount per month"
+msgstr "จำนวนเงินต่อเดือน"
+
+msgid "Percent of gross wage"
+msgstr "ร้อยละของค่าจ้างรวม"
+
+msgid "Total to deduct"
+msgstr "ยอดรวมที่ต้องหัก"
+
+msgid "Outstanding amount; deductions stop once it is reached."
+msgstr "ยอดคงค้าง การหักจะหยุดเมื่อครบยอดนี้"
+
+msgid "Legal cap: max percent of gross wage"
+msgstr "เพดานตามกฎหมาย: ร้อยละสูงสุดของค่าจ้างรวม"
+
+msgid ""
+"Optional ceiling from the order or the law. Verify against current law before relying on this figure."
+msgstr ""
+"เพดานตามคำสั่งหรือตามกฎหมาย (ไม่บังคับ) กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ตัวเลขนี้"
+
+msgid "Legal cap: wage protected per month"
+msgstr "เพดานตามกฎหมาย: ค่าจ้างที่ได้รับการคุ้มครองต่อเดือน"
+
+msgid ""
+"Optional amount of monthly wage that may not be deducted (e.g. a statutory exemption for garnishment). Verify against current law before relying on this figure."
+msgstr ""
+"จำนวนค่าจ้างรายเดือนที่ห้ามหัก (ไม่บังคับ) (เช่น จำนวนที่กฎหมายยกเว้นไม่ให้อายัด) กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ตัวเลขนี้"
+
+msgid "Lower is deducted first when several orders compete."
+msgstr "ค่าที่น้อยกว่าจะถูกหักก่อนเมื่อมีหลายคำสั่งพร้อมกัน"
+
+msgid "Deduction Order"
+msgstr "คำสั่งหักเงิน"
+
+msgid "Deduction Orders"
+msgstr "คำสั่งหักเงิน"
+
+msgid "Enter either an amount per month or a percent of wage, not both."
+msgstr ""
+"กรุณากรอกจำนวนเงินต่อเดือนหรือร้อยละของค่าจ้างอย่างใดอย่างหนึ่ง ไม่ใช่ทั้งสองอย่าง"
+
+msgid "The amount must be more than zero."
+msgstr "จำนวนเงินต้องมากกว่าศูนย์"
+
+msgid "The percent must be more than zero."
+msgstr "ร้อยละต้องมากกว่าศูนย์"
+
+msgid "The end date is before the start date."
+msgstr "วันที่สิ้นสุดอยู่ก่อนวันที่เริ่มต้น"
+
+msgid "Thai Benefits"
+msgstr "สวัสดิการ (ไทย)"
+
+msgid "Provident Fund"
+msgstr "กองทุนสำรองเลี้ยงชีพ"
+
+msgid "Loan & Garnishment Orders"
+msgstr "คำสั่งหักเงินกู้และอายัดเงินเดือน"
+
+msgid "My Provident Fund"
+msgstr "กองทุนสำรองเลี้ยงชีพของฉัน"
+
+msgid "Working"
+msgstr "ปฏิบัติงานอยู่"
+
+#, python-format
+msgid "%(d)s days of service"
+msgstr "อายุงาน %(d)s วัน"
+
+msgid "Not payable for this reason"
+msgstr "ไม่ต้องจ่ายสำหรับเหตุผลนี้"
+
+msgid "Unused annual leave"
+msgstr "วันลาพักร้อนคงเหลือ"
+
+msgid "Provident fund: vested employer share"
+msgstr "กองทุนสำรองเลี้ยงชีพ: เงินสมทบของนายจ้างที่ได้รับสิทธิ์"
+
+msgid "paid by the fund, not included in the total"
+msgstr "จ่ายโดยกองทุน ไม่รวมในยอดรวม"
+
+msgid ""
+"After at least this many years of service, this percent of the employer's contributions is vested. Below the first step nothing is vested."
+msgstr ""
+"เมื่อมีอายุงานอย่างน้อยตามจำนวนปีนี้ จะได้รับสิทธิ์ในเงินสมทบของนายจ้างตามร้อยละนี้ หากต่ำกว่าขั้นแรกจะไม่ได้รับสิทธิ์"
+
+#, python-format
+msgid "Employer share vested (%%)"
+msgstr "สิทธิ์ในเงินสมทบของนายจ้าง (%%)"
+
+msgid ""
+"Provident fund, final settlements, student loan and garnishment deductions."
+msgstr ""
+"กองทุนสำรองเลี้ยงชีพ การจ่ายเงินครั้งสุดท้าย และการหักเงิน กยศ. และอายัดเงินเดือน"
+
+msgid "My provident fund & settlements"
+msgstr "กองทุนสำรองเลี้ยงชีพและการจ่ายเงินครั้งสุดท้ายของฉัน"
+
+msgid "Your user account is not linked to an employee."
+msgstr "บัญชีผู้ใช้ของคุณไม่ได้เชื่อมโยงกับพนักงาน"
+
+msgid "Your rate"
+msgstr "อัตราของคุณ"
+
+msgid "Your contributions"
+msgstr "เงินสะสมของคุณ"
+
+msgid "Employer contributions"
+msgstr "เงินสมทบของนายจ้าง"
+
+msgid "Employer share vested today"
+msgstr "เงินสมทบของนายจ้างที่ได้รับสิทธิ์ ณ วันนี้"
+
+#, python-format
+msgid ""
+"Contributions to %(d)s from confirmed and paid payslips, excluding investment returns. Your fund manager's statement is authoritative."
+msgstr ""
+"เงินสะสมและเงินสมทบถึง %(d)s จากสลิปเงินเดือนที่ยืนยันและจ่ายแล้ว ไม่รวมผลตอบแทนจากการลงทุน รายงานของบริษัทจัดการกองทุนเป็นข้อมูลที่ถือเป็นหลัก"
+
+msgid "You are not a member of a provident fund."
+msgstr "คุณไม่ได้เป็นสมาชิกกองทุนสำรองเลี้ยงชีพ"
+
+msgid "Final settlement"
+msgstr "การจ่ายเงินครั้งสุดท้าย"
+
+msgid "Total payable"
+msgstr "ยอดรวมที่ต้องจ่าย"
+
+msgid "Student loan & garnishment orders"
+msgstr "คำสั่งหักเงิน กยศ. และอายัดเงินเดือน"
+
+msgid ""
+"Each order is deducted through its own payroll deduction. Sync before each payroll run."
+msgstr ""
+"แต่ละคำสั่งจะถูกหักผ่านรายการหักเงินเดือนของตนเอง กรุณาซิงค์ก่อนประมวลผลเงินเดือนทุกครั้ง"
+
+msgid "Remittance report"
+msgstr "รายงานการนำส่ง"
+
+msgid "Sync to payroll"
+msgstr "ซิงค์ไปยังระบบเงินเดือน"
+
+msgid "New order"
+msgstr "คำสั่งใหม่"
+
+msgid ""
+"Legal limits on garnishment are set per order (percent cap, protected wage). Verify against current law before relying on them."
+msgstr ""
+"ขีดจำกัดตามกฎหมายของการอายัดเงินเดือนกำหนดแยกตามแต่ละคำสั่ง (เพดานร้อยละ ค่าจ้างที่ได้รับการคุ้มครอง) กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ค่าเหล่านี้"
+
+msgid "Reference"
+msgstr "เลขที่อ้างอิง"
+
+msgid "Per month"
+msgstr "ต่อเดือน"
+
+msgid "No orders."
+msgstr "ไม่มีคำสั่ง"
+
+msgid "Provident fund members"
+msgstr "สมาชิกกองทุนสำรองเลี้ยงชีพ"
+
+msgid ""
+"Each member is deducted through a payroll deduction this page keeps in sync. Sync after changes and before each payroll run."
+msgstr ""
+"สมาชิกแต่ละคนจะถูกหักผ่านรายการหักเงินเดือนที่หน้านี้ซิงค์ให้ตรงกันเสมอ กรุณาซิงค์หลังมีการเปลี่ยนแปลงและก่อนประมวลผลเงินเดือนทุกครั้ง"
+
+msgid "Monthly report"
+msgstr "รายงานประจำเดือน"
+
+msgid "Add member"
+msgstr "เพิ่มสมาชิก"
+
+msgid "No members."
+msgstr "ไม่มีสมาชิก"
+
+msgid "Update provident fund tax claims"
+msgstr "อัปเดตค่าลดหย่อนภาษีกองทุนสำรองเลี้ยงชีพ"
+
+msgid ""
+"Sets each member's provident fund tax allowance for the year to the employee contributions deducted on confirmed and paid payslips. This replaces a figure typed in by hand for that year."
+msgstr ""
+"กำหนดค่าลดหย่อนภาษีกองทุนสำรองเลี้ยงชีพประจำปีของสมาชิกแต่ละคน ให้เท่ากับเงินสะสมของลูกจ้างที่หักในสลิปเงินเดือนที่ยืนยันและจ่ายแล้ว ซึ่งจะแทนที่ตัวเลขที่กรอกด้วยตนเองสำหรับปีนั้น"
+
+msgid "Provident fund plans"
+msgstr "แผนกองทุนสำรองเลี้ยงชีพ"
+
+msgid ""
+"Rate ranges and vesting schedules are data from each plan's rules; verify against current law."
+msgstr ""
+"ช่วงอัตราและตารางสิทธิ์รับเงินสมทบเป็นข้อมูลตามข้อบังคับของแต่ละแผน กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid "New plan"
+msgstr "แผนใหม่"
+
+msgid "Employee rate range"
+msgstr "ช่วงอัตราเงินสะสมของลูกจ้าง"
+
+msgid "Default employer rate"
+msgstr "อัตราเงินสมทบเริ่มต้นของนายจ้าง"
+
+msgid "Vesting schedule"
+msgstr "ตารางสิทธิ์รับเงินสมทบ"
+
+msgid "None (nothing vests)"
+msgstr "ไม่มี (ไม่ได้รับสิทธิ์)"
+
+msgid "No provident fund plans yet."
+msgstr "ยังไม่มีแผนกองทุนสำรองเลี้ยงชีพ"
+
+msgid ""
+"From confirmed and paid payslips ending in the month. Base: the payslip's basic pay. Verify the base against the plan's rules."
+msgstr ""
+"จากสลิปเงินเดือนที่ยืนยันและจ่ายแล้วซึ่งสิ้นสุดในเดือนนั้น ฐาน: เงินเดือนพื้นฐานในสลิปเงินเดือน กรุณาตรวจสอบฐานกับข้อบังคับของแผน"
+
+msgid "Export CSV (generic format)"
+msgstr "ส่งออก CSV (รูปแบบทั่วไป)"
+
+msgid "Employee contributions"
+msgstr "เงินสะสมของลูกจ้าง"
+
+msgid "Expected at member rates"
+msgstr "ยอดที่คาดไว้ตามอัตราของสมาชิก"
+
+msgid "Rows to check"
+msgstr "แถวที่ต้องตรวจสอบ"
+
+msgid "Rates"
+msgstr "อัตรา"
+
+msgid "Employer"
+msgstr "นายจ้าง"
+
+msgid "Check"
+msgstr "ตรวจสอบ"
+
+msgid "Expected"
+msgstr "ที่คาดไว้"
+
+msgid "Differs from expected"
+msgstr "แตกต่างจากที่คาดไว้"
+
+msgid "No issued payslips for members in this month."
+msgstr "ไม่มีสลิปเงินเดือนที่ออกให้สมาชิกในเดือนนี้"
+
+msgid "Monthly remittance"
+msgstr "การนำส่งประจำเดือน"
+
+msgid ""
+"Deducted on confirmed and paid payslips ending in the month, by order type and issuer."
+msgstr ""
+"ยอดที่หักในสลิปเงินเดือนที่ยืนยันและจ่ายแล้วซึ่งสิ้นสุดในเดือนนั้น แยกตามประเภทคำสั่งและผู้ออกคำสั่ง"
+
+msgid "Total to remit"
+msgstr "ยอดรวมที่ต้องนำส่ง"
+
+msgid "Deducted"
+msgstr "หักแล้ว"
+
+msgid "Nothing deducted for orders in this month."
+msgstr "ไม่มีการหักเงินตามคำสั่งในเดือนนี้"
+
+msgid "Recalculate"
+msgstr "คำนวณใหม่"
+
+msgid "Mark as paid"
+msgstr "ทำเครื่องหมายว่าจ่ายแล้ว"
+
+msgid ""
+"A calculation for HR to check, not legal advice. Severance bands and notice rules are data; verify against current law."
+msgstr ""
+"เป็นการคำนวณเพื่อให้ฝ่ายบุคคลตรวจสอบ ไม่ใช่คำแนะนำทางกฎหมาย อัตราค่าชดเชยและหลักเกณฑ์การบอกกล่าวล่วงหน้าเป็นข้อมูลที่กำหนดไว้ กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid "Service"
+msgstr "อายุงาน"
+
+msgid ""
+"Severance has special tax rules. OrvaHR does not calculate the tax; the split below is entered by HR as advised by an accountant."
+msgstr ""
+"ค่าชดเชยมีหลักเกณฑ์ภาษีเฉพาะ OrvaHR ไม่ได้คำนวณภาษี การแยกยอดด้านล่างกรอกโดยฝ่ายบุคคลตามคำแนะนำของนักบัญชี"
+
+msgid "Final settlement summary"
+msgstr "สรุปการจ่ายเงินครั้งสุดท้าย"
+
+msgid "Draft: not approved"
+msgstr "ฉบับร่าง: ยังไม่ได้อนุมัติ"
+
+msgid ""
+"Paid by the fund, not included in the company total. The fund manager's statement is authoritative."
+msgstr ""
+"จ่ายโดยกองทุน ไม่รวมในยอดรวมของบริษัท รายงานของบริษัทจัดการกองทุนเป็นข้อมูลที่ถือเป็นหลัก"
+
+msgid "Severance has special tax rules; OrvaHR does not calculate the tax."
+msgstr "ค่าชดเชยมีหลักเกณฑ์ภาษีเฉพาะ OrvaHR ไม่ได้คำนวณภาษี"
+
+msgid ""
+"A calculation for HR to check, not legal advice. Statutory figures are data; verify against current law."
+msgstr ""
+"เป็นการคำนวณเพื่อให้ฝ่ายบุคคลตรวจสอบ ไม่ใช่คำแนะนำทางกฎหมาย ตัวเลขตามกฎหมายเป็นข้อมูลที่กำหนดไว้ กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid "Approved by"
+msgstr "อนุมัติโดย"
+
+msgid "Final settlements"
+msgstr "การจ่ายเงินครั้งสุดท้าย"
+
+msgid ""
+"Drafts are recalculated on every change; approved settlements are frozen."
+msgstr ""
+"ฉบับร่างจะถูกคำนวณใหม่ทุกครั้งที่มีการเปลี่ยนแปลง ส่วนรายการที่อนุมัติแล้วจะถูกตรึงไว้"
+
+msgid "Severance rules"
+msgstr "หลักเกณฑ์ค่าชดเชย"
+
+msgid "New settlement"
+msgstr "สร้างการจ่ายเงินครั้งสุดท้ายใหม่"
+
+msgid "No settlements."
+msgstr "ไม่มีรายการจ่ายเงินครั้งสุดท้าย"
+
+msgid ""
+"Bands are data. The newest set effective on the last working day is used. Edit them in the admin."
+msgstr ""
+"อัตราต่างๆ เป็นข้อมูลที่กำหนดไว้ ระบบจะใช้ชุดล่าสุดที่มีผล ณ วันทำงานวันสุดท้าย แก้ไขได้ในหน้าผู้ดูแลระบบ"
+
+msgid ""
+"These figures are commonly cited, not authoritative. Verify against current law before relying on them."
+msgstr ""
+"ตัวเลขเหล่านี้เป็นค่าที่อ้างอิงกันทั่วไป ไม่ใช่ข้อมูลทางการ กรุณาตรวจสอบกับกฎหมายปัจจุบันก่อนใช้ตัวเลขเหล่านี้"
+
+msgid "No severance rules."
+msgstr "ไม่มีหลักเกณฑ์ค่าชดเชย"
+
+msgid "Monthly contribution report"
+msgstr "รายงานเงินสะสมและเงินสมทบประจำเดือน"
+
+msgid "Monthly remittance report"
+msgstr "รายงานการนำส่งประจำเดือน"
+
+msgid "Plan saved."
+msgstr "บันทึกแผนแล้ว"
+
+msgid "Provident fund plan"
+msgstr "แผนกองทุนสำรองเลี้ยงชีพ"
+
+msgid "Membership saved. Run \"Sync to payroll\" so the deduction follows it."
+msgstr ""
+"บันทึกการเป็นสมาชิกแล้ว กรุณากด \"ซิงค์ไปยังระบบเงินเดือน\" เพื่อให้รายการหักเงินเป็นไปตามข้อมูลนี้"
+
+msgid "Provident fund member"
+msgstr "สมาชิกกองทุนสำรองเลี้ยงชีพ"
+
+#, python-format
+msgid ""
+"Payroll deductions synced: %(created)s created, %(updated)s updated, %(changes)s membership changes."
+msgstr ""
+"ซิงค์รายการหักเงินเดือนแล้ว: สร้าง %(created)s รายการ อัปเดต %(updated)s รายการ การเปลี่ยนแปลงสมาชิกภาพ %(changes)s รายการ"
+
+#, python-format
+msgid ""
+"Provident fund tax claims for %(year)s: %(created)s created, %(updated)s updated."
+msgstr ""
+"ค่าลดหย่อนภาษีกองทุนสำรองเลี้ยงชีพสำหรับปี %(year)s: สร้าง %(created)s รายการ อัปเดต %(updated)s รายการ"
+
+msgid "Settlement drafted. Check every figure."
+msgstr "สร้างร่างการจ่ายเงินครั้งสุดท้ายแล้ว กรุณาตรวจสอบตัวเลขทุกรายการ"
+
+msgid "New final settlement"
+msgstr "การจ่ายเงินครั้งสุดท้ายใหม่"
+
+msgid "Only a draft settlement can be changed."
+msgstr "แก้ไขได้เฉพาะรายการที่เป็นฉบับร่างเท่านั้น"
+
+msgid "Settlement recalculated."
+msgstr "คำนวณการจ่ายเงินครั้งสุดท้ายใหม่แล้ว"
+
+msgid "Edit final settlement"
+msgstr "แก้ไขการจ่ายเงินครั้งสุดท้าย"
+
+msgid "Only a draft settlement can be recalculated."
+msgstr "คำนวณใหม่ได้เฉพาะรายการที่เป็นฉบับร่างเท่านั้น"
+
+msgid "Settlement approved."
+msgstr "อนุมัติการจ่ายเงินครั้งสุดท้ายแล้ว"
+
+msgid "Only a draft settlement can be approved."
+msgstr "อนุมัติได้เฉพาะรายการที่เป็นฉบับร่างเท่านั้น"
+
+msgid "Settlement marked as paid."
+msgstr "ทำเครื่องหมายการจ่ายเงินครั้งสุดท้ายว่าจ่ายแล้ว"
+
+msgid "Only an approved settlement can be marked as paid."
+msgstr "ทำเครื่องหมายว่าจ่ายแล้วได้เฉพาะรายการที่อนุมัติแล้วเท่านั้น"
+
+msgid "Order saved and synced to payroll."
+msgstr "บันทึกคำสั่งและซิงค์ไปยังระบบเงินเดือนแล้ว"
+
+msgid "Deduction order"
+msgstr "คำสั่งหักเงิน"
+
+#, python-format
+msgid "Orders synced to payroll: %(parts)s."
+msgstr "ซิงค์คำสั่งไปยังระบบเงินเดือนแล้ว: %(parts)s"
+
+msgid "No tax ID or national ID"
+msgstr "ไม่มีเลขประจำตัวผู้เสียภาษีหรือเลขประจำตัวประชาชน"
+
+msgid "Tax ID fails the check digit"
+msgstr "เลขประจำตัวผู้เสียภาษีไม่ผ่านการตรวจสอบหลักตรวจสอบ"
+
+msgid "No Thai name; the English name is used"
+msgstr "ไม่มีชื่อภาษาไทย จึงใช้ชื่อภาษาอังกฤษแทน"
+
+msgid "No social security number"
+msgstr "ไม่มีเลขประกันสังคม"
+
+msgid "Social security number is not 13 digits"
+msgstr "เลขประกันสังคมไม่ใช่ 13 หลัก"
+
+msgid "Thai statutory filings"
+msgstr "การยื่นแบบตามกฎหมายไทย"
+
+msgid "Company tax profile"
+msgstr "ข้อมูลภาษีของบริษัท"
+
+msgid "Company tax ID"
+msgstr "เลขประจำตัวผู้เสียภาษีของบริษัท"
+
+msgid "Legal name, tax ID, branch and social security account of each company"
+msgstr ""
+"ชื่อนิติบุคคล เลขประจำตัวผู้เสียภาษี สาขา และเลขที่บัญชีประกันสังคมของแต่ละบริษัท"
+
+msgid "Thai filings"
+msgstr "การยื่นแบบ (ไทย)"
+
+msgid "Legal name (Thai)"
+msgstr "ชื่อนิติบุคคล (ภาษาไทย)"
+
+msgid "As registered with the Department of Business Development."
+msgstr "ตามที่จดทะเบียนกับกรมพัฒนาธุรกิจการค้า"
+
+msgid "13-digit taxpayer identification number."
+msgstr "เลขประจำตัวผู้เสียภาษีอากร 13 หลัก"
+
+msgid "Branch number"
+msgstr "เลขที่สาขา"
+
+msgid "5 digits; 00000 is the head office."
+msgstr "5 หลัก; 00000 คือสำนักงานใหญ่"
+
+msgid "Neither"
+msgstr "ไม่ใช่ทั้งสองอย่าง"
+
+msgid "VAT branch"
+msgstr "สาขาภาษีมูลค่าเพิ่ม"
+
+msgid "Specific business tax branch"
+msgstr "สาขาภาษีธุรกิจเฉพาะ"
+
+msgid "Branch registered for"
+msgstr "สาขาที่จดทะเบียนสำหรับ"
+
+msgid "VAT if registered for both."
+msgstr "เลือกภาษีมูลค่าเพิ่ม หากจดทะเบียนทั้งสองอย่าง"
+
+msgid "Large taxpayer (LTO)"
+msgstr "ผู้เสียภาษีรายใหญ่ (สำนักงานผู้เสียภาษีรายใหญ่)"
+
+msgid "Electronic media / file deposit"
+msgstr "สื่อบันทึกข้อมูลอิเล็กทรอนิกส์ / ฝากไฟล์"
+
+msgid "Internet"
+msgstr "อินเทอร์เน็ต"
+
+msgid "RD filing channel"
+msgstr "ช่องทางการยื่นแบบกับกรมสรรพากร"
+
+msgid "RD registration reference / user ID"
+msgstr "เลขอ้างอิงการลงทะเบียน / รหัสผู้ใช้กรมสรรพากร"
+
+msgid ""
+"For internet filing, the RD e-Filing user ID; for electronic media, the registration reference number."
+msgstr ""
+"สำหรับการยื่นทางอินเทอร์เน็ต ใช้รหัสผู้ใช้ e-Filing ของกรมสรรพากร สำหรับสื่อบันทึกข้อมูลอิเล็กทรอนิกส์ ใช้เลขอ้างอิงการลงทะเบียน"
+
+msgid "Must be exactly 10 digits."
+msgstr "ต้องมี 10 หลักพอดี"
+
+msgid "SSO employer account number"
+msgstr "เลขที่บัญชีนายจ้าง (ประกันสังคม)"
+
+msgid "10-digit employer account number issued by the Social Security Office."
+msgstr "เลขที่บัญชีนายจ้าง 10 หลักที่สำนักงานประกันสังคมออกให้"
+
+msgid "Must be exactly 6 digits."
+msgstr "ต้องมี 6 หลักพอดี"
+
+msgid "SSO branch number"
+msgstr "ลำดับที่สาขา (ประกันสังคม)"
+
+msgid "6 digits; 000000 is the head office."
+msgstr "6 หลัก; 000000 คือสำนักงานใหญ่"
+
+msgid "Social security deduction code"
+msgstr "รหัสรายการหักประกันสังคม"
+
+msgid ""
+"Code of the payroll deduction that withholds social security. When a payslip carries it, its amounts are reported as they were paid; otherwise the contribution is worked out from the rules."
+msgstr ""
+"รหัสของรายการหักเงินเดือนที่ใช้หักเงินสมทบประกันสังคม หากสลิปเงินเดือนมีรายการนี้ จะรายงานยอดตามที่จ่ายจริง มิฉะนั้นจะคำนวณเงินสมทบตามหลักเกณฑ์"
+
+msgid "Address (number, building, road)"
+msgstr "ที่อยู่ (เลขที่ อาคาร ถนน)"
+
+msgid "Subdistrict (Tambon)"
+msgstr "ตำบล/แขวง"
+
+msgid "District (Amphoe)"
+msgstr "อำเภอ/เขต"
+
+msgid "Company tax profiles"
+msgstr "ข้อมูลภาษีของบริษัท"
+
+msgid "The company has no tax profile with a tax ID"
+msgstr "บริษัทยังไม่มีข้อมูลภาษีที่มีเลขประจำตัวผู้เสียภาษี"
+
+msgid "Payee address needs a district, province and 5-digit postcode"
+msgstr "ที่อยู่ของผู้มีเงินได้ต้องมีอำเภอ/เขต จังหวัด และรหัสไปรษณีย์ 5 หลัก"
+
+msgid "Characters the RD format does not allow were replaced"
+msgstr "อักขระที่รูปแบบของกรมสรรพากรไม่อนุญาตถูกแทนที่แล้ว"
+
+msgid "ID number"
+msgstr "เลขประจำตัว"
+
+msgid "Contract end (archived)"
+msgstr "สิ้นสุดสัญญาจ้าง (เก็บถาวร)"
+
+msgid ""
+"Built from issued payslips (confirmed or paid). Check every figure before filing."
+msgstr ""
+"สร้างจากสลิปเงินเดือนที่ออกแล้ว (ยืนยันหรือจ่ายแล้ว) กรุณาตรวจสอบตัวเลขทุกรายการก่อนยื่นแบบ"
+
+msgid "PND 1 (monthly)"
+msgstr "ภ.ง.ด.1 (รายเดือน)"
+
+msgid "PND 1 Kor (annual)"
+msgstr "ภ.ง.ด.1ก (รายปี)"
+
+msgid "Social security (SSO 1-10)"
+msgstr "ประกันสังคม (สปส.1-10)"
+
+msgid "Choose a company"
+msgstr "เลือกบริษัท"
+
+msgid "Year (AD)"
+msgstr "ปี (ค.ศ.)"
+
+msgid "Only payees with tax withheld"
+msgstr "เฉพาะผู้มีเงินได้ที่ถูกหักภาษี"
+
+msgid ""
+"This company has no tax profile yet: the returns have no employer tax ID, branch or SSO account."
+msgstr ""
+"บริษัทนี้ยังไม่มีข้อมูลภาษี: แบบที่ยื่นจะไม่มีเลขประจำตัวผู้เสียภาษีของนายจ้าง สาขา หรือเลขที่บัญชีประกันสังคม"
+
+msgid "Enter it now"
+msgstr "กรอกตอนนี้"
+
+msgid "Choose a company to report on."
+msgstr "เลือกบริษัทที่จะออกรายงาน"
+
+#, python-format
+msgid "PND 1 for %(month)s %(year)s"
+msgstr "ภ.ง.ด.1 ประจำเดือน %(month)s %(year)s"
+
+#, python-format
+msgid "PND 1 Kor for tax year %(year)s"
+msgstr "ภ.ง.ด.1ก ประจำปีภาษี %(year)s"
+
+msgid "Attachment PDF (draft)"
+msgstr "ใบแนบ PDF (ฉบับร่าง)"
+
+msgid "RD data file (FORMAT V2.0)"
+msgstr "ไฟล์ข้อมูลกรมสรรพากร (FORMAT V2.0)"
+
+#, python-format
+msgid ""
+"The data file follows the Revenue Department's \"%(title)s\", version %(version)s. It is filed through the RD's electronic-media / file-deposit channel or converted with RD Prep; New e-Filing does not take the .txt directly."
+msgstr ""
+"ไฟล์ข้อมูลเป็นไปตาม \"%(title)s\" ของกรมสรรพากร เวอร์ชัน %(version)s ยื่นผ่านช่องทางสื่อบันทึกข้อมูลอิเล็กทรอนิกส์ / ฝากไฟล์ของกรมสรรพากร หรือแปลงด้วยโปรแกรม RD Prep; ระบบ New e-Filing ไม่รับไฟล์ .txt โดยตรง"
+
+msgid "Specification"
+msgstr "ข้อกำหนด"
+
+msgid "The RD data file cannot be made yet"
+msgstr "ยังไม่สามารถสร้างไฟล์ข้อมูลกรมสรรพากรได้"
+
+msgid "Payees"
+msgstr "ผู้มีเงินได้"
+
+msgid "Income paid"
+msgstr "เงินได้ที่จ่าย"
+
+msgid "gross pay, section 40(1)"
+msgstr "เงินได้รวม ตามมาตรา 40(1)"
+
+msgid "Tax withheld"
+msgstr "ภาษีที่หักไว้"
+
+msgid "Employer tax ID"
+msgstr "เลขประจำตัวผู้เสียภาษีของนายจ้าง"
+
+msgid "To fix before filing"
+msgstr "สิ่งที่ต้องแก้ไขก่อนยื่นแบบ"
+
+msgid ""
+"Condition 1: withheld at source. IDs are masked on screen; the PDF carries them in full."
+msgstr ""
+"เงื่อนไข 1: หัก ณ ที่จ่าย เลขประจำตัวจะแสดงแบบปิดบังบนหน้าจอ แต่ไฟล์ PDF จะแสดงแบบเต็ม"
+
+msgid "Income"
+msgstr "เงินได้"
+
+msgid "No issued payslips in this period."
+msgstr "ไม่มีสลิปเงินเดือนที่ออกในงวดนี้"
+
+#, python-format
+msgid "%(n)s payee paid with no tax withheld is left off."
+msgid_plural "%(n)s payees paid with no tax withheld are left off."
+msgstr[0] "ไม่รวมผู้มีเงินได้ %(n)s รายที่ได้รับเงินโดยไม่ถูกหักภาษี"
+
+#, python-format
+msgid "SSO 1-10 for %(month)s %(year)s"
+msgstr "สปส.1-10 ประจำเดือน %(month)s %(year)s"
+
+msgid "Joiners and leavers (CSV)"
+msgstr "ผู้เข้าและออกจากงาน (CSV)"
+
+msgid ""
+"No social security rules file could be read; contributions not on a payslip are shown as zero."
+msgstr ""
+"ไม่สามารถอ่านไฟล์หลักเกณฑ์ประกันสังคมได้ เงินสมทบที่ไม่อยู่ในสลิปเงินเดือนจะแสดงเป็นศูนย์"
+
+msgid "Part 1: summary"
+msgstr "ส่วนที่ 1: สรุป"
+
+msgid "Employer account"
+msgstr "บัญชีนายจ้าง"
+
+msgid "branch"
+msgstr "สาขา"
+
+msgid "No SSO employer account number in the company tax profile."
+msgstr "ไม่มีเลขที่บัญชีนายจ้างประกันสังคมในข้อมูลภาษีของบริษัท"
+
+msgid "Insured persons"
+msgstr "ผู้ประกันตน"
+
+msgid "Total wages"
+msgstr "ค่าจ้างรวม"
+
+msgid "contribution base"
+msgstr "ฐานเงินสมทบ"
+
+#, python-format
+msgid ""
+"Rules: %(rate)s%% of the wage, clamped to %(min)s–%(max)s (%(src)s). Lines marked \"payslip\" use the social security deduction as it was paid."
+msgstr ""
+"หลักเกณฑ์: %(rate)s%% ของค่าจ้าง ภายในช่วง %(min)s–%(max)s (%(src)s) แถวที่ระบุว่า \"สลิปเงินเดือน\" ใช้ยอดหักประกันสังคมตามที่จ่ายจริง"
+
+msgid ""
+"Paid this month but has no social security number and no social security deduction: not on the return."
+msgstr ""
+"ได้รับเงินในเดือนนี้แต่ไม่มีเลขประกันสังคมและไม่มีการหักประกันสังคม: ไม่อยู่ในแบบที่ยื่น"
+
+msgid "Part 2: insured persons"
+msgstr "ส่วนที่ 2: ผู้ประกันตน"
+
+msgid "SSO number"
+msgstr "เลขประกันสังคม"
+
+msgid "Contribution base"
+msgstr "ฐานเงินสมทบ"
+
+msgid "payslip"
+msgstr "สลิปเงินเดือน"
+
+msgid "rules"
+msgstr "หลักเกณฑ์"
+
+msgid "No insured persons with issued payslips this month."
+msgstr "ไม่มีผู้ประกันตนที่มีสลิปเงินเดือนที่ออกในเดือนนี้"
+
+msgid "Joined this month (SSO 1-03)"
+msgstr "เข้างานในเดือนนี้ (สปส.1-03)"
+
+msgid "Left this month (SSO 6-09)"
+msgstr "ออกจากงานในเดือนนี้ (สปส.6-09)"
+
+msgid ""
+"Leavers come from the offboarding notice-period end, or the contract end date of archived employees. Employees archived without either date are not listed."
+msgstr ""
+"ผู้ออกจากงานมาจากวันสิ้นสุดระยะเวลาแจ้งล่วงหน้าในกระบวนการออกจากงาน หรือวันสิ้นสุดสัญญาจ้างของพนักงานที่เก็บถาวร พนักงานที่เก็บถาวรโดยไม่มีวันที่ทั้งสองนี้จะไม่แสดงในรายการ"
+
+msgid ""
+"How the Revenue Department and the Social Security Office know this company. Printed on PND 1, PND 1 Kor, SSO 1-10 and the 50 Tawi certificate."
+msgstr ""
+"ข้อมูลที่กรมสรรพากรและสำนักงานประกันสังคมใช้ระบุบริษัทนี้ พิมพ์บน ภ.ง.ด.1, ภ.ง.ด.1ก, สปส.1-10 และหนังสือรับรองการหักภาษี ณ ที่จ่าย (50 ทวิ)"
+
+msgid "Choose a company to edit its tax profile."
+msgstr "เลือกบริษัทเพื่อแก้ไขข้อมูลภาษี"
+
+msgid "Company tax profile saved."
+msgstr "บันทึกข้อมูลภาษีของบริษัทแล้ว"
+
+msgid "Part 2 as CSV (generic, not the SSO upload format)"
+msgstr "ส่วนที่ 2 เป็น CSV (รูปแบบทั่วไป ไม่ใช่รูปแบบอัปโหลดของประกันสังคม)"
+
+msgid "ISO 3166-2 code"
+msgstr "รหัส ISO 3166-2"
+
+msgid "Name (English)"
+msgstr "ชื่อ (ภาษาอังกฤษ)"
+
+msgid "Provinces"
+msgstr "จังหวัด"
+
+msgid "District"
+msgstr "อำเภอ/เขต"
+
+msgid "Districts"
+msgstr "อำเภอ/เขต"
+
+msgid "All postcodes"
+msgstr "รหัสไปรษณีย์ทั้งหมด"
+
+msgid "Subdistrict"
+msgstr "ตำบล/แขวง"
+
+msgid "Subdistricts"
+msgstr "ตำบล/แขวง"
+
+msgid "-- Select --"
+msgstr "-- เลือก --"
+
+msgid "Postcodes for this subdistrict:"
+msgstr "รหัสไปรษณีย์ของตำบล/แขวงนี้:"
+
+msgid ""
+"Pick the address from the official list, or type it in the fields below if it is not listed."
+msgstr "เลือกที่อยู่จากรายการทางการ หรือพิมพ์ลงในช่องด้านล่างหากไม่มีในรายการ"
+
+msgid "Province (list)"
+msgstr "จังหวัด (รายการ)"
+
+msgid "District (list)"
+msgstr "อำเภอ/เขต (รายการ)"
+
+msgid "Subdistrict (list)"
+msgstr "ตำบล/แขวง (รายการ)"
+
+msgid "PDPA"
+msgstr ""
+
+msgid "Legal content: have counsel review before publishing."
+msgstr "เนื้อหาทางกฎหมาย: ควรให้ที่ปรึกษากฎหมายตรวจสอบก่อนเผยแพร่"
+
+msgid "This version already exists for this audience."
+msgstr "เวอร์ชันนี้มีอยู่แล้วสำหรับกลุ่มเป้าหมายนี้"
+
+msgid ""
+"People have already responded to this notice. Create a new version instead of editing its text."
+msgstr "มีผู้ตอบรับประกาศนี้แล้ว กรุณาสร้างเวอร์ชันใหม่แทนการแก้ไขข้อความ"
+
+msgid "Describe the outcome before closing the request."
+msgstr "กรุณาระบุผลการดำเนินการก่อนปิดคำขอ"
+
+msgid "Type ANONYMISE to confirm"
+msgstr "พิมพ์ ANONYMISE เพื่อยืนยัน"
+
+msgid "Confirmation text does not match."
+msgstr "ข้อความยืนยันไม่ตรงกัน"
+
+msgid "Invalid selection."
+msgstr "การเลือกไม่ถูกต้อง"
+
+msgid "Select at least one record."
+msgstr "กรุณาเลือกอย่างน้อยหนึ่งรายการ"
+
+msgid "PDPA settings"
+msgstr "การตั้งค่า PDPA"
+
+msgid "Privacy notice"
+msgstr "ประกาศความเป็นส่วนตัว"
+
+msgid "Versioned privacy notices for employees and candidates"
+msgstr "ประกาศความเป็นส่วนตัวแบบมีเวอร์ชันสำหรับพนักงานและผู้สมัครงาน"
+
+msgid "Data Protection Officer"
+msgstr "เจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล"
+
+msgid "DPO contact details and PDPA deadlines"
+msgstr "ข้อมูลติดต่อ DPO และกำหนดเวลาตาม PDPA"
+
+msgid "Retention policy"
+msgstr "นโยบายการเก็บรักษาข้อมูล"
+
+msgid "How long personal data is kept"
+msgstr "ระยะเวลาการเก็บรักษาข้อมูลส่วนบุคคล"
+
+msgid "PDPA workspace"
+msgstr "พื้นที่ทำงาน PDPA"
+
+msgid "Data subject requests"
+msgstr "คำขอใช้สิทธิของเจ้าของข้อมูลส่วนบุคคล"
+
+msgid "Access, erasure and other PDPA requests"
+msgstr "คำขอเข้าถึง ลบ และคำขออื่นๆ ตาม PDPA"
+
+msgid "Breach register"
+msgstr "ทะเบียนการละเมิดข้อมูล"
+
+msgid "Personal data breaches and notification deadlines"
+msgstr "การละเมิดข้อมูลส่วนบุคคลและกำหนดเวลาการแจ้งเหตุ"
+
+msgid ""
+"Leave empty for the default used by companies without their own settings."
+msgstr ""
+"เว้นว่างไว้เพื่อใช้เป็นค่าเริ่มต้นสำหรับบริษัทที่ไม่มีการตั้งค่าของตนเอง"
+
+msgid "DPO email"
+msgstr "อีเมล DPO"
+
+msgid "DPO phone"
+msgstr "โทรศัพท์ DPO"
+
+msgid "DPO contact address"
+msgstr "ที่อยู่ติดต่อ DPO"
+
+msgid "Data subject request due (days)"
+msgstr "กำหนดตอบคำขอของเจ้าของข้อมูลส่วนบุคคล (วัน)"
+
+msgid "Days from receipt to respond. Default 30; have counsel verify."
+msgstr ""
+"จำนวนวันนับจากวันที่ได้รับคำขอจนถึงการตอบกลับ ค่าเริ่มต้น 30 วัน ควรให้ที่ปรึกษากฎหมายตรวจสอบ"
+
+msgid "Breach notification deadline (hours)"
+msgstr "กำหนดเวลาแจ้งเหตุการละเมิดข้อมูล (ชั่วโมง)"
+
+msgid ""
+"Hours from detection to notify the regulator. Default 72; have counsel verify."
+msgstr ""
+"จำนวนชั่วโมงนับจากที่ตรวจพบจนถึงการแจ้งหน่วยงานกำกับดูแล ค่าเริ่มต้น 72 ชั่วโมง ควรให้ที่ปรึกษากฎหมายตรวจสอบ"
+
+msgid "PDPA Settings"
+msgstr "การตั้งค่า PDPA"
+
+msgid "Can act as PDPA officer"
+msgstr "สามารถปฏิบัติหน้าที่เจ้าหน้าที่ PDPA ได้"
+
+msgid "Can export a data subject's personal data"
+msgstr "สามารถส่งออกข้อมูลส่วนบุคคลของเจ้าของข้อมูลได้"
+
+msgid "Can anonymise records past retention"
+msgstr "สามารถทำให้ข้อมูลที่เกินระยะเวลาเก็บรักษาเป็นข้อมูลนิรนามได้"
+
+msgid "Leave empty to use this notice for all companies."
+msgstr "เว้นว่างไว้เพื่อใช้ประกาศนี้กับทุกบริษัท"
+
+msgid "Notice text (Thai)"
+msgstr "ข้อความประกาศ (ภาษาไทย)"
+
+msgid "Notice text (English)"
+msgstr "ข้อความประกาศ (ภาษาอังกฤษ)"
+
+msgid "Privacy Notice"
+msgstr "ประกาศความเป็นส่วนตัว"
+
+msgid "Privacy Notices"
+msgstr "ประกาศความเป็นส่วนตัว"
+
+msgid ""
+"Optional purposes can be given and withdrawn by the data subject at any time."
+msgstr ""
+"เจ้าของข้อมูลส่วนบุคคลสามารถให้และถอนความยินยอมสำหรับวัตถุประสงค์ที่ไม่บังคับได้ทุกเมื่อ"
+
+msgid "Consent Purpose"
+msgstr "วัตถุประสงค์ของความยินยอม"
+
+msgid "Consent Purposes"
+msgstr "วัตถุประสงค์ของความยินยอม"
+
+msgid "Acknowledged notice"
+msgstr "รับทราบประกาศแล้ว"
+
+msgid "Granted"
+msgstr "ให้ความยินยอมแล้ว"
+
+msgid "Withdrawn"
+msgstr "ถอนความยินยอมแล้ว"
+
+msgid "Web self-service"
+msgstr "บริการตนเองทางเว็บ"
+
+msgid "Candidate application"
+msgstr "การสมัครงานของผู้สมัคร"
+
+msgid "Recorded by HR"
+msgstr "บันทึกโดยฝ่ายบุคคล"
+
+msgid "Paper form"
+msgstr "แบบฟอร์มกระดาษ"
+
+msgid "Notice version"
+msgstr "เวอร์ชันของประกาศ"
+
+msgid "Consent Record"
+msgstr "บันทึกความยินยอม"
+
+msgid "Consent Records"
+msgstr "บันทึกความยินยอม"
+
+msgid "Rectification"
+msgstr "การแก้ไขข้อมูลให้ถูกต้อง"
+
+msgid "Erasure"
+msgstr "การลบข้อมูล"
+
+msgid "Restriction of processing"
+msgstr "การระงับการใช้ข้อมูล"
+
+msgid "Objection"
+msgstr "การคัดค้าน"
+
+msgid "Data portability"
+msgstr "การโอนย้ายข้อมูล"
+
+msgid "Withdraw consent"
+msgstr "ถอนความยินยอม"
+
+msgid "Received"
+msgstr "ได้รับแล้ว"
+
+msgid "Verifying identity"
+msgstr "กำลังยืนยันตัวตน"
+
+msgid "Subject name"
+msgstr "ชื่อเจ้าของข้อมูล"
+
+msgid "For a requester who is neither an employee nor a candidate."
+msgstr "สำหรับผู้ยื่นคำขอที่ไม่ใช่พนักงานหรือผู้สมัครงาน"
+
+msgid "Request type"
+msgstr "ประเภทคำขอ"
+
+msgid "Received at"
+msgstr "ได้รับเมื่อ"
+
+msgid "Due at"
+msgstr "ครบกำหนดเมื่อ"
+
+msgid "Filled from the company's PDPA settings when left empty."
+msgstr "หากเว้นว่างไว้ จะใช้ค่าจากการตั้งค่า PDPA ของบริษัท"
+
+msgid "Assignee"
+msgstr "ผู้รับผิดชอบ"
+
+msgid "Request details"
+msgstr "รายละเอียดคำขอ"
+
+msgid "Internal notes"
+msgstr "บันทึกภายใน"
+
+msgid "Closed at"
+msgstr "ปิดเมื่อ"
+
+msgid "Data Subject Request"
+msgstr "คำขอใช้สิทธิของเจ้าของข้อมูลส่วนบุคคล"
+
+msgid "Data Subject Requests"
+msgstr "คำขอใช้สิทธิของเจ้าของข้อมูลส่วนบุคคล"
+
+msgid "Choose an employee or a candidate, or enter the subject's name."
+msgstr "กรุณาเลือกพนักงานหรือผู้สมัครงาน หรือกรอกชื่อเจ้าของข้อมูล"
+
+msgid "Low (unlikely to result in risk)"
+msgstr "ต่ำ (ไม่น่าจะมีความเสี่ยง)"
+
+msgid "Risk to rights and freedoms"
+msgstr "มีความเสี่ยงต่อสิทธิและเสรีภาพ"
+
+msgid "High risk"
+msgstr "ความเสี่ยงสูง"
+
+msgid "Contained"
+msgstr "ควบคุมได้แล้ว"
+
+msgid "Detected at"
+msgstr "ตรวจพบเมื่อ"
+
+msgid "Data categories affected"
+msgstr "ประเภทข้อมูลที่ได้รับผลกระทบ"
+
+msgid "Affected data subjects"
+msgstr "เจ้าของข้อมูลที่ได้รับผลกระทบ"
+
+msgid "Risk level"
+msgstr "ระดับความเสี่ยง"
+
+msgid "Regulator notification deadline"
+msgstr "กำหนดเวลาแจ้งหน่วยงานกำกับดูแล"
+
+msgid "Reported to PDPC at"
+msgstr "แจ้ง สคส. เมื่อ"
+
+msgid "Data subjects notified at"
+msgstr "แจ้งเจ้าของข้อมูลเมื่อ"
+
+msgid "Actions taken"
+msgstr "การดำเนินการที่ได้ทำ"
+
+msgid "Breach Incident"
+msgstr "เหตุการละเมิดข้อมูล"
+
+msgid "Breach Incidents"
+msgstr "เหตุการละเมิดข้อมูล"
+
+msgid "Flag for review"
+msgstr "ทำเครื่องหมายเพื่อตรวจสอบ"
+
+msgid "Anonymise"
+msgstr "ทำให้เป็นข้อมูลนิรนาม"
+
+msgid "Delete (manual, outside this tool)"
+msgstr "ลบ (ด้วยตนเอง นอกเครื่องมือนี้)"
+
+msgid "app_label.ModelName, e.g. employee.Employee or recruitment.Candidate"
+msgstr "app_label.ModelName เช่น employee.Employee หรือ recruitment.Candidate"
+
+msgid "Date field"
+msgstr "ฟิลด์วันที่"
+
+msgid ""
+"Date the retention period counts from, e.g. employee_work_info__contract_end_date"
+msgstr ""
+"วันที่เริ่มนับระยะเวลาการเก็บรักษา เช่น employee_work_info__contract_end_date"
+
+msgid "Keep for (years)"
+msgstr "เก็บรักษาไว้ (ปี)"
+
+msgid "Legal basis / notes"
+msgstr "ฐานทางกฎหมาย / หมายเหตุ"
+
+msgid "Record the legal basis for the period. Have counsel review."
+msgstr "บันทึกฐานทางกฎหมายของระยะเวลานี้ ควรให้ที่ปรึกษากฎหมายตรวจสอบ"
+
+msgid "Retention Policy"
+msgstr "นโยบายการเก็บรักษาข้อมูล"
+
+msgid "Retention Policies"
+msgstr "นโยบายการเก็บรักษาข้อมูล"
+
+msgid "Unknown model."
+msgstr "ไม่รู้จักโมเดลนี้"
+
+msgid "Unknown field."
+msgstr "ไม่รู้จักฟิลด์นี้"
+
+msgid "Must be a date or date-time field."
+msgstr "ต้องเป็นฟิลด์วันที่หรือวันที่และเวลา"
+
+msgid "Anonymisation is only available for employee records."
+msgstr "การทำให้เป็นข้อมูลนิรนามใช้ได้เฉพาะกับข้อมูลพนักงานเท่านั้น"
+
+msgid "Fields viewed"
+msgstr "ฟิลด์ที่ดู"
+
+msgid "Context"
+msgstr "บริบท"
+
+msgid "IP address"
+msgstr "ที่อยู่ IP"
+
+msgid "Accessed at"
+msgstr "เข้าถึงเมื่อ"
+
+msgid "Sensitive Access Log"
+msgstr "บันทึกการเข้าถึงข้อมูลอ่อนไหว"
+
+msgid "Sensitive Access Logs"
+msgstr "บันทึกการเข้าถึงข้อมูลอ่อนไหว"
+
+msgid "A data subject request was assigned to you."
+msgstr "มีคำขอใช้สิทธิของเจ้าของข้อมูลส่วนบุคคลมอบหมายให้คุณ"
+
+#, python-format
+msgid "Your personal data request #%(id)s (%(type)s) is now: %(status)s."
+msgstr ""
+"คำขอเกี่ยวกับข้อมูลส่วนบุคคลของคุณ #%(id)s (%(type)s) อยู่ในสถานะ: %(status)s"
+
+msgid "Consents"
+msgstr "ความยินยอม"
+
+msgid "Breach Register"
+msgstr "ทะเบียนการละเมิดข้อมูล"
+
+msgid "Retention"
+msgstr "การเก็บรักษาข้อมูล"
+
+msgid "My Privacy"
+msgstr "ความเป็นส่วนตัวของฉัน"
+
+msgid "Sensitive access log"
+msgstr "บันทึกการเข้าถึงข้อมูลอ่อนไหว"
+
+#, python-format
+msgid "Page %(n)s of %(total)s"
+msgstr "หน้า %(n)s จาก %(total)s"
+
+msgid "No entries."
+msgstr "ไม่มีรายการ"
+
+msgid "Record breach"
+msgstr "บันทึกการละเมิดข้อมูล"
+
+msgid ""
+"Deadlines come from PDPA settings (default 72 hours from detection; have counsel verify)."
+msgstr ""
+"กำหนดเวลามาจากการตั้งค่า PDPA (ค่าเริ่มต้น 72 ชั่วโมงนับจากที่ตรวจพบ ควรให้ที่ปรึกษากฎหมายตรวจสอบ)"
+
+msgid "Incident"
+msgstr "เหตุการณ์"
+
+msgid "Detected"
+msgstr "ตรวจพบ"
+
+msgid "Regulator deadline"
+msgstr "กำหนดแจ้งหน่วยงานกำกับดูแล"
+
+msgid "Reported to PDPC"
+msgstr "แจ้ง สคส. แล้ว"
+
+msgid "Subjects notified"
+msgstr "แจ้งเจ้าของข้อมูลแล้ว"
+
+msgid "No incidents."
+msgstr "ไม่มีเหตุการณ์"
+
+msgid "overdue by"
+msgstr "เกินกำหนด"
+
+msgid "Search employee"
+msgstr "ค้นหาพนักงาน"
+
+msgid "Current notice"
+msgstr "ประกาศฉบับปัจจุบัน"
+
+msgid "Acknowledged"
+msgstr "รับทราบแล้ว"
+
+msgid "Given"
+msgstr "ให้ความยินยอม"
+
+msgid "No employees."
+msgstr "ไม่มีพนักงาน"
+
+msgid ""
+"These tools help track PDPA work. They do not by themselves make processing compliant; have counsel review notices, deadlines and retention periods."
+msgstr ""
+"เครื่องมือเหล่านี้ช่วยติดตามงานด้าน PDPA แต่ไม่ได้ทำให้การประมวลผลข้อมูลสอดคล้องกับกฎหมายด้วยตัวเอง ควรให้ที่ปรึกษากฎหมายตรวจสอบประกาศ กำหนดเวลา และระยะเวลาการเก็บรักษา"
+
+msgid "Open data subject requests"
+msgstr "คำขอใช้สิทธิที่ยังเปิดอยู่"
+
+#, python-format
+msgid "%(n)s due within 7 days"
+msgstr "ครบกำหนดภายใน 7 วัน %(n)s รายการ"
+
+msgid "Overdue requests"
+msgstr "คำขอที่เกินกำหนด"
+
+msgid "View overdue list"
+msgstr "ดูรายการที่เกินกำหนด"
+
+msgid "Open breach incidents"
+msgstr "เหตุการละเมิดข้อมูลที่ยังเปิดอยู่"
+
+msgid "Breaches awaiting regulator notification"
+msgstr "การละเมิดข้อมูลที่รอแจ้งหน่วยงานกำกับดูแล"
+
+msgid "Overdue data subject requests"
+msgstr "คำขอใช้สิทธิของเจ้าของข้อมูลที่เกินกำหนด"
+
+msgid "not set"
+msgstr "ยังไม่ได้ตั้งค่า"
+
+msgid "Download personal data export (ZIP)"
+msgstr "ดาวน์โหลดไฟล์ส่งออกข้อมูลส่วนบุคคล (ZIP)"
+
+msgid ""
+"The download is logged. Send it to the data subject through a secure channel and do not keep copies."
+msgstr ""
+"การดาวน์โหลดจะถูกบันทึกไว้ กรุณาส่งให้เจ้าของข้อมูลผ่านช่องทางที่ปลอดภัยและอย่าเก็บสำเนาไว้"
+
+msgid "New request"
+msgstr "คำขอใหม่"
+
+msgid "Due"
+msgstr "ครบกำหนด"
+
+msgid "No requests."
+msgstr "ไม่มีคำขอ"
+
+msgid "effective from"
+msgstr "มีผลตั้งแต่"
+
+msgid "English version"
+msgstr "ฉบับภาษาอังกฤษ"
+
+msgid "You have acknowledged this notice."
+msgstr "คุณได้รับทราบประกาศนี้แล้ว"
+
+msgid "I have read this privacy notice"
+msgstr "ข้าพเจ้าได้อ่านประกาศความเป็นส่วนตัวนี้แล้ว"
+
+msgid "No privacy notice has been published yet."
+msgstr "ยังไม่มีการเผยแพร่ประกาศความเป็นส่วนตัว"
+
+msgid "My consents"
+msgstr "ความยินยอมของฉัน"
+
+msgid "Not given"
+msgstr "ยังไม่ได้ให้"
+
+msgid "Withdraw"
+msgstr "ถอน"
+
+msgid "Give consent"
+msgstr "ให้ความยินยอม"
+
+msgid "There are no optional consents to manage."
+msgstr "ไม่มีความยินยอมที่ไม่บังคับให้จัดการ"
+
+msgid ""
+"Withdrawing consent does not affect processing carried out before the withdrawal."
+msgstr "การถอนความยินยอมไม่กระทบต่อการประมวลผลที่ได้ดำเนินการไปก่อนการถอน"
+
+msgid "Requests about my personal data"
+msgstr "คำขอเกี่ยวกับข้อมูลส่วนบุคคลของฉัน"
+
+msgid "Details (optional)"
+msgstr "รายละเอียด (ไม่บังคับ)"
+
+msgid "Send request"
+msgstr "ส่งคำขอ"
+
+msgid "Consent history"
+msgstr "ประวัติความยินยอม"
+
+msgid "Thai"
+msgstr "ภาษาไทย"
+
+msgid "English"
+msgstr "ภาษาอังกฤษ"
+
+#, python-format
+msgid "%(n)s consent record(s) reference this version."
+msgstr "มีบันทึกความยินยอม %(n)s รายการที่อ้างอิงเวอร์ชันนี้"
+
+msgid "Misconfigured"
+msgstr "ตั้งค่าไม่ถูกต้อง"
+
+msgid "Dry run."
+msgstr "ทดลองรัน"
+
+#, python-format
+msgid "%(n)s record(s) past retention (first 200 shown)."
+msgstr "มีข้อมูล %(n)s รายการที่เกินระยะเวลาเก็บรักษา (แสดง 200 รายการแรก)"
+
+msgid "Nothing past retention."
+msgstr "ไม่มีข้อมูลที่เกินระยะเวลาเก็บรักษา"
+
+msgid "Anonymise selected employees"
+msgstr "ทำให้ข้อมูลพนักงานที่เลือกเป็นข้อมูลนิรนาม"
+
+msgid ""
+"This overwrites names and contact details, deletes Thai profile, tax claims and bank details, and disables the login. It cannot be undone. Audit history, uploaded files, payroll, leave and attendance records and backups are not changed."
+msgstr ""
+"การดำเนินการนี้จะเขียนทับชื่อและข้อมูลติดต่อ ลบข้อมูลพนักงาน (ไทย) รายการลดหย่อนภาษี และข้อมูลบัญชีธนาคาร และปิดการเข้าสู่ระบบ ไม่สามารถย้อนกลับได้ ประวัติการตรวจสอบ ไฟล์ที่อัปโหลด ข้อมูลเงินเดือน การลา การเข้างาน และข้อมูลสำรองจะไม่ถูกเปลี่ยนแปลง"
+
+msgid ""
+"This report only lists records past their retention period. Nothing is deleted automatically."
+msgstr ""
+"รายงานนี้แสดงเฉพาะข้อมูลที่เกินระยะเวลาเก็บรักษาเท่านั้น ระบบจะไม่ลบข้อมูลใดโดยอัตโนมัติ"
+
+msgid "Older than"
+msgstr "เก่ากว่า"
+
+msgid "Records past retention"
+msgstr "ข้อมูลที่เกินระยะเวลาเก็บรักษา"
+
+msgid "No active retention policy."
+msgstr "ไม่มีนโยบายการเก็บรักษาข้อมูลที่ใช้งานอยู่"
+
+msgid ""
+"Notice texts, deadlines and retention periods are legal content: have counsel review them. Defaults are placeholders to verify."
+msgstr ""
+"ข้อความประกาศ กำหนดเวลา และระยะเวลาการเก็บรักษาเป็นเนื้อหาทางกฎหมาย ควรให้ที่ปรึกษากฎหมายตรวจสอบ ค่าเริ่มต้นเป็นเพียงค่าตัวอย่างที่ต้องตรวจสอบ"
+
+msgid "Data Protection Officer and deadlines"
+msgstr "เจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคลและกำหนดเวลา"
+
+msgid "DPO"
+msgstr ""
+
+msgid "Request due (days)"
+msgstr "กำหนดตอบคำขอ (วัน)"
+
+msgid "Breach deadline (hours)"
+msgstr "กำหนดแจ้งเหตุละเมิด (ชั่วโมง)"
+
+msgid ""
+"Not set: requests are due in 30 days and breaches in 72 hours (verify)."
+msgstr ""
+"ยังไม่ได้ตั้งค่า: คำขอครบกำหนดใน 30 วัน และการละเมิดข้อมูลใน 72 ชั่วโมง (กรุณาตรวจสอบ)"
+
+msgid "Privacy notices"
+msgstr "ประกาศความเป็นส่วนตัว"
+
+msgid "Add notice"
+msgstr "เพิ่มประกาศ"
+
+msgid "No notice yet."
+msgstr "ยังไม่มีประกาศ"
+
+msgid "Consent purposes"
+msgstr "วัตถุประสงค์ของความยินยอม"
+
+msgid "Add purpose"
+msgstr "เพิ่มวัตถุประสงค์"
+
+msgid "No purpose yet."
+msgstr "ยังไม่มีวัตถุประสงค์"
+
+msgid "Retention policies"
+msgstr "นโยบายการเก็บรักษาข้อมูล"
+
+msgid "Add policy"
+msgstr "เพิ่มนโยบาย"
+
+msgid "Keep (years)"
+msgstr "เก็บรักษา (ปี)"
+
+msgid "No policy yet."
+msgstr "ยังไม่มีนโยบาย"
+
+#, python-format
+msgid "%(d)sd %(h)sh"
+msgstr "%(d)s วัน %(h)s ชม."
+
+#, python-format
+msgid "%(h)sh %(m)sm"
+msgstr "%(h)s ชม. %(m)s นาที"
+
+#, python-format
+msgid "%(span)s left"
+msgstr "เหลือ %(span)s"
+
+#, python-format
+msgid "overdue by %(span)s"
+msgstr "เกินกำหนด %(span)s"
+
+msgid "DPO and deadlines"
+msgstr "DPO และกำหนดเวลา"
+
+msgid "Consent purpose"
+msgstr "วัตถุประสงค์ของความยินยอม"
+
+msgid "Thank you. Your acknowledgement was recorded."
+msgstr "ขอบคุณ บันทึกการรับทราบของคุณแล้ว"
+
+msgid "This consent cannot be changed here."
+msgstr "ไม่สามารถเปลี่ยนความยินยอมนี้ที่นี่ได้"
+
+msgid "Your consent choice was saved."
+msgstr "บันทึกการเลือกความยินยอมของคุณแล้ว"
+
+msgid "Your request was sent to the data protection officer."
+msgstr "ส่งคำขอของคุณไปยังเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคลแล้ว"
+
+msgid "Choose a request type."
+msgstr "กรุณาเลือกประเภทคำขอ"
+
+msgid "Request recorded."
+msgstr "บันทึกคำขอแล้ว"
+
+msgid "New data subject request"
+msgstr "คำขอใช้สิทธิของเจ้าของข้อมูลส่วนบุคคลใหม่"
+
+msgid "Request updated."
+msgstr "อัปเดตคำขอแล้ว"
+
+msgid "This policy does not allow anonymisation."
+msgstr "นโยบายนี้ไม่อนุญาตให้ทำให้เป็นข้อมูลนิรนาม"
+
+#, python-format
+msgid "%(done)s record(s) anonymised."
+msgstr "ทำให้เป็นข้อมูลนิรนามแล้ว %(done)s รายการ"
+
+#, python-format
+msgid "%(n)s record(s) skipped: not past retention."
+msgstr "ข้ามไป %(n)s รายการ: ยังไม่เกินระยะเวลาเก็บรักษา"
+
+msgid "Breach incident"
+msgstr "เหตุการละเมิดข้อมูล"
+
+msgid "e.g. bank loan application, visa application"
+msgstr "เช่น ยื่นขอสินเชื่อธนาคาร ยื่นขอวีซ่า"
+
+msgid "Signer name"
+msgstr "ชื่อผู้ลงนาม"
+
+msgid "Signer title"
+msgstr "ตำแหน่งผู้ลงนาม"
+
+msgid "Your certificate request has been approved."
+msgstr "คำขอหนังสือรับรองของคุณได้รับการอนุมัติแล้ว"
+
+msgid "Your certificate request has been rejected."
+msgstr "คำขอหนังสือรับรองของคุณถูกปฏิเสธ"
+
+#, python-format
+msgid "Your %(certificate)s is ready to download in OrvaHR."
+msgstr "%(certificate)s ของคุณพร้อมให้ดาวน์โหลดใน OrvaHR แล้ว"
+
+#, python-format
+msgid "Your %(certificate)s request was rejected."
+msgstr "คำขอ%(certificate)sของคุณถูกปฏิเสธ"
+
+msgid "Certificate requested."
+msgstr "ส่งคำขอหนังสือรับรองแล้ว"
+
+msgid "Request a certificate"
+msgstr "ขอหนังสือรับรอง"
+
+msgid "The employee has no active contract with a wage."
+msgstr "พนักงานไม่มีสัญญาจ้างที่มีผลอยู่ซึ่งระบุค่าจ้าง"
+
+msgid "Certificate issued."
+msgstr "ออกหนังสือรับรองแล้ว"
+
+msgid "Generate a certificate"
+msgstr "สร้างหนังสือรับรอง"
+
+msgid "This request has already been decided."
+msgstr "คำขอนี้ได้รับการพิจารณาแล้ว"
+
+msgid ""
+"The certificate could not be issued: it was already decided, or the employee has no active contract with a wage."
+msgstr ""
+"ไม่สามารถออกหนังสือรับรองได้: คำขอได้รับการพิจารณาไปแล้ว หรือพนักงานไม่มีสัญญาจ้างที่มีผลอยู่ซึ่งระบุค่าจ้าง"
+
+msgid "Certificate approved."
+msgstr "อนุมัติหนังสือรับรองแล้ว"
+
+msgid "Approve certificate request"
+msgstr "อนุมัติคำขอหนังสือรับรอง"
+
+msgid "Certificate request rejected."
+msgstr "ปฏิเสธคำขอหนังสือรับรองแล้ว"
+
+msgid "Reject certificate request"
+msgstr "ปฏิเสธคำขอหนังสือรับรอง"
+
+msgid "Employment certificate"
+msgstr "หนังสือรับรองการทำงาน"
+
+msgid "Salary certificate"
+msgstr "หนังสือรับรองเงินเดือน"
+
+msgid "Certificate"
+msgstr "หนังสือรับรอง"
+
+msgid "Language"
+msgstr "ภาษา"
+
+msgid "Purpose"
+msgstr "วัตถุประสงค์"
+
+msgid "Reference number"
+msgstr "เลขที่อ้างอิง"
+
+msgid "Issue date"
+msgstr "วันที่ออก"
+
+msgid "Employment Certificate"
+msgstr "หนังสือรับรองการทำงาน"
+
+msgid "Employment Certificates"
+msgstr "หนังสือรับรองการทำงาน"
+
+msgid "Certificates"
+msgstr "หนังสือรับรอง"
+
+msgid "Employment & Salary Certificates"
+msgstr "หนังสือรับรองการทำงานและเงินเดือน"
+
+msgid "My certificates"
+msgstr "หนังสือรับรองของฉัน"
+
+msgid "Download PDF"
+msgstr "ดาวน์โหลด PDF"
+
+msgid "No certificates yet."
+msgstr "ยังไม่มีหนังสือรับรอง"
+
+msgid "All requests"
+msgstr "คำขอทั้งหมด"
+
+msgid "Requested on"
+msgstr "วันที่ขอ"
+
+msgid "No certificate requests."
+msgstr "ไม่มีคำขอหนังสือรับรอง"
+
+msgid "Pay Date"
+msgstr "วันที่จ่ายเงิน"
+
+msgid "Arrears & Recovery"
+msgstr "เงินตกเบิกและการเรียกคืนเงิน"
+
+msgid "Applied In"
+msgstr "รวมอยู่ใน"
+
+#, python-format
+msgid "%(count)s Entries Updated."
+msgstr "อัปเดตแล้ว %(count)s รายการ"
+
+#, python-format
+msgid "%(count)s More Could Not Be Changed."
+msgstr "อีก %(count)s รายการไม่สามารถเปลี่ยนแปลงได้"
+
+msgid "No Records Selected"
+msgstr "ไม่ได้เลือกรายการ"
+
+msgid "Entry Confirmed."
+msgstr "ยืนยันรายการแล้ว"
+
+msgid "Entry Saved As A Draft."
+msgstr "บันทึกรายการเป็นฉบับร่างแล้ว"
+
+msgid "Entry Updated."
+msgstr "อัปเดตรายการแล้ว"
+
+#, python-format
+msgid "%(title)s Is Already %(status)s."
+msgstr "%(title)s อยู่ในสถานะ %(status)s อยู่แล้ว"
+
+#, python-format
+msgid "%(title)s Confirmed."
+msgstr "ยืนยัน %(title)s แล้ว"
+
+#, python-format
+msgid "%(title)s Is Back To Draft."
+msgstr "%(title)s กลับเป็นฉบับร่างแล้ว"
+
+msgid "That Is Not A Status."
+msgstr "สถานะไม่ถูกต้อง"
+
+msgid "Entry Deleted."
+msgstr "ลบรายการแล้ว"
+
+msgid "No IDs Provided For Deletion."
+msgstr "ไม่ได้ระบุ ID สำหรับการลบ"
+
+msgid "Thailand"
+msgstr "ประเทศไทย"
+
+msgid ""
+"5% of gross pay, on a wage base held between 1,650 and 17,500 (so 82.50 to 875 a month). The employer pays the same 5%."
+msgstr ""
+"5% ของเงินเดือนรวม คำนวณจากฐานค่าจ้างที่อยู่ระหว่าง 1,650 ถึง 17,500 (คือ 82.50 ถึง 875 ต่อเดือน) นายจ้างจ่ายสมทบ 5% เท่ากัน"
+
+msgid ""
+"The 1,650-17,500 base applies 1 Jan 2026 - 31 Dec 2028 (Ministerial Regulation B.E. 2568, Royal Gazette 12 Dec 2025); it rises to 20,000 in 2029 and 23,000 in 2032, so update the component then. Verify the rate and the wage base against current law. Assign it only to employees registered with the Social Security Office. Taken after tax: Thai income tax allows the contribution as a deduction itself, so making it pre-tax would count it twice. The base assumes monthly pay periods, and gross pay is used as the wage; exclude anything that is not wages under the Social Security Act."
+msgstr ""
+"ฐาน 1,650-17,500 ใช้ตั้งแต่ 1 ม.ค. 2026 - 31 ธ.ค. 2028 (กฎกระทรวง พ.ศ. 2568 ราชกิจจานุเบกษา 12 ธ.ค. 2025) และจะเพิ่มเป็น 20,000 ในปี 2029 และ 23,000 ในปี 2032 ดังนั้นต้องอัปเดตองค์ประกอบนี้ในเวลานั้น กรุณาตรวจสอบอัตราและฐานค่าจ้างกับกฎหมายปัจจุบัน กำหนดให้เฉพาะพนักงานที่ขึ้นทะเบียนกับสำนักงานประกันสังคมเท่านั้น หักหลังภาษี: ภาษีเงินได้ของไทยให้นำเงินสมทบไปลดหย่อนได้อยู่แล้ว การหักก่อนภาษีจึงเป็นการนับซ้ำสองครั้ง ฐานนี้สมมติว่างวดการจ่ายเป็นรายเดือน และใช้เงินเดือนรวมเป็นค่าจ้าง ให้ตัดรายการที่ไม่ใช่ค่าจ้างตามพระราชบัญญัติประกันสังคมออก"
+
+msgid ""
+"1.5 times the hourly rate for each approved overtime hour on a working day."
+msgstr ""
+"1.5 เท่าของอัตราค่าจ้างรายชั่วโมงสำหรับทุกชั่วโมงทำงานล่วงเวลาที่ได้รับอนุมัติในวันทำงาน"
+
+msgid ""
+"Labour Protection Act. The hourly rate is worked out from the contract wage: a monthly wage over 30 days over 8 normal hours, a daily wage over 8. Change the hours if the normal working day is shorter. Verify against current law."
+msgstr ""
+"พระราชบัญญัติคุ้มครองแรงงาน อัตราค่าจ้างรายชั่วโมงคำนวณจากค่าจ้างตามสัญญา: ค่าจ้างรายเดือนหาร 30 วันแล้วหาร 8 ชั่วโมงทำงานปกติ ค่าจ้างรายวันหาร 8 หากวันทำงานปกติสั้นกว่านี้ให้เปลี่ยนจำนวนชั่วโมง กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid ""
+"For monthly-paid staff: one extra hourly rate for each of the first 8 hours worked on a public holiday, 3 times it after that."
+msgstr ""
+"สำหรับพนักงานรายเดือน: เพิ่มอีกหนึ่งเท่าของอัตราค่าจ้างรายชั่วโมงสำหรับแต่ละชั่วโมงใน 8 ชั่วโมงแรกที่ทำงานในวันหยุดนักขัตฤกษ์ และ 3 เท่าหลังจากนั้น"
+
+msgid ""
+"Monthly-paid employees are already paid for the holiday, so the normal hours earn one more hourly rate on top; hours beyond them are holiday overtime at 3 times. Assign to monthly-paid staff only. Verify against current law."
+msgstr ""
+"พนักงานรายเดือนได้รับค่าจ้างสำหรับวันหยุดอยู่แล้ว ชั่วโมงทำงานปกติจึงได้เพิ่มอีกหนึ่งเท่าของอัตราค่าจ้างรายชั่วโมง ส่วนชั่วโมงที่เกินจากนั้นเป็นค่าล่วงเวลาในวันหยุด 3 เท่า กำหนดให้เฉพาะพนักงานรายเดือนเท่านั้น กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid ""
+"For daily-paid staff: twice the hourly rate for each of the first 8 hours worked on a public holiday, 3 times it after that."
+msgstr ""
+"สำหรับพนักงานรายวัน: 2 เท่าของอัตราค่าจ้างรายชั่วโมงสำหรับแต่ละชั่วโมงใน 8 ชั่วโมงแรกที่ทำงานในวันหยุดนักขัตฤกษ์ และ 3 เท่าหลังจากนั้น"
+
+msgid ""
+"Daily-paid employees are not otherwise paid for the day, so the normal hours earn twice the hourly rate. Assign to daily-paid staff only. Verify against current law."
+msgstr ""
+"พนักงานรายวันไม่ได้รับค่าจ้างสำหรับวันนั้นในกรณีอื่น ชั่วโมงทำงานปกติจึงได้ 2 เท่าของอัตราค่าจ้างรายชั่วโมง กำหนดให้เฉพาะพนักงานรายวันเท่านั้น กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid ""
+"The same rates as a public holiday, for approved work on the weekly day off, for monthly-paid staff."
+msgstr ""
+"อัตราเดียวกับวันหยุดนักขัตฤกษ์ สำหรับการทำงานที่ได้รับอนุมัติในวันหยุดประจำสัปดาห์ สำหรับพนักงานรายเดือน"
+
+msgid ""
+"The Act treats the weekly holiday like any other holiday. Assign to monthly-paid staff only. Verify against current law."
+msgstr ""
+"กฎหมายถือว่าวันหยุดประจำสัปดาห์เหมือนกับวันหยุดอื่นๆ กำหนดให้เฉพาะพนักงานรายเดือนเท่านั้น กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid ""
+"The same rates as a public holiday, for approved work on the weekly day off, for daily-paid staff."
+msgstr ""
+"อัตราเดียวกับวันหยุดนักขัตฤกษ์ สำหรับการทำงานที่ได้รับอนุมัติในวันหยุดประจำสัปดาห์ สำหรับพนักงานรายวัน"
+
+msgid "Assign to daily-paid staff only. Verify against current law."
+msgstr "กำหนดให้เฉพาะพนักงานรายวันเท่านั้น กรุณาตรวจสอบกับกฎหมายปัจจุบัน"
+
+msgid "Not Applied"
+msgstr "ยังไม่ได้นำไปใช้"
+
+msgid "Follows Standard"
+msgstr "ตามค่ามาตรฐาน"
+
+msgid "Taxable / Pre-Tax"
+msgstr "ต้องเสียภาษี / ก่อนภาษี"
+
+msgid "Confirmed By"
+msgstr "ยืนยันโดย"
+
+msgid "Confirmed On"
+msgstr "ยืนยันเมื่อ"
+
+msgid "It Is Already On A Payslip, So This Cannot Go Back To Draft."
+msgstr "รายการนี้อยู่ในสลิปเงินเดือนแล้ว จึงไม่สามารถกลับเป็นฉบับร่างได้"
+
+#, python-format
+msgid "A Payslip Already Exists For %(month)s, So It Cannot Take This."
+msgstr "มีสลิปเงินเดือนสำหรับ %(month)s แล้ว จึงไม่สามารถรับรายการนี้ได้"
+
+msgid ""
+"Confirmed Makes The Pay Lines; Draft Takes Them Away, Unless A Payslip Carries Them."
+msgstr ""
+"การยืนยันจะสร้างรายการในสลิปเงินเดือน การกลับเป็นฉบับร่างจะนำรายการออก เว้นแต่จะอยู่ในสลิปเงินเดือนแล้ว"
+
+msgid "Taxable (Arrears Only)"
+msgstr "ต้องเสียภาษี (เฉพาะเงินตกเบิก)"
+
+msgid ""
+"Changes The Selected Arrears Entries; Recovery Entries Are Left As They Are. Drafts Only."
+msgstr ""
+"เปลี่ยนรายการเงินตกเบิกที่เลือก รายการเรียกคืนเงินจะคงเดิม เฉพาะฉบับร่างเท่านั้น"
+
+msgid "Pre-Tax (Recovery Only)"
+msgstr "ก่อนภาษี (เฉพาะการเรียกคืนเงิน)"
+
+msgid ""
+"Changes The Selected Recovery Entries; Arrears Entries Are Left As They Are. Drafts Only."
+msgstr ""
+"เปลี่ยนรายการเรียกคืนเงินที่เลือก รายการเงินตกเบิกจะคงเดิม เฉพาะฉบับร่างเท่านั้น"
+
+msgid "Drafts Only. For A Month That Has No Payslip For The Employee."
+msgstr "เฉพาะฉบับร่างเท่านั้น สำหรับเดือนที่พนักงานยังไม่มีสลิปเงินเดือน"
+
+msgid "Choose Something To Change."
+msgstr "กรุณาเลือกสิ่งที่ต้องการเปลี่ยน"
+
+#, python-format
+msgid ""
+"Recoveries Due This Period Come To %(due)s, More Than The Monthly Pay Of %(pay)s, So Only Part Could Be Taken (%(titles)s). Send Them Back To Draft In Arrears & Recovery And Spread Them Over More Months."
+msgstr ""
+"ยอดเรียกคืนเงินที่ครบกำหนดในงวดนี้รวม %(due)s ซึ่งมากกว่าเงินเดือนประจำเดือน %(pay)s จึงหักได้เพียงบางส่วน (%(titles)s) กรุณาส่งกลับเป็นฉบับร่างในเมนูเงินตกเบิกและการเรียกคืนเงิน แล้วกระจายออกไปหลายเดือน"
+
+#, python-format
+msgid ""
+"%(amount)s Could Not Be Deducted: The Deductions Came To More Than The Pay."
+msgstr "ไม่สามารถหัก %(amount)s ได้: ยอดรายการหักมากกว่าเงินเดือน"
+
+msgid "of the hourly rate worked out from the wage"
+msgstr "ของอัตราค่าจ้างรายชั่วโมงที่คำนวณจากค่าจ้าง"
+
+msgid "base held within"
+msgstr "ฐานอยู่ภายในช่วง"
+
+msgid "Upload An Excel (.xlsx) Or CSV File."
+msgstr "กรุณาอัปโหลดไฟล์ Excel (.xlsx) หรือ CSV"
+
+msgid "That File Could Not Be Read As A Sheet."
+msgstr "ไม่สามารถอ่านไฟล์นั้นเป็นแผ่นงานได้"
+
+msgid "The Sheet Has No Rows."
+msgstr "แผ่นงานไม่มีแถวข้อมูล"
+
+#, python-format
+msgid "The Sheet Has %(count)s Rows; Import At Most %(max)s At A Time."
+msgstr "แผ่นงานมี %(count)s แถว นำเข้าได้ครั้งละไม่เกิน %(max)s แถว"
+
+#, python-format
+msgid "The Sheet Is Missing These Columns: %(columns)s."
+msgstr "แผ่นงานไม่มีคอลัมน์เหล่านี้: %(columns)s"
+
+msgid "Badge ID Is Missing."
+msgstr "ไม่มีรหัสพนักงาน"
+
+msgid "No Employee Has This Badge ID."
+msgstr "ไม่มีพนักงานที่มีรหัสพนักงานนี้"
+
+msgid "More Than One Employee Has This Badge ID."
+msgstr "มีพนักงานมากกว่าหนึ่งคนที่มีรหัสพนักงานนี้"
+
+msgid "This Employee Is Not Active."
+msgstr "พนักงานคนนี้ไม่ได้อยู่ในสถานะใช้งาน"
+
+msgid "Type Must Be Arrears Or Recovery."
+msgstr "ประเภทต้องเป็น Arrears หรือ Recovery"
+
+msgid "Title Is Missing."
+msgstr "ไม่มีชื่อรายการ"
+
+msgid "Title Is Longer Than 100 Characters."
+msgstr "ชื่อรายการยาวเกิน 100 ตัวอักษร"
+
+msgid "Amount Is Missing."
+msgstr "ไม่มีจำนวนเงิน"
+
+msgid "Amount Must Be A Number More Than Zero."
+msgstr "จำนวนเงินต้องเป็นตัวเลขที่มากกว่าศูนย์"
+
+msgid "Pay Date Is Missing."
+msgstr "ไม่มีวันที่จ่ายเงิน"
+
+msgid "Pay Date Must Be A Date, As YYYY-MM-DD."
+msgstr "วันที่จ่ายเงินต้องเป็นวันที่ในรูปแบบ YYYY-MM-DD"
+
+msgid "Taxable / Pre-Tax Must Be Yes, No Or Empty."
+msgstr "ต้องเสียภาษี / ก่อนภาษี ต้องเป็น Yes, No หรือเว้นว่าง"
+
+msgid "This Row Is Repeated Earlier In The Sheet."
+msgstr "แถวนี้ซ้ำกับแถวก่อนหน้าในแผ่นงาน"
+
+msgid "This Entry Already Exists."
+msgstr "รายการนี้มีอยู่แล้ว"
+
+msgid "Arrears"
+msgstr "เงินตกเบิก"
+
+msgid "Recovery"
+msgstr "การเรียกคืนเงิน"
+
+msgid "Use the ISO 3166-2:TH code, for example TH-10 for Bangkok."
+msgstr "ใช้รหัส ISO 3166-2:TH เช่น TH-10 สำหรับกรุงเทพมหานคร"
+
+msgid "Province code"
+msgstr "รหัสจังหวัด"
+
+msgid "ISO 3166-2:TH, for example TH-10 for Bangkok."
+msgstr "ISO 3166-2:TH เช่น TH-10 สำหรับกรุงเทพมหานคร"
+
+msgid "Minimum daily wage"
+msgstr "ค่าจ้างขั้นต่ำรายวัน"
+
+msgid "Where the figure comes from, e.g. the announcement it was taken from."
+msgstr "แหล่งที่มาของตัวเลข เช่น ประกาศที่นำตัวเลขมา"
+
+msgid "Minimum Wage Rate"
+msgstr "อัตราค่าจ้างขั้นต่ำ"
+
+msgid "Minimum Wage Rates"
+msgstr "อัตราค่าจ้างขั้นต่ำ"
+
+msgid "The minimum daily wage must be more than zero."
+msgstr "ค่าจ้างขั้นต่ำรายวันต้องมากกว่าศูนย์"
+
+msgid "The contract's hourly wage"
+msgstr "ค่าจ้างรายชั่วโมงตามสัญญา"
+
+msgid "Worked out from the contract wage"
+msgstr "คำนวณจากค่าจ้างตามสัญญา"
+
+msgid ""
+"What the multipliers are applied to. Worked out from the wage: a monthly wage is divided by the days per month and then the hours per day; a daily wage by the hours per day; an hourly contract uses its hourly wage."
+msgstr ""
+"ฐานที่ใช้คูณกับตัวคูณ คำนวณจากค่าจ้าง: ค่าจ้างรายเดือนหารด้วยจำนวนวันต่อเดือนแล้วหารด้วยจำนวนชั่วโมงต่อวัน ค่าจ้างรายวันหารด้วยจำนวนชั่วโมงต่อวัน สัญญาจ้างรายชั่วโมงใช้ค่าจ้างรายชั่วโมงตามสัญญา"
+
+msgid "Days per month"
+msgstr "จำนวนวันต่อเดือน"
+
+msgid "What a monthly wage is divided by to give a day's pay."
+msgstr "ตัวหารค่าจ้างรายเดือนเพื่อให้ได้ค่าจ้างต่อวัน"
+
+msgid "Normal hours per day"
+msgstr "จำนวนชั่วโมงทำงานปกติต่อวัน"
+
+msgid "What a day's pay is divided by to give an hour's pay."
+msgstr "ตัวหารค่าจ้างต่อวันเพื่อให้ได้ค่าจ้างต่อชั่วโมง"
+
+msgid "Minimum base"
+msgstr "ฐานขั้นต่ำ"
+
+msgid ""
+"The percentage is never taken of less than this. Leave empty for no floor. A period with nothing paid still contributes nothing."
+msgstr ""
+"ร้อยละจะไม่คำนวณจากยอดที่น้อยกว่านี้ เว้นว่างไว้หากไม่มีขั้นต่ำ งวดที่ไม่มีการจ่ายเงินจะยังคงไม่มีเงินสมทบ"
+
+msgid "Maximum base"
+msgstr "ฐานสูงสุด"
+
+msgid ""
+"The percentage is never taken of more than this, for the employee and the employer share alike. Leave empty for no ceiling."
+msgstr ""
+"ร้อยละจะไม่คำนวณจากยอดที่มากกว่านี้ ทั้งส่วนของลูกจ้างและนายจ้าง เว้นว่างไว้หากไม่มีเพดาน"
+
+msgid "The maximum base cannot be less than the minimum base."
+msgstr "ฐานสูงสุดต้องไม่น้อยกว่าฐานขั้นต่ำ"
+
+msgid "The Payslip For This Month Carries It."
+msgstr "รายการนี้อยู่ในสลิปเงินเดือนของเดือนนี้แล้ว"
+
+msgid "The Amount Must Be More Than Zero."
+msgstr "จำนวนเงินต้องมากกว่าศูนย์"
+
+msgid "Only A Draft Can Be Confirmed."
+msgstr "ยืนยันได้เฉพาะฉบับร่างเท่านั้น"
+
+msgid "It Is Already On A Payslip, So It Cannot Be Deleted."
+msgstr "รายการนี้อยู่ในสลิปเงินเดือนแล้ว จึงไม่สามารถลบได้"
+
+msgid "Move A Confirmed Entry Back To Draft Before Deleting It."
+msgstr "กรุณาเปลี่ยนรายการที่ยืนยันแล้วกลับเป็นฉบับร่างก่อนลบ"
+
+msgid ""
+"It Is Confirmed, So Its Details Are Locked. Send It Back To Draft First."
+msgstr "รายการนี้ยืนยันแล้ว รายละเอียดจึงถูกล็อก กรุณาส่งกลับเป็นฉบับร่างก่อน"
+
+msgid "In Review"
+msgstr "กำลังตรวจสอบ"
+
+msgid ""
+"A paid run cannot be changed directly. Undo the payment first (mark it approved)."
+msgstr ""
+"ไม่สามารถเปลี่ยนแปลงรอบการจ่ายที่จ่ายแล้วได้โดยตรง กรุณายกเลิกการจ่ายก่อน (ทำเครื่องหมายว่าอนุมัติแล้ว)"
+
+msgid "Back pay owed to an employee, paid in a chosen month."
+msgstr "เงินตกเบิกที่ค้างจ่ายแก่พนักงาน จ่ายในเดือนที่เลือก"
+
+msgid ""
+"Created when an arrears entry is confirmed. Not taxable by default; each entry can say otherwise, and so can an employee's own exception."
+msgstr ""
+"สร้างขึ้นเมื่อยืนยันรายการเงินตกเบิก โดยค่าเริ่มต้นไม่ต้องเสียภาษี แต่ละรายการสามารถกำหนดเป็นอย่างอื่นได้ รวมถึงข้อยกเว้นเฉพาะของพนักงานแต่ละคน"
+
+msgid "Excess pay taken back from an employee, in instalments."
+msgstr "เงินที่จ่ายเกินซึ่งเรียกคืนจากพนักงานเป็นงวดๆ"
+
+msgid ""
+"One deduction per instalment date. Pre-tax by default, since recovering an overpayment reduces the income that was taxed."
+msgstr ""
+"หนึ่งรายการหักต่อหนึ่งวันที่ผ่อนชำระ โดยค่าเริ่มต้นหักก่อนภาษี เนื่องจากการเรียกคืนเงินที่จ่ายเกินจะลดเงินได้ที่ถูกนำไปคิดภาษี"
+
+msgid ""
+"Progressive 0-35% bands. The standard deduction of 160,000 is the 50% expense deduction at its 100,000 cap plus the 60,000 personal allowance; for incomes under 200,000 the real expense deduction is smaller, but tax is nil there either way. Per-person allowances (spouse, children, parents, insurance, funds) and social security are NOT modelled by this pack: use the OrvaHR payroll engine (ORVAHR_PAYROLL_ENGINE_URL) for those. Verify every figure against the current Revenue Department announcement."
+msgstr ""
+"อัตราก้าวหน้า 0-35% ค่าลดหย่อนมาตรฐาน 160,000 มาจากค่าใช้จ่าย 50% ที่เพดาน 100,000 รวมกับค่าลดหย่อนส่วนตัว 60,000 สำหรับเงินได้ต่ำกว่า 200,000 ค่าใช้จ่ายจริงจะน้อยกว่านี้ แต่ภาษีเป็นศูนย์ไม่ว่ากรณีใด ค่าลดหย่อนรายบุคคล (คู่สมรส บุตร บิดามารดา ประกัน กองทุน) และประกันสังคมไม่ได้คำนวณในชุดนี้: ให้ใช้ OrvaHR payroll engine (ORVAHR_PAYROLL_ENGINE_URL) สำหรับรายการเหล่านั้น กรุณาตรวจสอบตัวเลขทุกรายการกับประกาศกรมสรรพากรฉบับปัจจุบัน"
+
+msgid "Open The Payslip"
+msgstr "เปิดสลิปเงินเดือน"
+
+msgid "Waiting For The Next Pay Run"
+msgstr "รอรอบการจ่ายเงินเดือนถัดไป"
+
+msgid "Draft: Not In Any Payslip"
+msgstr "ฉบับร่าง: ยังไม่อยู่ในสลิปเงินเดือนใด"
+
+msgid "Type & Status"
+msgstr "ประเภทและสถานะ"
+
+msgid "It Is On A Payslip, So Its Status Is Locked."
+msgstr "รายการนี้อยู่ในสลิปเงินเดือนแล้ว สถานะจึงถูกล็อก"
+
+msgid ""
+"Change The Status? Confirming Creates The Pay Lines; Going Back To Draft Removes Them."
+msgstr ""
+"เปลี่ยนสถานะหรือไม่? การยืนยันจะสร้างรายการในสลิปเงินเดือน การกลับเป็นฉบับร่างจะนำรายการออก"
+
+msgid ""
+"Arrears Owed To An Employee, And Excess Pay To Take Back. An Entry Reaches A Payslip Only Once It Is Approved."
+msgstr ""
+"เงินตกเบิกที่ค้างจ่ายแก่พนักงาน และเงินที่จ่ายเกินซึ่งต้องเรียกคืน รายการจะเข้าสู่สลิปเงินเดือนก็ต่อเมื่อได้รับการอนุมัติแล้วเท่านั้น"
+
+msgid "Back To Inputs"
+msgstr "กลับไปที่ข้อมูลนำเข้า"
+
+msgid "Change Status"
+msgstr "เปลี่ยนสถานะ"
+
+msgid "Undo the payment? The payslips go back to confirmed."
+msgstr "ยกเลิกการจ่ายหรือไม่? สลิปเงินเดือนจะกลับเป็นสถานะยืนยันแล้ว"
+
+msgid "Mark As"
+msgstr "ทำเครื่องหมายเป็น"
+
+#, python-format
+msgid "%(n)s not yet paid"
+msgid_plural "%(n)s not yet paid"
+msgstr[0] "ยังไม่ได้จ่าย %(n)s รายการ"
+
+msgid "Net paid"
+msgstr "ยอดจ่ายสุทธิ"
+
+#, python-format
+msgid "Generate %(n)s Payslip"
+msgid_plural "Generate %(n)s Payslips"
+msgstr[0] "สร้างสลิปเงินเดือน %(n)s ใบ"
+
+msgid "Problems With This Employee"
+msgstr "ปัญหาของพนักงานคนนี้"
+
+msgid "Problems"
+msgstr "ปัญหา"
+
+msgid "Delete This Entry?"
+msgstr "ลบรายการนี้หรือไม่?"
+
+msgid "Import Arrears & Recovery"
+msgstr "นำเข้าเงินตกเบิกและการเรียกคืนเงิน"
+
+msgid "With Problems"
+msgstr "มีปัญหา"
+
+msgid ""
+"Rows With Problems Are Left Out. Download Them, Correct Them And Import Them Again."
+msgstr ""
+"แถวที่มีปัญหาจะไม่ถูกนำเข้า ดาวน์โหลดแถวเหล่านั้น แก้ไข แล้วนำเข้าอีกครั้ง"
+
+msgid "Result"
+msgstr "ผลลัพธ์"
+
+#, python-format
+msgid ""
+"%(hidden_rows)s More Rows Are Not Shown, But Are Checked And Imported The Same."
+msgstr ""
+"อีก %(hidden_rows)s แถวไม่ได้แสดง แต่ได้รับการตรวจสอบและนำเข้าเหมือนกัน"
+
+msgid "Upload Another File"
+msgstr "อัปโหลดไฟล์อื่น"
+
+msgid "Download Problems"
+msgstr "ดาวน์โหลดแถวที่มีปัญหา"
+
+#, python-format
+msgid "Import %(n)s Entry As A Draft"
+msgid_plural "Import %(n)s Entries As Drafts"
+msgstr[0] "นำเข้า %(n)s รายการเป็นฉบับร่าง"
+
+msgid "Sheet Columns"
+msgstr "คอลัมน์ในแผ่นงาน"
+
+msgid "The Employee's Badge ID"
+msgstr "รหัสพนักงาน"
+
+msgid "Arrears Or Recovery"
+msgstr "Arrears หรือ Recovery"
+
+msgid "Title, Amount"
+msgstr "ชื่อรายการ, จำนวนเงิน"
+
+msgid "A Name For It, And An Amount Above Zero"
+msgstr "ชื่อรายการ และจำนวนเงินที่มากกว่าศูนย์"
+
+msgid "As YYYY-MM-DD, For A Month Without A Payslip Yet"
+msgstr "ในรูปแบบ YYYY-MM-DD สำหรับเดือนที่ยังไม่มีสลิปเงินเดือน"
+
+msgid "Yes, No, Or Empty For The Standard Setting"
+msgstr "Yes, No หรือเว้นว่างเพื่อใช้การตั้งค่ามาตรฐาน"
+
+msgid ""
+"Each Row Is Saved As A Draft, And Reaches A Payslip Only Once Confirmed"
+msgstr ""
+"แต่ละแถวจะถูกบันทึกเป็นฉบับร่าง และจะเข้าสู่สลิปเงินเดือนก็ต่อเมื่อได้รับการยืนยันแล้วเท่านั้น"
+
+msgid "Fill In The Template And Upload It Here"
+msgstr "กรอกข้อมูลในแม่แบบแล้วอัปโหลดที่นี่"
+
+msgid "Choose A File To Import."
+msgstr "กรุณาเลือกไฟล์ที่จะนำเข้า"
+
+msgid "That Import Has Expired. Upload The File Again."
+msgstr "การนำเข้านั้นหมดอายุแล้ว กรุณาอัปโหลดไฟล์อีกครั้ง"
+
+#, python-format
+msgid "%(n)d Entry Saved As A Draft."
+msgid_plural "%(n)d Entries Saved As Drafts."
+msgstr[0] "บันทึก %(n)d รายการเป็นฉบับร่างแล้ว"
+
+#, python-format
+msgid "%(n)d Row(s) With Problems Were Left Out."
+msgstr "ไม่รวมแถวที่มีปัญหา %(n)d แถว"
+
+#, python-format
+msgid "Row %(row)s: %(reason)s"
+msgstr "แถว %(row)s: %(reason)s"
+
+msgid "There Are No Failed Rows To Download."
+msgstr "ไม่มีแถวที่ล้มเหลวให้ดาวน์โหลด"
+
+msgid "Title, dates and managers."
+msgstr "ชื่อ วันที่ และผู้จัดการ"
+
+msgid "The Vacancy Lines Could Not Be Read. Please Review Them."
+msgstr "ไม่สามารถอ่านรายการตำแหน่งงานว่างได้ กรุณาตรวจสอบอีกครั้ง"
+
+msgid "A Job Position Can Only Be On One Line."
+msgstr "ตำแหน่งงานหนึ่งตำแหน่งระบุได้เพียงบรรทัดเดียว"
+
+msgid "Choose A Job Position For Every Line."
+msgstr "กรุณาเลือกตำแหน่งงานสำหรับทุกบรรทัด"
+
+#, python-format
+msgid "Vacancy For %(position)s Must Be A Whole Number Of Zero Or More."
+msgstr ""
+"จำนวนตำแหน่งงานว่างของ %(position)s ต้องเป็นจำนวนเต็มตั้งแต่ศูนย์ขึ้นไป"
+
+msgid "Add At Least One Job Position."
+msgstr "กรุณาเพิ่มตำแหน่งงานอย่างน้อยหนึ่งตำแหน่ง"
+
+#, python-format
+msgid ""
+"Vacancy (%(vacancy)s) For %(position)s Is More Than The %(available)s Still Free. Headcount Less The People Already In It And The Vacancies Already Open."
+msgstr ""
+"จำนวนตำแหน่งงานว่าง (%(vacancy)s) ของ %(position)s มากกว่าจำนวนที่ยังว่างอยู่ %(available)s (อัตรากำลังหักจำนวนคนที่อยู่ในตำแหน่งแล้วและตำแหน่งงานว่างที่เปิดรับอยู่แล้ว)"
+
+#, python-format
+msgid ""
+"Vacancy (%(vacancy)s) Is More Than The %(available)s Still Free For %(positions)s. Headcount Less The People Already In It And The Vacancies Already Open."
+msgstr ""
+"จำนวนตำแหน่งงานว่าง (%(vacancy)s) มากกว่าจำนวนที่ยังว่างอยู่ %(available)s สำหรับ %(positions)s (อัตรากำลังหักจำนวนคนที่อยู่ในตำแหน่งแล้วและตำแหน่งงานว่างที่เปิดรับอยู่แล้ว)"
+
+msgid ""
+"Empty Means Not Specified: No Number Of Places Was Set For This Position."
+msgstr "ว่างหมายถึงไม่ได้ระบุ: ไม่ได้กำหนดจำนวนที่รับสำหรับตำแหน่งนี้"
+
+msgid "Recruitment Vacancy"
+msgstr "ตำแหน่งงานว่างในการสรรหา"
+
+msgid "Recruitment Vacancies"
+msgstr "ตำแหน่งงานว่างในการสรรหา"
+
+#, python-format
+msgid "%(selected)s Of %(total)s Places Filled"
+msgstr "รับแล้ว %(selected)s จาก %(total)s อัตรา"
+
+msgid "Over Selected"
+msgstr "คัดเลือกเกิน"
+
+msgid "Filled"
+msgstr "เต็มแล้ว"
+
+msgid "Vacancy Not Specified"
+msgstr "ไม่ได้ระบุจำนวนตำแหน่งงานว่าง"
+
+msgid "Vacancy Details"
+msgstr "รายละเอียดตำแหน่งงานว่าง"
+
+#, python-format
+msgid "%(n)s Over Selected"
+msgid_plural "%(n)s Over Selected"
+msgstr[0] "คัดเลือกเกิน %(n)s คน"
+
+msgid "All Places Filled"
+msgstr "รับครบทุกอัตราแล้ว"
+
+#, python-format
+msgid "%(left)s Place Left"
+msgid_plural "%(left)s Places Left"
+msgstr[0] "เหลือ %(left)s อัตรา"
+
+msgid "Positions Filled"
+msgstr "ตำแหน่งที่รับครบแล้ว"
+
+msgid "Places Left"
+msgstr "อัตราที่เหลือ"
+
+#, python-format
+msgid "%(n)s Over"
+msgstr "เกิน %(n)s"
+
+msgid "In Position"
+msgstr "อยู่ในตำแหน่ง"
+
+msgid "Already Open"
+msgstr "เปิดรับอยู่แล้ว"
+
+msgid "Free"
+msgstr "ว่าง"
+
+msgid "Places to fill in each job position."
+msgstr "จำนวนอัตราที่ต้องการรับในแต่ละตำแหน่งงาน"
+
+msgid ""
+"Add One Line For Each Job Position With The Number Of People To Hire. A Position With A Headcount Cannot Go Over Its Free Places."
+msgstr ""
+"เพิ่มหนึ่งบรรทัดสำหรับแต่ละตำแหน่งงานพร้อมจำนวนคนที่ต้องการจ้าง ตำแหน่งที่กำหนดอัตรากำลังไว้จะรับเกินจำนวนที่ว่างอยู่ไม่ได้"
+
+msgid "Total Vacancy"
+msgstr "ตำแหน่งงานว่างทั้งหมด"
+
+msgid "Total Applied"
+msgstr "ผู้สมัครทั้งหมด"
+
+msgid "Add Line"
+msgstr "เพิ่มบรรทัด"
+
+msgid "No Headcount Set: No Limit"
+msgstr "ไม่ได้กำหนดอัตรากำลัง: ไม่จำกัด"
+
+msgid "No Job Position Added. Use Add Line."
+msgstr "ยังไม่ได้เพิ่มตำแหน่งงาน กรุณาใช้ปุ่มเพิ่มบรรทัด"
+
+msgid "Remove Line"
+msgstr "ลบบรรทัด"
+
+msgid "The First Line Cannot Be Removed"
+msgstr "ไม่สามารถลบบรรทัดแรกได้"
+
+msgid "Moved to position"
+msgstr "ย้ายไปยังตำแหน่ง"
+
+msgid "Reorder stage"
+msgstr "จัดลำดับขั้นตอนใหม่"
+
+msgid "Use the up and down arrow keys, or drag."
+msgstr "ใช้ปุ่มลูกศรขึ้นและลง หรือลากเพื่อจัดลำดับ"
+
+msgid "Add At Least One Vacancy."
+msgstr "กรุณาเพิ่มตำแหน่งงานว่างอย่างน้อยหนึ่งตำแหน่ง"
