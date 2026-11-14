@@ -55,7 +55,7 @@
                                 {% endif %}
                                 {% if perms.line_integration.delete_linechannel %}
                                     <form method="post" action="{% url 'line-channel-delete' row.channel.pk %}" style="display:inline"
-                                        onsubmit="return confirm('{% trans "Delete this LINE channel? All LINE links for it are removed." %}')">
+                                        onsubmit="return confirm('{{ _("Delete this LINE channel? All LINE links for it are removed.")|escapejs }}')">
                                         {% csrf_token %}
                                         <button class="oh-btn oh-btn--danger" type="submit">{% trans "Delete" %}</button>
                                     </form>

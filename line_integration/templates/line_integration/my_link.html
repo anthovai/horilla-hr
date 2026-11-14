@@ -42,7 +42,7 @@
                     </button>
                 </form>
                 {% if link %}
-                    <form method="post" onsubmit="return confirm('{% trans "Disconnect LINE?" %}')">
+                    <form method="post" onsubmit="return confirm('{{ _("Disconnect LINE?")|escapejs }}')">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="unlink" />
                         <button type="submit" class="oh-btn oh-btn--light-bkg">{% trans "Disconnect" %}</button>

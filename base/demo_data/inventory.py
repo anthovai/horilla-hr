@@ -43,6 +43,11 @@ SIDEBAR_DEMO_MODELS: tuple[tuple[str, str], ...] = (
     ("base", "Tags"),
     ("base", "HorillaMailTemplate"),
     ("horilla_automations", "MailAutomation"),
+    # OrvaHR Thai modules: no demo rows are seeded yet, so these report 0.
+    ("orvahr_benefits", "ProvidentFundPlan"),
+    ("orvahr_benefits", "FinalSettlement"),
+    ("orvahr_pdpa", "PrivacyNotice"),
+    ("orvahr_pdpa", "DataSubjectRequest"),
 )
 
 
