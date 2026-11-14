@@ -1,0 +1,5 @@
+# Pinned so a new stable release cannot add clippy lints that fail CI on its own.
+# Bump deliberately; keep the version in .github/workflows/orvahr-services.yml in step.
+[toolchain]
+channel = "1.99.1"
+components = ["rustfmt", "clippy"]
