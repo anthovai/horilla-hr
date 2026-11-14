@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <div class="border border-[#ebebeb] rounded-md p-4 mb-5" style="max-width: 860px">
+        <h2 class="text-base font-semibold">{{ notice.title }} <span class="text-xs text-gray-500">v{{ notice.version }} &middot; {{ notice.get_audience_display }} &middot; {% trans "Effective from" %} {{ notice.effective_from|date:"d/m/Y" }}</span></h2>
+        <h3 class="text-sm font-semibold mt-4">{% trans "Thai" %}</h3>
+        <div class="text-sm" style="white-space: pre-wrap">{{ notice.text_th }}</div>
+        {% if notice.text_en %}
+            <h3 class="text-sm font-semibold mt-4">{% trans "English" %}</h3>
+            <div class="text-sm" style="white-space: pre-wrap">{{ notice.text_en }}</div>
+        {% endif %}
+        <p class="text-xs text-gray-500 mt-4">{% blocktrans with n=notice.consents.count %}{{ n }} consent record(s) reference this version.{% endblocktrans %}</p>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+{% load i18n pdpa_tags %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-dsr-list">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <div class="flex gap-2 mb-3 items-center">
+        <a class="oh-btn {% if view == 'open' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="?view=open">{% trans "Open" %}</a>
+        <a class="oh-btn {% if view == 'overdue' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="?view=overdue">{% trans "Overdue" %}</a>
+        <a class="oh-btn {% if view == 'all' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="?view=all">{% trans "All" %}</a>
+        {% if perms.orvahr_pdpa.add_datasubjectrequest %}<a class="oh-btn oh-btn--secondary ml-auto" href="{% url 'orvahr_pdpa:dsr-create' %}">{% trans "New request" %}</a>{% endif %}
+    </div>
+    <table class="w-full text-sm">
+        <thead><tr class="text-left">
+            <th class="p-2">#</th><th class="p-2">{% trans "Type" %}</th><th class="p-2">{% trans "Subject" %}</th>
+            <th class="p-2">{% trans "Received" %}</th><th class="p-2">{% trans "Due" %}</th><th class="p-2">{% trans "Status" %}</th><th class="p-2">{% trans "Assignee" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for d in page %}
+            <tr class="border-t">
+                <td class="p-2"><a href="{% url 'orvahr_pdpa:dsr-detail' d.pk %}">{{ d.pk }}</a></td>
+                <td class="p-2">{{ d.get_request_type_display }}</td>
+                <td class="p-2">{{ d.subject_display }}</td>
+                <td class="p-2">{{ d.received_at|date:"d/m/Y" }}</td>
+                <td class="p-2 {% if d.is_overdue %}text-red-600{% endif %}">{{ d.due_at|date:"d/m/Y" }}{% if d.is_open %}<div class="text-xs">{{ d.due_at|countdown }}</div>{% endif %}</td>
+                <td class="p-2">{{ d.get_status_display }}</td>
+                <td class="p-2">{{ d.assignee|default:"-" }}</td>
+            </tr>
+        {% empty %}<tr><td class="p-2" colspan="7">{% trans "No requests." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+    {% include 'orvahr_pdpa/_pager.html' %}
+</div>
+{% endblock content %}

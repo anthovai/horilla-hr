@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+{% load i18n pdpa_tags %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-breaches">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <div class="flex gap-2 mb-3 items-center">
+        <a class="oh-btn {% if view == 'open' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="?view=open">{% trans "Open" %}</a>
+        <a class="oh-btn {% if view == 'all' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="?view=all">{% trans "All" %}</a>
+        {% if perms.orvahr_pdpa.add_breachincident %}<a class="oh-btn oh-btn--secondary ml-auto" href="{% url 'orvahr_pdpa:breach-create' %}">{% trans "Record breach" %}</a>{% endif %}
+    </div>
+    <p class="text-xs text-gray-500 mb-2">{% trans "Deadlines come from PDPA settings (default 72 hours from detection; have counsel verify)." %}</p>
+    <table class="w-full text-sm">
+        <thead><tr class="text-left">
+            <th class="p-2">{% trans "Incident" %}</th><th class="p-2">{% trans "Detected" %}</th><th class="p-2">{% trans "Risk level" %}</th>
+            <th class="p-2">{% trans "Affected data subjects" %}</th><th class="p-2">{% trans "Regulator deadline" %}</th>
+            <th class="p-2">{% trans "Reported to PDPC" %}</th><th class="p-2">{% trans "Subjects notified" %}</th><th class="p-2">{% trans "Status" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for b in page %}
+            <tr class="border-t">
+                <td class="p-2"><a href="{% url 'orvahr_pdpa:breach-update' b.pk %}">{{ b.title }}</a></td>
+                <td class="p-2">{{ b.detected_at|date:"d/m/Y H:i" }}</td>
+                <td class="p-2">{{ b.get_risk_level_display }}</td>
+                <td class="p-2">{{ b.affected_subjects_count }}</td>
+                <td class="p-2 {% if b.is_late %}text-red-600{% endif %}">
+                    {{ b.deadline_at|date:"d/m/Y H:i" }}
+                    {% if b.awaiting_report %}<div class="text-xs pdpa-countdown" data-deadline="{{ b.deadline_at|date:'c' }}">{{ b.deadline_at|countdown }}</div>{% endif %}
+                </td>
+                <td class="p-2">{{ b.reported_to_pdpc_at|date:"d/m/Y H:i"|default:"-" }}</td>
+                <td class="p-2">{{ b.subjects_notified_at|date:"d/m/Y H:i"|default:"-" }}</td>
+                <td class="p-2">{{ b.get_status_display }}</td>
+            </tr>
+        {% empty %}<tr><td class="p-2" colspan="8">{% trans "No incidents." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+    {% include 'orvahr_pdpa/_pager.html' %}
+</div>
+<script>
+    (function () {
+        var left = "{{ _('left')|escapejs }}", late = "{{ _('overdue by')|escapejs }}";
+        function span(s) {
+            s = Math.abs(Math.floor(s / 1000));
+            var d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+            return d ? d + "d " + h + "h" : h + "h " + m + "m";
+        }
+        function tick() {
+            document.querySelectorAll(".pdpa-countdown").forEach(function (el) {
+                var diff = new Date(el.dataset.deadline) - new Date();
+                el.textContent = diff >= 0 ? span(diff) + " " + left : late + " " + span(diff);
+                el.classList.toggle("text-red-600", diff < 0);
+            });
+        }
+        setInterval(tick, 60000);
+    })();
+</script>
+{% endblock content %}

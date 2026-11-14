@@ -1,0 +1,27 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5 p-4" style="max-width: 860px" id="pdpa-form">
+        <h2 class="text-base font-semibold mb-3">{{ title }}</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="oh-alert oh-alert--danger mb-3">{{ form.non_field_errors }}</div>{% endif %}
+            {% for field in form.visible_fields %}
+                <div class="mb-3">
+                    <label class="oh-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<p class="text-xs text-gray-500">{{ field.help_text }}</p>{% endif %}
+                    {% for error in field.errors %}<p class="text-xs text-red-600">{{ error }}</p>{% endfor %}
+                </div>
+            {% endfor %}
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+            <div class="flex gap-2">
+                <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Save" %}</button>
+                <a href="{{ back_url }}" class="oh-btn oh-btn--light-bkg">{% trans "Cancel" %}</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

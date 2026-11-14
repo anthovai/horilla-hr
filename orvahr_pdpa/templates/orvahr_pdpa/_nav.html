@@ -1,0 +1,10 @@
+{% load i18n %}
+<div class="flex flex-wrap gap-2 my-4" id="pdpa-nav">
+    {% if perms.orvahr_pdpa.pdpa_officer %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:dashboard' %}">{% trans "Overview" %}</a>{% endif %}
+    {% if perms.orvahr_pdpa.view_datasubjectrequest %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:dsr-list' %}">{% trans "Data subject requests" %}</a>{% endif %}
+    {% if perms.orvahr_pdpa.view_consentrecord %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:consent-status' %}">{% trans "Consents" %}</a>{% endif %}
+    {% if perms.orvahr_pdpa.view_breachincident %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:breach-list' %}">{% trans "Breach register" %}</a>{% endif %}
+    {% if perms.orvahr_pdpa.view_retentionpolicy %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:retention-report' %}">{% trans "Retention" %}</a>{% endif %}
+    {% if perms.orvahr_pdpa.view_sensitiveaccesslog %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:access-log' %}">{% trans "Sensitive access log" %}</a>{% endif %}
+    {% if perms.orvahr_pdpa.view_pdpasettings %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:settings' %}">{% trans "Settings" %}</a>{% endif %}
+</div>

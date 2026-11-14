@@ -1,0 +1,62 @@
+{% extends 'index.html' %}
+{% load i18n pdpa_tags %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-dashboard">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <p class="text-xs text-gray-500 mb-3">{% trans "These tools help track PDPA work. They do not by themselves make processing compliant; have counsel review notices, deadlines and retention periods." %}</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <div class="border border-[#ebebeb] rounded-md p-4">
+            <div class="text-xs text-gray-500">{% trans "Open data subject requests" %}</div>
+            <div class="text-2xl font-semibold">{{ open_dsr_count }}</div>
+            <div class="text-xs">{% blocktrans with n=due_soon_dsr %}{{ n }} due within 7 days{% endblocktrans %}</div>
+        </div>
+        <div class="border border-[#ebebeb] rounded-md p-4">
+            <div class="text-xs text-gray-500">{% trans "Overdue requests" %}</div>
+            <div class="text-2xl font-semibold {% if overdue_count %}text-red-600{% endif %}">{{ overdue_count }}</div>
+            <a class="text-xs" href="{% url 'orvahr_pdpa:dsr-list' %}?view=overdue">{% trans "View overdue list" %}</a>
+        </div>
+        <div class="border border-[#ebebeb] rounded-md p-4">
+            <div class="text-xs text-gray-500">{% trans "Open breach incidents" %}</div>
+            <div class="text-2xl font-semibold">{{ open_breach_count }}</div>
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Breaches awaiting regulator notification" %}</h2>
+        <table class="w-full text-sm">
+            <thead><tr class="text-left"><th class="p-2">{% trans "Incident" %}</th><th class="p-2">{% trans "Risk level" %}</th><th class="p-2">{% trans "Deadline" %}</th><th class="p-2"></th></tr></thead>
+            <tbody>
+            {% for b in breaches %}
+                <tr class="border-t">
+                    <td class="p-2"><a href="{% url 'orvahr_pdpa:breach-update' b.pk %}">{{ b.title }}</a></td>
+                    <td class="p-2">{{ b.get_risk_level_display }}</td>
+                    <td class="p-2">{{ b.deadline_at|date:"d/m/Y H:i" }}</td>
+                    <td class="p-2 {% if b.seconds_left < 0 %}text-red-600{% endif %}">{{ b.deadline_at|countdown }}</td>
+                </tr>
+            {% empty %}<tr><td class="p-2" colspan="4">{% trans "None." %}</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Overdue data subject requests" %}</h2>
+        <table class="w-full text-sm">
+            <tbody>
+            {% for d in overdue_dsr %}
+                <tr class="border-t">
+                    <td class="p-2"><a href="{% url 'orvahr_pdpa:dsr-detail' d.pk %}">#{{ d.pk }} {{ d.get_request_type_display }}</a></td>
+                    <td class="p-2">{{ d.subject_display }}</td>
+                    <td class="p-2">{{ d.assignee|default:"-" }}</td>
+                    <td class="p-2 text-red-600">{{ d.due_at|countdown }}</td>
+                </tr>
+            {% empty %}<tr><td class="p-2">{% trans "None." %}</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-xs text-gray-500">
+        {% trans "Data Protection Officer" %}:
+        {% if dpo and dpo.dpo_name %}{{ dpo.dpo_name }} {{ dpo.dpo_email }} {{ dpo.dpo_phone }}{% else %}{% trans "not set" %}{% endif %}
+    </div>
+</div>
+{% endblock content %}

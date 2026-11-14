@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-consents">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <form method="get" class="flex gap-2 mb-3">
+        <input type="text" name="search" value="{{ search }}" class="oh-input" placeholder="{% trans 'Search employee' %}" />
+        <button class="oh-btn oh-btn--secondary" type="submit">{% trans "Search" %}</button>
+    </form>
+    <div class="oh-sticky-table">
+        <table class="w-full text-sm">
+            <thead><tr class="text-left">
+                <th class="p-2">{% trans "Employee" %}</th>
+                <th class="p-2">{% trans "Current notice" %}</th>
+                <th class="p-2">{% trans "Acknowledged" %}</th>
+                {% for p in purposes %}<th class="p-2">{{ p.name }}</th>{% endfor %}
+            </tr></thead>
+            <tbody>
+            {% for row in rows %}
+                <tr class="border-t">
+                    <td class="p-2">{{ row.employee }}</td>
+                    <td class="p-2">{% if row.notice %}v{{ row.notice.version }}{% else %}-{% endif %}</td>
+                    <td class="p-2">{% if not row.notice %}-{% elif row.acknowledged %}{% trans "Yes" %}{% else %}<span class="text-red-600">{% trans "No" %}</span>{% endif %}</td>
+                    {% for rec in row.purposes %}
+                        <td class="p-2">{% if rec and rec.action == "granted" %}{% trans "Given" %}{% elif rec %}{% trans "Withdrawn" %}{% else %}-{% endif %}
+                            {% if rec %}<div class="text-xs text-gray-500">{{ rec.created_at|date:"d/m/Y" }}</div>{% endif %}</td>
+                    {% endfor %}
+                </tr>
+            {% empty %}<tr><td class="p-2">{% trans "No employees." %}</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include 'orvahr_pdpa/_pager.html' %}
+</div>
+{% endblock content %}

@@ -1,0 +1,98 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-settings">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <p class="text-xs text-gray-500 mb-3">{% trans "Notice texts, deadlines and retention periods are legal content: have counsel review them. Defaults are placeholders to verify." %}</p>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Data Protection Officer and deadlines" %}</h2>
+        <div class="p-4">
+            {% if perms.orvahr_pdpa.add_pdpasettings %}<a class="oh-btn oh-btn--secondary mb-3" href="{% url 'orvahr_pdpa:settings-create' %}">{% trans "Add" %}</a>{% endif %}
+            <table class="w-full text-sm">
+                <thead><tr class="text-left"><th class="p-2">{% trans "Company" %}</th><th class="p-2">{% trans "DPO" %}</th><th class="p-2">{% trans "Contact" %}</th><th class="p-2">{% trans "Request due (days)" %}</th><th class="p-2">{% trans "Breach deadline (hours)" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for row in settings_rows %}
+                    <tr class="border-t">
+                        <td class="p-2">{{ row.company|default:_("Default") }}</td>
+                        <td class="p-2">{{ row.dpo_name }}</td>
+                        <td class="p-2">{{ row.dpo_email }} {{ row.dpo_phone }}</td>
+                        <td class="p-2">{{ row.dsr_due_days }}</td>
+                        <td class="p-2">{{ row.breach_deadline_hours }}</td>
+                        <td class="p-2">{% if perms.orvahr_pdpa.change_pdpasettings %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:settings-update' row.pk %}">{% trans "Edit" %}</a>{% endif %}</td>
+                    </tr>
+                {% empty %}<tr><td class="p-2" colspan="6">{% trans "Not set: requests are due in 30 days and breaches in 72 hours (verify)." %}</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Privacy notices" %}</h2>
+        <div class="p-4">
+            {% if perms.orvahr_pdpa.add_privacynotice %}<a class="oh-btn oh-btn--secondary mb-3" href="{% url 'orvahr_pdpa:notice-create' %}">{% trans "Add notice" %}</a>{% endif %}
+            <table class="w-full text-sm">
+                <thead><tr class="text-left"><th class="p-2">{% trans "Title" %}</th><th class="p-2">{% trans "Audience" %}</th><th class="p-2">{% trans "Version" %}</th><th class="p-2">{% trans "Company" %}</th><th class="p-2">{% trans "Effective from" %}</th><th class="p-2">{% trans "Published" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for n in notices %}
+                    <tr class="border-t">
+                        <td class="p-2"><a href="{% url 'orvahr_pdpa:notice-detail' n.pk %}">{{ n.title }}</a></td>
+                        <td class="p-2">{{ n.get_audience_display }}</td>
+                        <td class="p-2">{{ n.version }}</td>
+                        <td class="p-2">{{ n.company|default:_("All") }}</td>
+                        <td class="p-2">{{ n.effective_from|date:"d/m/Y" }}</td>
+                        <td class="p-2">{% if n.published %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                        <td class="p-2">{% if perms.orvahr_pdpa.change_privacynotice %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:notice-update' n.pk %}">{% trans "Edit" %}</a>{% endif %}</td>
+                    </tr>
+                {% empty %}<tr><td class="p-2" colspan="7">{% trans "No notice yet." %}</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Consent purposes" %}</h2>
+        <div class="p-4">
+            {% if perms.orvahr_pdpa.add_consentpurpose %}<a class="oh-btn oh-btn--secondary mb-3" href="{% url 'orvahr_pdpa:purpose-create' %}">{% trans "Add purpose" %}</a>{% endif %}
+            <table class="w-full text-sm">
+                <thead><tr class="text-left"><th class="p-2">{% trans "Name" %}</th><th class="p-2">{% trans "Audience" %}</th><th class="p-2">{% trans "Code" %}</th><th class="p-2">{% trans "Optional" %}</th><th class="p-2">{% trans "Active" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for p in purposes %}
+                    <tr class="border-t">
+                        <td class="p-2">{{ p.name }}{% if p.name_th %} / {{ p.name_th }}{% endif %}</td>
+                        <td class="p-2">{{ p.get_audience_display }}</td>
+                        <td class="p-2"><code>{{ p.code }}</code></td>
+                        <td class="p-2">{% if p.optional %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                        <td class="p-2">{% if p.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                        <td class="p-2">{% if perms.orvahr_pdpa.change_consentpurpose %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:purpose-update' p.pk %}">{% trans "Edit" %}</a>{% endif %}</td>
+                    </tr>
+                {% empty %}<tr><td class="p-2" colspan="6">{% trans "No purpose yet." %}</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Retention policies" %}</h2>
+        <div class="p-4">
+            {% if perms.orvahr_pdpa.add_retentionpolicy %}<a class="oh-btn oh-btn--secondary mb-3" href="{% url 'orvahr_pdpa:policy-create' %}">{% trans "Add policy" %}</a>{% endif %}
+            <table class="w-full text-sm">
+                <thead><tr class="text-left"><th class="p-2">{% trans "Name" %}</th><th class="p-2">{% trans "Model" %}</th><th class="p-2">{% trans "Date field" %}</th><th class="p-2">{% trans "Keep (years)" %}</th><th class="p-2">{% trans "Action" %}</th><th class="p-2">{% trans "Active" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for p in policies %}
+                    <tr class="border-t">
+                        <td class="p-2">{{ p.name }}</td>
+                        <td class="p-2"><code>{{ p.model_label }}</code></td>
+                        <td class="p-2"><code>{{ p.date_field }}</code></td>
+                        <td class="p-2">{{ p.keep_years }}</td>
+                        <td class="p-2">{{ p.get_action_display }}</td>
+                        <td class="p-2">{% if p.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                        <td class="p-2">{% if perms.orvahr_pdpa.change_retentionpolicy %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_pdpa:policy-update' p.pk %}">{% trans "Edit" %}</a>{% endif %}</td>
+                    </tr>
+                {% empty %}<tr><td class="p-2" colspan="7">{% trans "No policy yet." %}</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

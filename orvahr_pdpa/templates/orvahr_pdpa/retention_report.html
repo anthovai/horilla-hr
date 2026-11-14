@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-retention">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <p class="text-sm mb-3"><strong>{% trans "Dry run." %}</strong> {% trans "This report only lists records past their retention period. Nothing is deleted automatically." %}</p>
+    <table class="w-full text-sm">
+        <thead><tr class="text-left">
+            <th class="p-2">{% trans "Policy" %}</th><th class="p-2">{% trans "Model" %}</th><th class="p-2">{% trans "Older than" %}</th>
+            <th class="p-2">{% trans "Action" %}</th><th class="p-2">{% trans "Records past retention" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for row in rows %}
+            <tr class="border-t">
+                <td class="p-2"><a href="{% url 'orvahr_pdpa:retention-policy' row.policy.pk %}">{{ row.policy.name }}</a></td>
+                <td class="p-2"><code>{{ row.policy.model_label }}.{{ row.policy.date_field }}</code></td>
+                <td class="p-2">{{ row.cutoff|date:"d/m/Y" }}</td>
+                <td class="p-2">{{ row.policy.get_action_display }}</td>
+                <td class="p-2">{% if row.error %}<span class="text-red-600">{% trans "Misconfigured" %}: {{ row.error }}</span>{% else %}{{ row.count }}{% endif %}</td>
+            </tr>
+        {% empty %}<tr><td class="p-2" colspan="5">{% trans "No active retention policy." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

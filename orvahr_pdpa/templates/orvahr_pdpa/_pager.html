@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if page.has_other_pages %}
+<div class="flex gap-2 items-center mt-3 text-sm">
+    {% if page.has_previous %}<a class="oh-btn oh-btn--light-bkg" href="?{% if query %}{{ query }}&{% endif %}page={{ page.previous_page_number }}">{% trans "Previous" %}</a>{% endif %}
+    <span>{% blocktrans with n=page.number total=page.paginator.num_pages %}Page {{ n }} of {{ total }}{% endblocktrans %}</span>
+    {% if page.has_next %}<a class="oh-btn oh-btn--light-bkg" href="?{% if query %}{{ query }}&{% endif %}page={{ page.next_page_number }}">{% trans "Next" %}</a>{% endif %}
+</div>
+{% endif %}

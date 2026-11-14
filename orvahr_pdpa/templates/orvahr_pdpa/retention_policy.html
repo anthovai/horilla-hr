@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper" id="pdpa-retention-policy">
+    {% include 'orvahr_pdpa/_nav.html' %}
+    <h2 class="text-base font-semibold">{{ policy.name }}</h2>
+    <p class="text-sm"><code>{{ policy.model_label }}.{{ policy.date_field }}</code> &lt; {{ cutoff|date:"d/m/Y" }} ({{ policy.keep_years }} {% trans "years" %}) &middot; {{ policy.get_action_display }}</p>
+    {% if policy.notes %}<p class="text-xs text-gray-500" style="white-space: pre-wrap">{{ policy.notes }}</p>{% endif %}
+    {% if error %}
+        <p class="text-red-600 text-sm mt-3">{% trans "Misconfigured" %}: {{ error }}</p>
+    {% else %}
+        <p class="text-sm mt-3"><strong>{% trans "Dry run." %}</strong> {% blocktrans with n=total %}{{ n }} record(s) past retention (first 200 shown).{% endblocktrans %}</p>
+        <form method="post" action="{% url 'orvahr_pdpa:retention-anonymise' policy.pk %}" id="pdpa-anonymise-form">
+            {% csrf_token %}
+            <table class="w-full text-sm mt-2">
+                <tbody>
+                {% for record in records %}
+                    <tr class="border-t">
+                        {% if can_anonymise %}<td class="p-2" style="width: 2rem"><input type="checkbox" class="pdpa-pick" value="{{ record.pk }}" /></td>{% endif %}
+                        <td class="p-2">{{ record.pk }}</td>
+                        <td class="p-2">{{ record }}</td>
+                    </tr>
+                {% empty %}<tr><td class="p-2">{% trans "Nothing past retention." %}</td></tr>{% endfor %}
+                </tbody>
+            </table>
+            {% if can_anonymise and records %}
+                <div class="border border-red-300 rounded-md p-3 mt-4" style="max-width: 560px">
+                    <p class="text-sm"><strong>{% trans "Anonymise selected employees" %}</strong></p>
+                    <p class="text-xs text-gray-600">{% trans "This overwrites names and contact details, deletes Thai profile, tax claims and bank details, and disables the login. It cannot be undone. Audit history, uploaded files, payroll, leave and attendance records and backups are not changed." %}</p>
+                    {{ form.record_ids }}
+                    <label class="oh-label mt-2" for="{{ form.confirm.id_for_label }}">{{ form.confirm.label }}</label>
+                    {{ form.confirm }}
+                    <button type="submit" class="oh-btn oh-btn--danger mt-2">{% trans "Anonymise" %}</button>
+                </div>
+                <script>
+                    document.getElementById("pdpa-anonymise-form").addEventListener("submit", function () {
+                        var ids = Array.from(document.querySelectorAll(".pdpa-pick:checked")).map(function (el) { return el.value; });
+                        this.querySelector("input[name=record_ids]").value = ids.join(",");
+                    });
+                </script>
+            {% endif %}
+        </form>
+    {% endif %}
+</div>
+{% endblock content %}
