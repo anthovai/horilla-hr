@@ -1,0 +1,41 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <h1 class="oh-main__titlebar-title fw-bold mb-0">{{ title }}</h1>
+  <a href="{% url back %}" class="oh-btn oh-btn--light">{% trans "Back" %}</a>
+</div>
+<form method="post" class="pb__panel" style="padding:1rem;" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="ob-note">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="row">
+    {% for field in form %}
+      <div class="col-12 col-md-6 mb-3">
+        <label class="oh-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<div class="ob-sub">{{ field.help_text }}</div>{% endif %}
+        {% for error in field.errors %}<div class="text-danger" style="font-size:.8rem;">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+  {% if formset %}
+    <h2 style="font-size:1rem;font-weight:600;margin:1rem 0 .5rem;">{{ formset_title }}</h2>
+    <div class="ob-sub mb-2">{% trans "After at least this many years of service, this percent of the employer's contributions is vested. Below the first step nothing is vested." %}</div>
+    {{ formset.management_form }}
+    {% if formset.non_form_errors %}<div class="ob-note">{{ formset.non_form_errors }}</div>{% endif %}
+    <table class="pb__table">
+      <thead><tr><th>{% trans "Years of service (at least)" %}</th><th>{% trans "Employer share vested (%)" %}</th><th>{% trans "Delete" %}</th></tr></thead>
+      <tbody>
+        {% for f in formset %}
+          <tr>
+            <td>{{ f.id }}<input type="number" step="0.01" name="{{ f.years_of_service.html_name }}" value="{{ f.years_of_service.value|default_if_none:'' }}" class="oh-input w-100">{{ f.years_of_service.errors }}</td>
+            <td><input type="number" step="0.01" name="{{ f.vested_percent.html_name }}" value="{{ f.vested_percent.value|default_if_none:'' }}" class="oh-input w-100">{{ f.vested_percent.errors }}{{ f.non_field_errors }}</td>
+            <td>{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+  <div class="mt-3"><button type="submit" class="oh-btn oh-btn--secondary">{% trans "Save" %}</button></div>
+</form>
+{% endblock %}

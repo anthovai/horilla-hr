@@ -1,0 +1,45 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Monthly remittance" %}</h1>
+    <div class="ob-sub">{% trans "Deducted on confirmed and paid payslips ending in the month, by order type and issuer." %}</div>
+  </div>
+  <a href="{% url 'orvahr_benefits:remittance-csv' %}?{{ request.GET.urlencode }}" class="oh-btn oh-btn--light">{% trans "Export CSV" %}</a>
+</div>
+<form method="get" class="pb__panel mb-3">
+  <div class="ob-filters">
+    <div>
+      <label class="oh-label" for="month">{% trans "Month" %}</label>
+      <input type="month" name="month" id="month" class="oh-input" value="{{ month_value }}">
+    </div>
+    <div>
+      <label class="oh-label" for="type">{% trans "Order type" %}</label>
+      <select name="type" id="type" class="oh-select">
+        <option value="">{% trans "All" %}</option>
+        {% for value, label in types %}<option value="{{ value }}" {% if value == order_type %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Show" %}</button>
+  </div>
+</form>
+<div class="pb__kpis">
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Total to remit" %}</div><div class="pb__kpi-value">{{ grand|floatformat:2 }}</div></div>
+</div>
+{% for g in groups %}
+  <div class="pb__panel ob-scroll mb-3">
+    <div class="pb__panel-head"><span>{{ g.order_type }} · {{ g.issuer }}</span><span>{{ g.total|floatformat:2 }}</span></div>
+    <table class="pb__table">
+      <thead><tr><th>{% trans "Employee" %}</th><th>{% trans "Reference" %}</th><th class="ob-num">{% trans "Deducted" %}</th><th class="ob-num">{% trans "Remaining" %}</th></tr></thead>
+      <tbody>
+        {% for r in g.rows %}
+          <tr><td>{{ r.employee.get_full_name }}</td><td>{{ r.masked_reference }}</td><td class="ob-num">{{ r.amount|floatformat:2 }}</td><td class="ob-num">{{ r.remaining|floatformat:2|default:"—" }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% empty %}
+  <div class="pb__panel"><div class="pb__empty" style="padding:1rem;">{% trans "Nothing deducted for orders in this month." %}</div></div>
+{% endfor %}
+{% endblock %}

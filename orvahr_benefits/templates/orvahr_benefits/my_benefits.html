@@ -1,0 +1,37 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "My provident fund & settlements" %}</h1>
+</div>
+{% if not employee %}
+  <div class="pb__panel"><div class="pb__empty" style="padding:1rem;">{% trans "Your user account is not linked to an employee." %}</div></div>
+{% else %}
+  {% for item in memberships %}
+    <div class="pb__panel mb-3" style="padding:1rem;">
+      <div style="font-weight:600;">{{ item.member.plan.name }} <span class="ob-sub">· {{ item.member.plan.fund_manager_name }}</span></div>
+      <div class="ob-sub mb-2">{% trans "Your rate" %} {{ item.member.employee_rate }}% · {% trans "Employer rate" %} {{ item.member.employer_rate }}% · {% trans "Joined" %} {{ item.member.joined_on|date:"Y-m-d" }}{% if item.member.left_on %} · {% trans "Left" %} {{ item.member.left_on|date:"Y-m-d" }}{% endif %}</div>
+      <div class="pb__kpis">
+        <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Your contributions" %}</div><div class="pb__kpi-value">{{ item.balance.employee|floatformat:2 }}</div></div>
+        <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Employer contributions" %}</div><div class="pb__kpi-value">{{ item.balance.employer|floatformat:2 }}</div></div>
+        <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Employer share vested today" %}</div><div class="pb__kpi-value">{{ item.vesting.percent|floatformat:"-2" }}%</div><div class="pb__kpi-note">{{ item.vesting.vested_employer|floatformat:2 }}</div></div>
+      </div>
+      <div class="ob-sub">{% blocktrans with d=item.balance.as_of|date:"Y-m-d" %}Contributions to {{ d }} from confirmed and paid payslips, excluding investment returns. Your fund manager's statement is authoritative.{% endblocktrans %}</div>
+    </div>
+  {% empty %}
+    <div class="pb__panel mb-3"><div class="pb__empty" style="padding:1rem;">{% trans "You are not a member of a provident fund." %}</div></div>
+  {% endfor %}
+  {% if settlements %}
+    <div class="pb__panel ob-scroll">
+      <table class="pb__table">
+        <thead><tr><th>{% trans "Final settlement" %}</th><th>{% trans "Status" %}</th><th class="ob-num">{% trans "Total payable" %}</th><th></th></tr></thead>
+        <tbody>
+          {% for s in settlements %}
+            <tr><td>{{ s.last_working_day|date:"Y-m-d" }} · {{ s.get_reason_display }}</td><td>{{ s.get_status_display }}</td><td class="ob-num">{{ s.total_payable|floatformat:2 }}</td><td><a href="{% url 'orvahr_benefits:settlement-detail' s.pk %}">{% trans "Open" %}</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

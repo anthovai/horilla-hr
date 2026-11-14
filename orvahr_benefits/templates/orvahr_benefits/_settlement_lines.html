@@ -1,0 +1,14 @@
+{% load i18n %}
+<table class="pb__table">
+  <thead><tr><th>{% trans "Item" %}</th><th>{% trans "Working" %}</th><th class="ob-num">{% trans "Amount" %}</th></tr></thead>
+  <tbody>
+    <tr><td>{% trans "Last wages (pro-rata)" %}</td><td>{{ s.last_wage_days }} × {{ s.daily_wage|floatformat:2 }}{% if s.last_wage_from %} ({{ s.last_wage_from|date:"Y-m-d" }} – {{ s.last_working_day|date:"Y-m-d" }}){% endif %}</td><td class="ob-num">{{ s.last_wages|floatformat:2 }}</td></tr>
+    <tr><td>{% trans "Severance pay" %}</td><td>{% if severance_eligible %}{{ s.severance_days }} × {{ s.daily_wage|floatformat:2 }} ({% blocktrans with d=s.service_days %}{{ d }} days of service{% endblocktrans %}){% else %}{% trans "Not payable for this reason" %}{% endif %}</td><td class="ob-num">{{ s.severance_amount|floatformat:2 }}</td></tr>
+    <tr><td>{% trans "Payment in lieu of notice" %}</td><td>{% if notice_eligible %}{{ s.notice_shortfall_days }} × {{ s.daily_wage|floatformat:2 }}{% else %}{% trans "Not payable for this reason" %}{% endif %}</td><td class="ob-num">{{ s.notice_pay|floatformat:2 }}</td></tr>
+    <tr><td>{% trans "Unused annual leave" %}</td><td>{{ s.annual_leave_days|floatformat:"-2" }} × {{ s.daily_wage|floatformat:2 }}</td><td class="ob-num">{{ s.leave_payout|floatformat:2 }}</td></tr>
+    <tr><td>{% trans "Other additions" %}</td><td>{{ s.other_note|linebreaksbr }}</td><td class="ob-num">{{ s.other_additions|floatformat:2 }}</td></tr>
+    <tr><td>{% trans "Other deductions" %}</td><td></td><td class="ob-num">-{{ s.other_deductions|floatformat:2 }}</td></tr>
+    <tr style="font-weight:700;"><td>{% trans "Total payable by the company" %}</td><td></td><td class="ob-num">{{ s.total_payable|floatformat:2 }}</td></tr>
+    <tr><td>{% trans "Provident fund: vested employer share" %}</td><td>{{ s.pvd_vested_percent|floatformat:"-2" }}% × {{ s.pvd_employer_balance|floatformat:2 }} — {% trans "paid by the fund, not included in the total" %}</td><td class="ob-num">{{ s.pvd_vested_employer|floatformat:2 }}</td></tr>
+  </tbody>
+</table>

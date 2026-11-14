@@ -1,0 +1,69 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Provident fund members" %}</h1>
+    <div class="ob-sub">{% trans "Each member is deducted through a payroll deduction this page keeps in sync. Sync after changes and before each payroll run." %}</div>
+  </div>
+  <div class="ob-actions">
+    <a href="{% url 'orvahr_benefits:pvd-report' %}" class="oh-btn oh-btn--light">{% trans "Monthly report" %}</a>
+    {% if perms.orvahr_benefits.change_employeeprovidentfund %}
+      <form method="post" action="{% url 'orvahr_benefits:pvd-sync' %}">{% csrf_token %}
+        <button class="oh-btn oh-btn--light" type="submit">{% trans "Sync to payroll" %}</button>
+      </form>
+    {% endif %}
+    {% if perms.orvahr_benefits.add_employeeprovidentfund %}
+      <a href="{% url 'orvahr_benefits:pvd-member-create' %}" class="oh-btn oh-btn--secondary">{% trans "Add member" %}</a>
+    {% endif %}
+  </div>
+</div>
+<form method="get" class="pb__panel mb-3">
+  <div class="ob-filters">
+    <div>
+      <label class="oh-label" for="plan">{% trans "Plan" %}</label>
+      <select name="plan" id="plan" class="oh-select">
+        <option value="">{% trans "All" %}</option>
+        {% for p in plans %}<option value="{{ p.pk }}" {% if plan_id == p.pk|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Show" %}</button>
+  </div>
+</form>
+<div class="pb__panel ob-scroll">
+  <table class="pb__table">
+    <thead><tr>
+      <th>{% trans "Employee" %}</th><th>{% trans "Plan" %}</th><th class="ob-num">{% trans "Employee rate" %}</th>
+      <th class="ob-num">{% trans "Employer rate" %}</th><th>{% trans "Joined" %}</th><th>{% trans "Left" %}</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for m in members %}
+        <tr>
+          <td>{{ m.employee.get_full_name }}{% if m.employee.badge_id %} <span class="ob-sub">({{ m.employee.badge_id }})</span>{% endif %}</td>
+          <td>{{ m.plan.name }}</td>
+          <td class="ob-num">{{ m.employee_rate }}%</td>
+          <td class="ob-num">{{ m.employer_rate }}%</td>
+          <td>{{ m.joined_on|date:"Y-m-d" }}</td>
+          <td>{{ m.left_on|date:"Y-m-d"|default:"—" }}</td>
+          <td>{% if perms.orvahr_benefits.change_employeeprovidentfund %}<a href="{% url 'orvahr_benefits:pvd-member-update' m.pk %}">{% trans "Edit" %}</a>{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="pb__empty">{% trans "No members." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if perms.orvahr_benefits.change_employeeprovidentfund %}
+<form method="post" action="{% url 'orvahr_benefits:pvd-tax-claims' %}" class="pb__panel mt-3">
+  {% csrf_token %}
+  <div class="ob-filters">
+    <div>
+      <label class="oh-label" for="year">{% trans "Tax year" %}</label>
+      <input type="number" name="year" id="year" class="oh-input" min="2000" max="2200" value="{% now 'Y' %}">
+    </div>
+    <button type="submit" class="oh-btn oh-btn--light">{% trans "Update provident fund tax claims" %}</button>
+    <div class="ob-sub" style="max-width:36rem;">{% trans "Sets each member's provident fund tax allowance for the year to the employee contributions deducted on confirmed and paid payslips. This replaces a figure typed in by hand for that year." %}</div>
+  </div>
+</form>
+{% endif %}
+{% endblock %}

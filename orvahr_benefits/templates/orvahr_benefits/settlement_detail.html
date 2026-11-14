@@ -1,0 +1,43 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Final settlement" %}: {{ s.employee.get_full_name }}</h1>
+    <div class="ob-sub">{{ s.get_reason_display }} · {% trans "Last working day" %} {{ s.last_working_day|date:"Y-m-d" }} · <span class="pb__pill pb__pill--{{ s.status }}">{{ s.get_status_display }}</span></div>
+  </div>
+  <div class="ob-actions">
+    <a href="{% url 'orvahr_benefits:settlement-pdf' s.pk %}" class="oh-btn oh-btn--light" target="_blank" rel="noopener">{% trans "PDF" %}</a>
+    {% if is_hr %}
+      {% if s.is_draft and perms.orvahr_benefits.change_finalsettlement %}
+        <a href="{% url 'orvahr_benefits:settlement-update' s.pk %}" class="oh-btn oh-btn--light">{% trans "Edit" %}</a>
+        <form method="post" action="{% url 'orvahr_benefits:settlement-recompute' s.pk %}">{% csrf_token %}<button class="oh-btn oh-btn--light" type="submit">{% trans "Recalculate" %}</button></form>
+      {% endif %}
+      {% if s.is_draft and perms.orvahr_benefits.approve_finalsettlement %}
+        <form method="post" action="{% url 'orvahr_benefits:settlement-approve' s.pk %}">{% csrf_token %}<button class="oh-btn oh-btn--secondary" type="submit">{% trans "Approve" %}</button></form>
+      {% endif %}
+      {% if s.status == "approved" and perms.orvahr_benefits.change_finalsettlement %}
+        <form method="post" action="{% url 'orvahr_benefits:settlement-paid' s.pk %}">{% csrf_token %}<button class="oh-btn oh-btn--secondary" type="submit">{% trans "Mark as paid" %}</button></form>
+      {% endif %}
+      <a href="{% url 'orvahr_benefits:settlements' %}" class="oh-btn oh-btn--light">{% trans "Back" %}</a>
+    {% else %}
+      <a href="{% url 'orvahr_benefits:my-benefits' %}" class="oh-btn oh-btn--light">{% trans "Back" %}</a>
+    {% endif %}
+  </div>
+</div>
+<div class="ob-note">{% trans "A calculation for HR to check, not legal advice. Severance bands and notice rules are data; verify against current law." %}</div>
+{% if s.computation_notes %}<div class="ob-note">{{ s.computation_notes|linebreaksbr }}</div>{% endif %}
+<div class="pb__kpis">
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Service" %}</div><div class="pb__kpi-value">{{ s.service_days }}</div><div class="pb__kpi-note">{% trans "days" %}</div></div>
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Daily wage" %}</div><div class="pb__kpi-value">{{ s.daily_wage|floatformat:2 }}</div><div class="pb__kpi-note">{{ s.wage_basis }}</div></div>
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Total payable" %}</div><div class="pb__kpi-value">{{ s.total_payable|floatformat:2 }}</div></div>
+</div>
+<div class="pb__panel ob-scroll mb-3">{% include "orvahr_benefits/_settlement_lines.html" %}</div>
+<div class="pb__panel" style="padding:1rem;">
+  <div style="font-weight:600;margin-bottom:.25rem;">{% trans "Tax" %}</div>
+  <div class="ob-sub mb-2">{% trans "Severance has special tax rules. OrvaHR does not calculate the tax; the split below is entered by HR as advised by an accountant." %}</div>
+  <div>{% trans "Taxable amount" %}: {{ s.taxable_amount|floatformat:2|default:"—" }} · {% trans "Tax-exempt amount" %}: {{ s.tax_exempt_amount|floatformat:2|default:"—" }}</div>
+  {% if s.tax_note %}<div class="ob-sub">{{ s.tax_note|linebreaksbr }}</div>{% endif %}
+  {% if s.approved_at %}<div class="ob-sub mt-2">{% trans "Approved" %} {{ s.approved_at|date:"Y-m-d H:i" }} {% if s.approved_by %}· {{ s.approved_by }}{% endif %}{% if s.paid_on %} · {% trans "Paid" %} {{ s.paid_on|date:"Y-m-d" }}{% endif %}</div>{% endif %}
+</div>
+{% endblock %}

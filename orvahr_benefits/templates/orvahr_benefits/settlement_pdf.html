@@ -1,0 +1,64 @@
+{% load i18n thai %}<!DOCTYPE html>
+{% comment %}
+  Final settlement summary, bilingual (Thai labels fixed, English via
+  gettext). Rendered by xhtml2pdf through orvahr_th.pdf: tables and plain CSS
+  only, Sarabun throughout. No national or tax ID on it.
+{% endcomment %}
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex">
+  <title>สรุปการจ่ายเงินเมื่อสิ้นสุดการจ้าง / {% trans "Final settlement" %}</title>
+  <style>
+    {% thai_font_face pdf_engine %}
+    @page { size: A4; margin: 14mm; }
+    html, body, table, td, th, p, h1, div, span { font-family: 'Sarabun'; }
+    body { font-size: 11pt; color: #111; background: #fff; }
+    h1 { font-size: 15pt; text-align: center; margin: 0 0 6px 0; }
+    .sub { text-align: center; font-size: 10pt; color: #444; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    .info td { padding: 3px 6px; vertical-align: top; }
+    .lines th, .lines td { border: 1px solid #777; padding: 4px 6px; }
+    .lines th { background: #eee; }
+    .num { text-align: right; }
+    .total td { font-weight: bold; }
+    .note { font-size: 9pt; color: #444; margin-top: 8px; }
+    .warn { border: 1px solid #b45309; color: #92400e; padding: 4px 6px; font-size: 9.5pt; margin-bottom: 8px; }
+    .sign td { padding-top: 28px; text-align: center; font-size: 10pt; }
+  </style>
+</head>
+<body>
+  <h1>สรุปการจ่ายเงินเมื่อสิ้นสุดการจ้าง<br>{% trans "Final settlement summary" %}</h1>
+  <div class="sub">สถานะ / {% trans "Status" %}: {{ s.get_status_display }}</div>
+  {% if s.is_draft %}<div class="warn">ร่าง — ยังไม่อนุมัติ / {% trans "Draft: not approved" %}</div>{% endif %}
+  <table class="info">
+    <tr><td width="40%">ชื่อพนักงาน / {% trans "Employee" %}</td><td>{{ s.employee.get_full_name }}{% if s.employee.badge_id %} ({{ s.employee.badge_id }}){% endif %}</td></tr>
+    <tr><td>วันทำงานวันสุดท้าย / {% trans "Last working day" %}</td><td>{{ s.last_working_day|be_date }} ({{ s.last_working_day|date:"Y-m-d" }})</td></tr>
+    <tr><td>เหตุแห่งการสิ้นสุดการจ้าง / {% trans "Reason" %}</td><td>{{ s.get_reason_display }}</td></tr>
+    <tr><td>อายุงาน / {% trans "Service" %}</td><td>{{ s.service_days }} วัน / {% trans "days" %}</td></tr>
+    <tr><td>ค่าจ้างรายวัน / {% trans "Daily wage" %}</td><td>{{ s.daily_wage|floatformat:2 }} ({{ s.wage_basis }})</td></tr>
+  </table>
+  <br>
+  <table class="lines">
+    <tr><th>รายการ / {% trans "Item" %}</th><th>{% trans "Working" %}</th><th class="num">จำนวนเงิน (บาท) / {% trans "Amount" %}</th></tr>
+    <tr><td>ค่าจ้างงวดสุดท้าย / {% trans "Last wages (pro-rata)" %}</td><td>{{ s.last_wage_days }} × {{ s.daily_wage|floatformat:2 }}</td><td class="num">{{ s.last_wages|floatformat:2 }}</td></tr>
+    <tr><td>ค่าชดเชย / {% trans "Severance pay" %}</td><td>{% if severance_eligible %}{{ s.severance_days }} × {{ s.daily_wage|floatformat:2 }}{% else %}-{% endif %}</td><td class="num">{{ s.severance_amount|floatformat:2 }}</td></tr>
+    <tr><td>สินจ้างแทนการบอกกล่าวล่วงหน้า / {% trans "Payment in lieu of notice" %}</td><td>{% if notice_eligible %}{{ s.notice_shortfall_days }} × {{ s.daily_wage|floatformat:2 }}{% else %}-{% endif %}</td><td class="num">{{ s.notice_pay|floatformat:2 }}</td></tr>
+    <tr><td>ค่าจ้างวันหยุดพักผ่อนประจำปีที่ไม่ได้ใช้ / {% trans "Unused annual leave" %}</td><td>{{ s.annual_leave_days|floatformat:"-2" }} × {{ s.daily_wage|floatformat:2 }}</td><td class="num">{{ s.leave_payout|floatformat:2 }}</td></tr>
+    <tr><td>รายการอื่น (เพิ่ม) / {% trans "Other additions" %}</td><td>{{ s.other_note }}</td><td class="num">{{ s.other_additions|floatformat:2 }}</td></tr>
+    <tr><td>รายการอื่น (หัก) / {% trans "Other deductions" %}</td><td></td><td class="num">-{{ s.other_deductions|floatformat:2 }}</td></tr>
+    <tr class="total"><td>รวมที่บริษัทต้องจ่าย / {% trans "Total payable by the company" %}</td><td></td><td class="num">{{ s.total_payable|floatformat:2 }}</td></tr>
+  </table>
+  <div class="note">({{ s.total_payable|baht_text }})</div>
+  <br>
+  <table class="lines">
+    <tr><td>กองทุนสำรองเลี้ยงชีพ: เงินสมทบนายจ้างที่ได้รับสิทธิ์ / {% trans "Provident fund: vested employer share" %} ({{ s.pvd_vested_percent|floatformat:"-2" }}% × {{ s.pvd_employer_balance|floatformat:2 }})</td><td class="num">{{ s.pvd_vested_employer|floatformat:2 }}</td></tr>
+  </table>
+  <div class="note">จ่ายโดยกองทุน ไม่รวมในยอดที่บริษัทจ่าย / {% trans "Paid by the fund, not included in the company total. The fund manager's statement is authoritative." %}</div>
+  <div class="note">ภาษี / {% trans "Tax" %}: {% trans "Taxable amount" %} {{ s.taxable_amount|floatformat:2|default:"-" }} · {% trans "Tax-exempt amount" %} {{ s.tax_exempt_amount|floatformat:2|default:"-" }}. {% trans "Severance has special tax rules; OrvaHR does not calculate the tax." %}</div>
+  <div class="note">{% trans "A calculation for HR to check, not legal advice. Statutory figures are data; verify against current law." %}</div>
+  <table class="sign">
+    <tr><td>.................................<br>ผู้อนุมัติ / {% trans "Approved by" %}</td><td>.................................<br>พนักงาน / {% trans "Employee" %}</td></tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Provident fund contributions" %}</h1>
+    <div class="ob-sub">{% trans "From confirmed and paid payslips ending in the month. Base: the payslip's basic pay. Verify the base against the plan's rules." %}</div>
+  </div>
+  <a href="{% url 'orvahr_benefits:pvd-report-csv' %}?{{ request.GET.urlencode }}" class="oh-btn oh-btn--light">{% trans "Export CSV (generic format)" %}</a>
+</div>
+<form method="get" class="pb__panel mb-3">
+  <div class="ob-filters">
+    <div>
+      <label class="oh-label" for="month">{% trans "Month" %}</label>
+      <input type="month" name="month" id="month" class="oh-input" value="{{ month_value }}">
+    </div>
+    <div>
+      <label class="oh-label" for="plan">{% trans "Plan" %}</label>
+      <select name="plan" id="plan" class="oh-select">
+        <option value="">{% trans "All" %}</option>
+        {% for p in plans %}<option value="{{ p.pk }}" {% if plan.pk == p.pk %}selected{% endif %}>{{ p.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Show" %}</button>
+  </div>
+</form>
+<div class="pb__kpis">
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Employee contributions" %}</div><div class="pb__kpi-value">{{ totals.deducted_employee|floatformat:2 }}</div></div>
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Employer contributions" %}</div><div class="pb__kpi-value">{{ totals.deducted_employer|floatformat:2 }}</div></div>
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "To remit" %}</div><div class="pb__kpi-value">{{ totals.deducted_total|floatformat:2 }}</div></div>
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Expected at member rates" %}</div><div class="pb__kpi-value">{{ totals.expected_total|floatformat:2 }}</div></div>
+  <div class="pb__kpi"><div class="pb__kpi-label">{% trans "Rows to check" %}</div><div class="pb__kpi-value {% if totals.mismatches %}pb__kpi-value--warn{% endif %}">{{ totals.mismatches }}</div></div>
+</div>
+<div class="pb__panel ob-scroll">
+  <table class="pb__table">
+    <thead><tr>
+      <th>{% trans "Employee" %}</th><th>{% trans "Plan" %}</th><th>{% trans "Period" %}</th>
+      <th class="ob-num">{% trans "Base" %}</th><th class="ob-num">{% trans "Rates" %}</th>
+      <th class="ob-num">{% trans "Employee" %}</th><th class="ob-num">{% trans "Employer" %}</th><th>{% trans "Check" %}</th>
+    </tr></thead>
+    <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.employee.get_full_name }}</td>
+          <td>{{ r.plan.name }}</td>
+          <td>{{ r.period_start|date:"Y-m-d" }} – {{ r.period_end|date:"Y-m-d" }}</td>
+          <td class="ob-num">{{ r.base|floatformat:2 }}</td>
+          <td class="ob-num">{{ r.employee_rate }}% / {{ r.employer_rate }}%</td>
+          <td class="ob-num">{% if r.deducted_employee is None %}—{% else %}{{ r.deducted_employee|floatformat:2 }}{% endif %}</td>
+          <td class="ob-num">{% if r.deducted_employer is None %}—{% else %}{{ r.deducted_employer|floatformat:2 }}{% endif %}</td>
+          <td>{% if r.mismatch %}<span class="pb__pill pb__pill--review" title="{% trans 'Expected' %}: {{ r.expected_employee|floatformat:2 }} / {{ r.expected_employer|floatformat:2 }}">{% trans "Differs from expected" %}</span>{% else %}<span class="pb__pill pb__pill--paid">{% trans "OK" %}</span>{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="pb__empty">{% trans "No issued payslips for members in this month." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

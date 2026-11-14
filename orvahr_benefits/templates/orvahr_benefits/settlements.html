@@ -1,0 +1,50 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Final settlements" %}</h1>
+    <div class="ob-sub">{% trans "Drafts are recalculated on every change; approved settlements are frozen." %}</div>
+  </div>
+  <div class="ob-actions">
+    <a href="{% url 'orvahr_benefits:severance-rules' %}" class="oh-btn oh-btn--light">{% trans "Severance rules" %}</a>
+    {% if perms.orvahr_benefits.add_finalsettlement %}
+      <a href="{% url 'orvahr_benefits:settlement-create' %}" class="oh-btn oh-btn--secondary">{% trans "New settlement" %}</a>
+    {% endif %}
+  </div>
+</div>
+<form method="get" class="pb__panel mb-3">
+  <div class="ob-filters">
+    <div>
+      <label class="oh-label" for="status">{% trans "Status" %}</label>
+      <select name="status" id="status" class="oh-select">
+        <option value="">{% trans "All" %}</option>
+        {% for value, label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Show" %}</button>
+  </div>
+</form>
+<div class="pb__panel ob-scroll">
+  <table class="pb__table">
+    <thead><tr>
+      <th>{% trans "Employee" %}</th><th>{% trans "Last working day" %}</th><th>{% trans "Reason" %}</th>
+      <th class="ob-num">{% trans "Total payable" %}</th><th>{% trans "Status" %}</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for s in settlements %}
+        <tr>
+          <td>{{ s.employee.get_full_name }}</td>
+          <td>{{ s.last_working_day|date:"Y-m-d" }}</td>
+          <td>{{ s.get_reason_display }}</td>
+          <td class="ob-num">{{ s.total_payable|floatformat:2 }}</td>
+          <td><span class="pb__pill pb__pill--{{ s.status }}">{{ s.get_status_display }}</span></td>
+          <td><a href="{% url 'orvahr_benefits:settlement-detail' s.pk %}">{% trans "Open" %}</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="pb__empty">{% trans "No settlements." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

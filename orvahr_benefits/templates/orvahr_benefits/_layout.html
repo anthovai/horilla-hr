@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% comment %}
+  Shared frame for every orvahr_benefits page: the payroll page styling
+  (panels, figure strip, tables) so these pages look like the payroll ones.
+{% endcomment %}
+{% block content %}
+<main :class="sidebarOpen ? 'oh-main__sidebar-visible' : ''">
+  {% include "payroll/batch/_batch.css.html" %}
+  <style>
+    .ob-head { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
+    .ob-sub { font-size:.8rem; color:#6b7280; }
+    .ob-filters { padding:.85rem 1rem; display:flex; gap:1rem; align-items:flex-end; flex-wrap:wrap; }
+    .ob-filters .oh-input, .ob-filters .oh-select, .ob-filters .oh-btn { height:2.375rem; margin-bottom:0; }
+    .ob-num { text-align:right; font-variant-numeric: tabular-nums; white-space:nowrap; }
+    .ob-note { font-size:.78rem; color:#92400e; background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:.5rem .75rem; margin-bottom:1rem; }
+    .ob-scroll { overflow-x:auto; }
+    .ob-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+  </style>
+  <section class="oh-wrapper pb">
+    {% block page %}{% endblock %}
+  </section>
+</main>
+{% endblock %}

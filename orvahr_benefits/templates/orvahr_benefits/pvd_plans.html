@@ -1,0 +1,42 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Provident fund plans" %}</h1>
+    <div class="ob-sub">{% trans "Rate ranges and vesting schedules are data from each plan's rules; verify against current law." %}</div>
+  </div>
+  <div class="ob-actions">
+    <a href="{% url 'orvahr_benefits:pvd-members' %}" class="oh-btn oh-btn--light">{% trans "Members" %}</a>
+    {% if perms.orvahr_benefits.add_providentfundplan %}
+      <a href="{% url 'orvahr_benefits:pvd-plan-create' %}" class="oh-btn oh-btn--secondary">{% trans "New plan" %}</a>
+    {% endif %}
+  </div>
+</div>
+<div class="pb__panel ob-scroll">
+  <table class="pb__table">
+    <thead><tr>
+      <th>{% trans "Plan" %}</th><th>{% trans "Fund manager" %}</th><th>{% trans "Employee rate range" %}</th>
+      <th>{% trans "Default employer rate" %}</th><th>{% trans "Vesting schedule" %}</th><th>{% trans "Active" %}</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for plan in plans %}
+        <tr>
+          <td>{{ plan.name }}{% if plan.policy_name %}<div class="ob-sub">{{ plan.policy_name }}</div>{% endif %}</td>
+          <td>{{ plan.fund_manager_name }}</td>
+          <td>{{ plan.min_employee_rate }}% – {{ plan.max_employee_rate }}%</td>
+          <td>{{ plan.default_employer_rate }}%</td>
+          <td>
+            {% for step in plan.vesting_steps.all %}{{ step.years_of_service|floatformat:"-2" }}y → {{ step.vested_percent|floatformat:"-2" }}%{% if not forloop.last %}, {% endif %}{% empty %}<span class="ob-sub">{% trans "None (nothing vests)" %}</span>{% endfor %}
+            <div class="ob-sub">{{ plan.get_vesting_basis_display }}</div>
+          </td>
+          <td>{% if plan.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+          <td>{% if perms.orvahr_benefits.change_providentfundplan %}<a href="{% url 'orvahr_benefits:pvd-plan-update' plan.pk %}">{% trans "Edit" %}</a>{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="pb__empty">{% trans "No provident fund plans yet." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Severance rules" %}</h1>
+    <div class="ob-sub">{% trans "Bands are data. The newest set effective on the last working day is used. Edit them in the admin." %}</div>
+  </div>
+</div>
+<div class="ob-note">{% trans "These figures are commonly cited, not authoritative. Verify against current law before relying on them." %}</div>
+<div class="pb__panel ob-scroll">
+  <table class="pb__table">
+    <thead><tr>
+      <th>{% trans "Effective from" %}</th><th class="ob-num">{% trans "Service from (days)" %}</th><th class="ob-num">{% trans "Service below (days)" %}</th>
+      <th class="ob-num">{% trans "Days of wages" %}</th><th>{% trans "Legal reference" %}</th><th>{% trans "Active" %}</th>
+    </tr></thead>
+    <tbody>
+      {% for r in rules %}
+        <tr>
+          <td>{{ r.effective_from|date:"Y-m-d" }}</td>
+          <td class="ob-num">{{ r.min_days }}</td>
+          <td class="ob-num">{{ r.max_days|default_if_none:"—" }}</td>
+          <td class="ob-num">{{ r.days_of_wages }}</td>
+          <td>{{ r.legal_reference }}{% if r.note %}<div class="ob-sub">{{ r.note }}</div>{% endif %}</td>
+          <td>{% if r.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="pb__empty">{% trans "No severance rules." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

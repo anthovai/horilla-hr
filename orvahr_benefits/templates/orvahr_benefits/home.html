@@ -1,0 +1,19 @@
+{% extends "orvahr_benefits/_layout.html" %}
+{% load i18n %}
+{% block page %}
+<div class="ob-head">
+  <div>
+    <h1 class="oh-main__titlebar-title fw-bold mb-0">{% trans "Thai Benefits" %}</h1>
+    <div class="ob-sub">{% trans "Provident fund, final settlements, student loan and garnishment deductions." %}</div>
+  </div>
+</div>
+<div class="pb__panel">
+  <table class="pb__table">
+    <tbody>
+      {% for url_name, label in links %}
+        <tr><td><a href="{% url url_name %}">{{ label }}</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
