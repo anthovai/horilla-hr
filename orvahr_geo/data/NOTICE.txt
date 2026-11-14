@@ -1,0 +1,18 @@
+th_geo.json is derived from "Thailand Geography JSON"
+  https://github.com/thailand-geography-data/thailand-geography-json
+  commit 021d18e9a481bc141ea87de4ddeebe843cff2f12 (src/provinces.json,
+  src/districts.json, src/subdistricts.json), downloaded 2026-11-14.
+  Copyright (c) 2023-Present Joe Takara, MIT License: see
+  LICENSE.thailand-geography-json in this directory.
+
+Upstream states its postcodes come from the Thailand Post poster
+"รหัสไปรษณีย์ทั่วประเทศ จำแนกตามท้องที่" (May 2018); the area codes are the
+DOPA administrative codes.
+
+Transformation: names whitespace-normalised; codes as strings; every
+postcode of a subdistrict kept (space separated, primary first). Counts:
+77 provinces, 928 districts, 7,436 subdistricts, 974 distinct postcodes,
+86 subdistricts with more than one postcode.
+
+To refresh: rebuild th_geo.json in the same format, then run
+`python manage.py load_th_geo` (idempotent; never deletes rows).

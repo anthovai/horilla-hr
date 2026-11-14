@@ -34,8 +34,6 @@ from django.utils.translation import gettext_lazy as _
 
 from base.methods import eval_validate, reload_queryset
 from employee.filters import EmployeeFilter
-from employee.tax_claims import PER_UNIT_CODES
-from employee.thai_validators import is_valid_thai_national_id, normalize_digits
 from employee.models import (
     Actiontype,
     BonusPoint,
@@ -52,6 +50,8 @@ from employee.models import (
     Policy,
     PolicyMultipleFile,
 )
+from employee.tax_claims import PER_UNIT_CODES
+from employee.thai_validators import is_valid_thai_national_id, normalize_digits
 from horilla import horilla_middlewares
 from horilla_audit.models import AccountBlockUnblock
 from horilla_auth.models import HorillaUser
@@ -997,6 +997,11 @@ class EmployeeThaiProfileForm(ModelForm):
     promptpay_id = forms.CharField(
         max_length=20, required=False, label=_("PromptPay ID")
     )
+    # Set by the address picker (orvahr_geo) when a subdistrict is chosen from
+    # the list; cleared by the page as soon as a name is typed by hand.
+    th_subdistrict_code = forms.CharField(
+        max_length=6, required=False, widget=forms.HiddenInput
+    )
 
     class Meta:
         model = EmployeeThaiProfile
@@ -1082,6 +1087,58 @@ class EmployeeThaiProfileForm(ModelForm):
         if value and not re.fullmatch(r"\d{5}", value):
             raise forms.ValidationError(_("Must be exactly 5 digits."))
         return value
+
+    def clean(self):
+        cleaned = super().clean()
+        self._clean_thai_address(cleaned)
+        return cleaned
+
+    def _clean_thai_address(self, cleaned):
+        """
+        Picked subdistrict: store its Thai names and check the postcode.
+        Typed names that match a known subdistrict: check the postcode.
+        Anything else is kept as free text.
+        """
+        from django.apps import apps
+
+        if not apps.is_installed("orvahr_geo"):
+            return
+        from orvahr_geo.lookup import find_subdistrict, get_subdistrict
+
+        code = (cleaned.get("th_subdistrict_code") or "").strip()
+        if code:
+            sub = get_subdistrict(code)
+            if sub is None:
+                self.add_error(
+                    None, _("The selected subdistrict was not found. Pick it again.")
+                )
+                return
+            cleaned["subdistrict"] = sub.name_th
+            cleaned["district"] = sub.district.name_th
+            cleaned["province"] = sub.district.province.name_th
+        else:
+            sub = find_subdistrict(
+                cleaned.get("province"),
+                cleaned.get("district"),
+                cleaned.get("subdistrict"),
+            )
+            if sub is None:
+                return
+        if "postcode" in self.errors:
+            return
+        postcode = cleaned.get("postcode")
+        if not postcode:
+            cleaned["postcode"] = sub.postcode
+        elif postcode not in sub.postcode_list:
+            self.add_error(
+                "postcode",
+                _("Postcode %(postcode)s does not serve %(subdistrict)s (%(valid)s).")
+                % {
+                    "postcode": postcode,
+                    "subdistrict": sub.name_th,
+                    "valid": ", ".join(sub.postcode_list),
+                },
+            )
 
 
 class EmployeeTaxClaimForm(ModelForm):

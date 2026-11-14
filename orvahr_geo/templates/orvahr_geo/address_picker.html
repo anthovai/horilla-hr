@@ -1,0 +1,185 @@
+{% load i18n %}
+{% comment %}
+  Cascading province -> district -> subdistrict picker for a form that has
+  plain text inputs named province/district/subdistrict/postcode and a hidden
+  th_subdistrict_code. Choosing from the lists fills the text inputs (Thai
+  names) and the postcode; typing a name by hand clears the picked code so the
+  server treats the address as free text (and still checks the postcode when
+  the typed names match a known subdistrict).
+  Context: picker_key (unique per page, e.g. the employee pk).
+{% endcomment %}
+<div class="col-12 mb-1" id="thGeoPicker{{ picker_key }}"
+    data-provinces-url="{% url 'orvahr_geo:provinces' %}"
+    data-districts-url="{% url 'orvahr_geo:districts' %}"
+    data-subdistricts-url="{% url 'orvahr_geo:subdistricts' %}"
+    data-postcode-url="{% url 'orvahr_geo:postcode-search' %}"
+    data-placeholder="{% trans '-- Select --' %}"
+    data-other-postcodes="{% trans 'Postcodes for this subdistrict:' %}">
+    <div class="row">
+        <div class="col-12">
+            <small class="text-muted d-block mb-2">{% trans "Pick the address from the official list, or type it in the fields below if it is not listed." %}</small>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <label class="oh-label" for="thGeoPicker{{ picker_key }}Province">{% trans "Province (list)" %}</label>
+            <select id="thGeoPicker{{ picker_key }}Province" class="oh-select w-100" data-level="province"></select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <label class="oh-label" for="thGeoPicker{{ picker_key }}District">{% trans "District (list)" %}</label>
+            <select id="thGeoPicker{{ picker_key }}District" class="oh-select w-100" data-level="district" disabled></select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <label class="oh-label" for="thGeoPicker{{ picker_key }}Subdistrict">{% trans "Subdistrict (list)" %}</label>
+            <select id="thGeoPicker{{ picker_key }}Subdistrict" class="oh-select w-100" data-level="subdistrict" disabled></select>
+            <small class="text-muted d-block" data-role="postcodes-hint"></small>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var root = document.getElementById("thGeoPicker{{ picker_key|escapejs }}");
+    if (!root) { return; }
+    var form = root.closest("form");
+    var input = function (name) { return form.querySelector('[name="' + name + '"]'); };
+    var provinceSel = root.querySelector('[data-level="province"]');
+    var districtSel = root.querySelector('[data-level="district"]');
+    var subSel = root.querySelector('[data-level="subdistrict"]');
+    var hint = root.querySelector('[data-role="postcodes-hint"]');
+    var codeInput = input("th_subdistrict_code");
+    var cache = {};
+
+    function getJSON(url) {
+        if (!cache[url]) {
+            cache[url] = fetch(url, { credentials: "same-origin", headers: { "Accept": "application/json" } })
+                .then(function (r) { return r.ok ? r.json() : { results: [] }; })
+                .then(function (d) { return d.results || []; })
+                .catch(function () { delete cache[url]; return []; });
+        }
+        return cache[url];
+    }
+    function url(kind, param, value) {
+        return root.dataset[kind + "Url"] + "?" + param + "=" + encodeURIComponent(value);
+    }
+    function fill(select, items, selected) {
+        select.innerHTML = "";
+        select.appendChild(new Option(root.dataset.placeholder, ""));
+        items.forEach(function (item) {
+            var option = new Option(item.th + " / " + item.en, item.code);
+            option.dataset.th = item.th;
+            option.dataset.en = item.en;
+            if (item.postcodes) { option.dataset.postcodes = item.postcodes.join(" "); }
+            select.appendChild(option);
+        });
+        select.disabled = items.length === 0;
+        if (selected) { select.value = selected; }
+    }
+    function clear(select) { fill(select, [], ""); }
+    function findCode(items, name) {
+        name = (name || "").trim().toLowerCase();
+        if (!name) { return ""; }
+        var hit = items.filter(function (i) { return i.th.toLowerCase() === name || i.en.toLowerCase() === name; })[0];
+        return hit ? hit.code : "";
+    }
+    function selected(select) { return select.options[select.selectedIndex]; }
+    function showPostcodes(option) {
+        var codes = option && option.dataset.postcodes ? option.dataset.postcodes.split(" ") : [];
+        hint.textContent = codes.length > 1 ? root.dataset.otherPostcodes + " " + codes.join(", ") : "";
+        return codes;
+    }
+    function setText(name, value) { var el = input(name); if (el) { el.value = value; } }
+
+    function loadDistricts(provinceCode, preselectName) {
+        clear(subSel);
+        if (!provinceCode) { clear(districtSel); return Promise.resolve(""); }
+        return getJSON(url("districts", "province", provinceCode)).then(function (items) {
+            var code = findCode(items, preselectName);
+            fill(districtSel, items, code);
+            return code;
+        });
+    }
+    function loadSubdistricts(districtCode, preselectName) {
+        if (!districtCode) { clear(subSel); return Promise.resolve(""); }
+        return getJSON(url("subdistricts", "district", districtCode)).then(function (items) {
+            var code = findCode(items, preselectName);
+            fill(subSel, items, code);
+            showPostcodes(selected(subSel));
+            return code;
+        });
+    }
+
+    provinceSel.addEventListener("change", function () {
+        var option = selected(provinceSel);
+        setText("province", option && option.value ? option.dataset.th : "");
+        ["district", "subdistrict", "postcode"].forEach(function (n) { setText(n, ""); });
+        codeInput.value = "";
+        hint.textContent = "";
+        loadDistricts(provinceSel.value);
+    });
+    districtSel.addEventListener("change", function () {
+        var option = selected(districtSel);
+        setText("district", option && option.value ? option.dataset.th : "");
+        ["subdistrict", "postcode"].forEach(function (n) { setText(n, ""); });
+        codeInput.value = "";
+        hint.textContent = "";
+        loadSubdistricts(districtSel.value);
+    });
+    subSel.addEventListener("change", function () {
+        var option = selected(subSel);
+        if (!option || !option.value) {
+            setText("subdistrict", "");
+            codeInput.value = "";
+            showPostcodes(null);
+            return;
+        }
+        setText("subdistrict", option.dataset.th);
+        codeInput.value = option.value;
+        var codes = showPostcodes(option);
+        var postcode = input("postcode");
+        if (postcode && codes.indexOf(postcode.value) === -1) { postcode.value = codes[0] || ""; }
+    });
+
+    // Typing a name by hand means the address is no longer the picked one.
+    ["province", "district", "subdistrict"].forEach(function (name) {
+        var el = input(name);
+        if (el) { el.addEventListener("input", function () { codeInput.value = ""; }); }
+    });
+
+    // A typed postcode with no address yet narrows the lists.
+    var postcodeInput = input("postcode");
+    if (postcodeInput) {
+        postcodeInput.addEventListener("input", function () {
+            var value = postcodeInput.value.trim();
+            if (!/^\d{5}$/.test(value) || subSel.value || input("province").value.trim()) { return; }
+            getJSON(url("postcode", "postcode", value)).then(function (items) {
+                if (!items.length || subSel.value) { return; }
+                var province = items[0].province, district = items[0].district;
+                var sameDistrict = items.every(function (i) { return i.district.code === district.code; });
+                provinceSel.value = province.code;
+                setText("province", province.th);
+                loadDistricts(province.code).then(function () {
+                    if (!sameDistrict) { return; }
+                    districtSel.value = district.code;
+                    setText("district", district.th);
+                    loadSubdistricts(district.code).then(function () {
+                        if (items.length === 1) {
+                            subSel.value = items[0].code;
+                            setText("subdistrict", items[0].th);
+                            codeInput.value = items[0].code;
+                            showPostcodes(selected(subSel));
+                        }
+                    });
+                });
+            });
+        });
+    }
+
+    // Initial state: preselect from the saved (or re-posted) text values.
+    getJSON(root.dataset.provincesUrl).then(function (items) {
+        var provinceCode = findCode(items, input("province") && input("province").value);
+        fill(provinceSel, items, provinceCode);
+        if (!provinceCode) { clear(districtSel); clear(subSel); return; }
+        loadDistricts(provinceCode, input("district") && input("district").value).then(function (districtCode) {
+            if (districtCode) { loadSubdistricts(districtCode, input("subdistrict") && input("subdistrict").value); }
+        });
+    });
+})();
+</script>
