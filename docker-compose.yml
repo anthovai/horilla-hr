@@ -97,9 +97,11 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # TODO(exports): services/exports (Go, EXPORTS_BIND 127.0.0.1:8091,
-  # GET /healthz) is not in the repo yet. Once its go.mod lands, add a service
-  # here like payroll-engine (internal only, no published port).
+  # Payroll export files (Go). Internal only: no host port is published;
+  # reach it as http://exports:8091 from other services.
+  exports:
+    build: ./services/exports
+    restart: unless-stopped
 
   db:
     image: postgres:16-alpine
