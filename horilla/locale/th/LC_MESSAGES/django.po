@@ -1,0 +1,3593 @@
+# Thai translation for OrvaHR.
+# Machine-drafted; needs review by a Thai-speaking HR professional.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: horilla-hrms\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-14 00:00+0000\n"
+"PO-Revision-Date: 2026-11-14 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Thai\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "of"
+msgstr "จาก"
+
+msgid "Page"
+msgstr "หน้า"
+
+msgid "Delete"
+msgstr "ลบ"
+
+msgid "Edit"
+msgstr "แก้ไข"
+
+msgid "No"
+msgstr "ไม่"
+
+msgid "Employee"
+msgstr "พนักงาน"
+
+msgid "Actions"
+msgstr "การดำเนินการ"
+
+msgid "Save"
+msgstr "บันทึก"
+
+msgid "Next"
+msgstr "ถัดไป"
+
+msgid "Close"
+msgstr "ปิด"
+
+msgid "Last"
+msgstr "สุดท้าย"
+
+msgid "Status"
+msgstr "สถานะ"
+
+msgid "Previous"
+msgstr "ก่อนหน้า"
+
+msgid "First"
+msgstr "แรก"
+
+msgid "Create"
+msgstr "สร้าง"
+
+msgid "Approve"
+msgstr "อนุมัติ"
+
+msgid "Department"
+msgstr "แผนก"
+
+msgid "Add"
+msgstr "เพิ่ม"
+
+msgid "Job Position"
+msgstr "ตำแหน่งงาน"
+
+msgid "Select All"
+msgstr "เลือกทั้งหมด"
+
+msgid "Reject"
+msgstr "ปฏิเสธ"
+
+msgid "Filter"
+msgstr "กรอง"
+
+msgid "Company"
+msgstr "บริษัท"
+
+msgid "Shift"
+msgstr "กะงาน"
+
+msgid "Work Type"
+msgstr "ประเภทการทำงาน"
+
+msgid "Advanced"
+msgstr "ขั้นสูง"
+
+msgid "Action"
+msgstr "การดำเนินการ"
+
+msgid "Export"
+msgstr "ส่งออก"
+
+msgid "To"
+msgstr "ถึง"
+
+msgid "Description"
+msgstr "รายละเอียด"
+
+msgid "Apply"
+msgstr "นำไปใช้"
+
+msgid "Update"
+msgstr "อัปเดต"
+
+msgid "App"
+msgstr "แอป"
+
+msgid "Start Date"
+msgstr "วันที่เริ่มต้น"
+
+msgid "Total"
+msgstr "รวม"
+
+msgid "No Records found."
+msgstr "ไม่พบข้อมูล"
+
+msgid "Title"
+msgstr "ชื่อเรื่อง"
+
+msgid "Archive"
+msgstr "เก็บถาวร"
+
+msgid "End Date"
+msgstr "วันที่สิ้นสุด"
+
+msgid "Select"
+msgstr "เลือก"
+
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgid "Date"
+msgstr "วันที่"
+
+msgid "No search result found!"
+msgstr "ไม่พบผลการค้นหา!"
+
+msgid "At"
+msgstr "ที่"
+
+msgid "Asset"
+msgstr "สินทรัพย์"
+
+msgid "Star"
+msgstr "ดาว"
+
+msgid "Requested"
+msgstr "ร้องขอแล้ว"
+
+msgid "Leave Type"
+msgstr "ประเภทการลา"
+
+msgid "Group By"
+msgstr "จัดกลุ่มตาม"
+
+msgid "Work Info"
+msgstr "ข้อมูลการทำงาน"
+
+msgid "Leave"
+msgstr "การลา"
+
+msgid "Page not found. 404."
+msgstr "ไม่พบหน้า 404"
+
+msgid "Upload"
+msgstr "อัปโหลด"
+
+msgid "Stars"
+msgstr "ดาว"
+
+msgid "Employees"
+msgstr "พนักงาน"
+
+msgid "requested"
+msgstr "ร้องขอแล้ว"
+
+msgid "Remove"
+msgstr "ลบออก"
+
+msgid "Approved"
+msgstr "อนุมัติแล้ว"
+
+msgid "Reporting Manager"
+msgstr "ผู้บังคับบัญชา"
+
+msgid "approved"
+msgstr "อนุมัติแล้ว"
+
+msgid "Search"
+msgstr "ค้นหา"
+
+msgid "In"
+msgstr "เข้า"
+
+msgid "rejected"
+msgstr "ถูกปฏิเสธ"
+
+msgid "Attendance"
+msgstr "การเข้างาน"
+
+msgid "All"
+msgstr "ทั้งหมด"
+
+msgid "Overtime"
+msgstr "ค่าล่วงเวลา"
+
+msgid "Amount"
+msgstr "จำนวนเงิน"
+
+msgid "Rotate every"
+msgstr "หมุนเวียนทุก"
+
+msgid "Active"
+msgstr "ใช้งานอยู่"
+
+msgid "Add filter"
+msgstr "เพิ่มตัวกรอง"
+
+msgid "Min Hour"
+msgstr "ชั่วโมงขั้นต่ำ"
+
+msgid "Today"
+msgstr "วันนี้"
+
+msgid "Comment"
+msgstr "ความคิดเห็น"
+
+msgid "No records available at the moment"
+msgstr "ไม่มีข้อมูลในขณะนี้"
+
+msgid "Recruitment"
+msgstr "การสรรหา"
+
+msgid "View"
+msgstr "ดู"
+
+msgid "Email"
+msgstr "อีเมล"
+
+msgid "No data"
+msgstr "ไม่มีข้อมูล"
+
+msgid "Day"
+msgstr "วัน"
+
+msgid "Start"
+msgstr "เริ่ม"
+
+msgid "Duplicate"
+msgstr "ทำสำเนา"
+
+msgid "Rotate"
+msgstr "หมุนเวียน"
+
+msgid "Loading..."
+msgstr "กำลังโหลด..."
+
+msgid "Assign"
+msgstr "มอบหมาย"
+
+msgid "At Work"
+msgstr "กำลังทำงาน"
+
+msgid "Type"
+msgstr "ประเภท"
+
+msgid "In Date"
+msgstr "วันที่เข้า"
+
+msgid "Pending"
+msgstr "รอดำเนินการ"
+
+msgid "Back"
+msgstr "ย้อนกลับ"
+
+msgid "No Records found"
+msgstr "ไม่พบข้อมูล"
+
+msgid "Managers"
+msgstr "ผู้จัดการ"
+
+msgid "End"
+msgstr "สิ้นสุด"
+
+msgid "Return"
+msgstr "ส่งคืน"
+
+msgid "Job Role"
+msgstr "บทบาทงาน"
+
+msgid "Fields"
+msgstr "ฟิลด์"
+
+msgid "Details"
+msgstr "รายละเอียด"
+
+msgid "Country"
+msgstr "ประเทศ"
+
+msgid "Check-In"
+msgstr "เข้างาน"
+
+msgid "Check-Out"
+msgstr "ออกงาน"
+
+msgid "Gender"
+msgstr "เพศ"
+
+msgid "Candidate"
+msgstr "ผู้สมัคร"
+
+msgid "Import"
+msgstr "นำเข้า"
+
+msgid "Reset"
+msgstr "รีเซ็ต"
+
+msgid "Out Date"
+msgstr "วันที่ออก"
+
+msgid "Stage"
+msgstr "ขั้นตอน"
+
+msgid "Task"
+msgstr "งาน"
+
+msgid "This Month"
+msgstr "เดือนนี้"
+
+msgid "Search Input"
+msgstr "ช่องค้นหา"
+
+msgid "Phone"
+msgstr "โทรศัพท์"
+
+msgid "Available"
+msgstr "ว่าง"
+
+msgid "days"
+msgstr "วัน"
+
+msgid "Send Mail"
+msgstr "ส่งอีเมล"
+
+msgid "By"
+msgstr "โดย"
+
+msgid "Based On"
+msgstr "อ้างอิงตาม"
+
+msgid "Deduction"
+msgstr "รายการหัก"
+
+msgid "State"
+msgstr "จังหวัด/รัฐ"
+
+msgid "Paid"
+msgstr "จ่ายแล้ว"
+
+msgid "Batch"
+msgstr "กลุ่มงาน"
+
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+msgid "None"
+msgstr "ไม่มี"
+
+msgid "Rejected"
+msgstr "ถูกปฏิเสธ"
+
+msgid "From"
+msgstr "จาก"
+
+msgid "Group"
+msgstr "กลุ่ม"
+
+msgid "This Week"
+msgstr "สัปดาห์นี้"
+
+msgid "Un-Archive"
+msgstr "ยกเลิกการเก็บถาวร"
+
+msgid "Holiday"
+msgstr "วันหยุด"
+
+msgid "Just now"
+msgstr "เมื่อสักครู่"
+
+msgid "Upload a File"
+msgstr "อัปโหลดไฟล์"
+
+msgid "Attendance Date"
+msgstr "วันที่เข้างาน"
+
+msgid "Drag and drop files here"
+msgstr "ลากและวางไฟล์ที่นี่"
+
+msgid "Not set"
+msgstr "ยังไม่ได้ตั้งค่า"
+
+msgid "Confirmation"
+msgstr "การยืนยัน"
+
+msgid "Create "
+msgstr "สร้าง "
+
+msgid "Excel columns"
+msgstr "คอลัมน์ Excel"
+
+msgid "Requested Date"
+msgstr "วันที่ร้องขอ"
+
+msgid "Name or Badge ID"
+msgstr "ชื่อหรือรหัสพนักงาน"
+
+msgid "Report"
+msgstr "รายงาน"
+
+msgid "Address"
+msgstr "ที่อยู่"
+
+msgid "Manager"
+msgstr "ผู้จัดการ"
+
+msgid "Validate"
+msgstr "ตรวจสอบ"
+
+msgid "Completed"
+msgstr "เสร็จสมบูรณ์"
+
+msgid "This Year"
+msgstr "ปีนี้"
+
+msgid "Name"
+msgstr "ชื่อ"
+
+msgid "Notes"
+msgstr "หมายเหตุ"
+
+msgid "Options"
+msgstr "ตัวเลือก"
+
+msgid "Document"
+msgstr "เอกสาร"
+
+msgid "Option"
+msgstr "ตัวเลือก"
+
+msgid "Last Week"
+msgstr "สัปดาห์ที่แล้ว"
+
+msgid "Last Month"
+msgstr "เดือนที่แล้ว"
+
+msgid "Available Days"
+msgstr "จำนวนวันที่ใช้ได้"
+
+msgid "Download"
+msgstr "ดาวน์โหลด"
+
+msgid "Uploading..."
+msgstr "กำลังอัปโหลด..."
+
+msgid "Assigned Date"
+msgstr "วันที่มอบหมาย"
+
+msgid "Toggle Search"
+msgstr "สลับการค้นหา"
+
+msgid "Download Template"
+msgstr "ดาวน์โหลดแม่แบบ"
+
+msgid "Pay"
+msgstr "จ่ายเงิน"
+
+msgid "Candidates"
+msgstr "ผู้สมัคร"
+
+msgid "Month"
+msgstr "เดือน"
+
+msgid "Contract"
+msgstr "สัญญา"
+
+msgid "Customize"
+msgstr "ปรับแต่ง"
+
+msgid "Are you sure want to delete this attendance?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลการเข้างานนี้?"
+
+msgid "Load"
+msgstr "โหลด"
+
+msgid "Work Location"
+msgstr "สถานที่ทำงาน"
+
+msgid "Do you want to delete this record?"
+msgstr "คุณต้องการลบรายการนี้หรือไม่?"
+
+msgid "Yes"
+msgstr "ใช่"
+
+msgid "Upload "
+msgstr "อัปโหลด "
+
+msgid "between"
+msgstr "ระหว่าง"
+
+msgid "departments"
+msgstr "แผนก"
+
+msgid "Total Leave Days"
+msgstr "จำนวนวันลาทั้งหมด"
+
+msgid "Owner"
+msgstr "เจ้าของ"
+
+msgid "today"
+msgstr "วันนี้"
+
+msgid "Project"
+msgstr "โครงการ"
+
+msgid "Answer"
+msgstr "คำตอบ"
+
+msgid "Allocate"
+msgstr "จัดสรร"
+
+msgid "OT"
+msgstr "ล่วงเวลา"
+
+msgid "Open"
+msgstr "เปิด"
+
+msgid "No records"
+msgstr "ไม่มีข้อมูล"
+
+msgid "Password"
+msgstr "รหัสผ่าน"
+
+msgid "Un-archive"
+msgstr "ยกเลิกการเก็บถาวร"
+
+msgid "Week"
+msgstr "สัปดาห์"
+
+msgid "Badge ID"
+msgstr "รหัสพนักงาน"
+
+msgid "Comments"
+msgstr "ความคิดเห็น"
+
+msgid "Dashboard"
+msgstr "แดชบอร์ด"
+
+msgid "Count"
+msgstr "จำนวน"
+
+msgid "Assets"
+msgstr "สินทรัพย์"
+
+msgid "Unselect"
+msgstr "ยกเลิกการเลือก"
+
+msgid "Paid Leave"
+msgstr "ลาแบบได้รับค่าจ้าง"
+
+msgid "Unpaid Leave"
+msgstr "ลาแบบไม่ได้รับค่าจ้าง"
+
+msgid "Carryforward"
+msgstr "ยกยอดไปปีถัดไป"
+
+msgid "Requested Days"
+msgstr "จำนวนวันที่ขอลา"
+
+msgid "Based"
+msgstr "อ้างอิงตาม"
+
+msgid "Custom"
+msgstr "กำหนดเอง"
+
+msgid "Payslip"
+msgstr "สลิปเงินเดือน"
+
+msgid "Tags"
+msgstr "แท็ก"
+
+msgid "Present"
+msgstr "มาทำงาน"
+
+msgid "City"
+msgstr "เมือง"
+
+msgid "Base"
+msgstr "พื้นฐาน"
+
+msgid "Clear"
+msgstr "ล้าง"
+
+msgid "Resume"
+msgstr "เรซูเม่"
+
+msgid "Closed"
+msgstr "ปิดแล้ว"
+
+msgid "Clear All"
+msgstr "ล้างทั้งหมด"
+
+msgid "Deductions"
+msgstr "รายการหัก"
+
+msgid "Unselect All"
+msgstr "ยกเลิกการเลือกทั้งหมด"
+
+msgid "Do you want to approve this request?"
+msgstr "คุณต้องการอนุมัติคำขอนี้หรือไม่?"
+
+msgid "Sign Up"
+msgstr "สมัครใช้งาน"
+
+msgid "Are you sure?"
+msgstr "คุณแน่ใจหรือไม่?"
+
+msgid "New"
+msgstr "ใหม่"
+
+msgid "Send"
+msgstr "ส่ง"
+
+msgid "Submit"
+msgstr "ส่ง"
+
+msgid "Selected"
+msgstr "ที่เลือก"
+
+msgid "Pending Hour"
+msgstr "ชั่วโมงที่ค้าง"
+
+msgid "Field"
+msgstr "ฟิลด์"
+
+msgid "Loading"
+msgstr "กำลังโหลด"
+
+msgid "Priority"
+msgstr "ลำดับความสำคัญ"
+
+msgid "Assigned to"
+msgstr "มอบหมายให้"
+
+msgid "High"
+msgstr "สูง"
+
+msgid "Absent"
+msgstr "ขาดงาน"
+
+msgid "Period"
+msgstr "ช่วงเวลา"
+
+msgid "Medium"
+msgstr "ปานกลาง"
+
+msgid "Week Off"
+msgstr "วันหยุดประจำสัปดาห์"
+
+msgid "Schedule"
+msgstr "ตารางเวลา"
+
+msgid "Question"
+msgstr "คำถาม"
+
+msgid "Gross Pay"
+msgstr "เงินเดือนรวม"
+
+msgid "Key Result"
+msgstr "ผลลัพธ์หลัก"
+
+msgid "Customize columns"
+msgstr "ปรับแต่งคอลัมน์"
+
+msgid "Tax"
+msgstr "ภาษี"
+
+msgid "Valid"
+msgstr "ถูกต้อง"
+
+msgid "Penalty"
+msgstr "ค่าปรับ"
+
+msgid "cancelled"
+msgstr "ยกเลิกแล้ว"
+
+msgid "Next Switch"
+msgstr "การสลับครั้งถัดไป"
+
+msgid "day"
+msgstr "วัน"
+
+msgid "selected"
+msgstr "ที่เลือก"
+
+msgid "Total Days"
+msgstr "จำนวนวันทั้งหมด"
+
+msgid "First Name"
+msgstr "ชื่อ"
+
+msgid "Low"
+msgstr "ต่ำ"
+
+msgid "Gross"
+msgstr "รวม"
+
+msgid "Worked"
+msgstr "ทำงานแล้ว"
+
+msgid "Expired"
+msgstr "หมดอายุ"
+
+msgid "To Date"
+msgstr "ถึงวันที่"
+
+msgid "Duration"
+msgstr "ระยะเวลา"
+
+msgid "No Limit"
+msgstr "ไม่จำกัด"
+
+msgid "Last Name"
+msgstr "นามสกุล"
+
+msgid "Assigned "
+msgstr "มอบหมาย "
+
+msgid "Next Step"
+msgstr "ขั้นตอนถัดไป"
+
+msgid "Created By"
+msgstr "สร้างโดย"
+
+msgid "Work Email"
+msgstr "อีเมลที่ทำงาน"
+
+msgid "Allocated User"
+msgstr "ผู้ใช้ที่ได้รับการจัดสรร"
+
+msgid "Attendance From"
+msgstr "เข้างานตั้งแต่"
+
+msgid "Attendance Till"
+msgstr "เข้างานถึง"
+
+msgid "No saved templates yet."
+msgstr "ยังไม่มีแม่แบบที่บันทึกไว้"
+
+msgid "Net"
+msgstr "สุทธิ"
+
+msgid "Created"
+msgstr "สร้างแล้ว"
+
+msgid "Worked Hours"
+msgstr "ชั่วโมงทำงาน"
+
+msgid "Current Shift"
+msgstr "กะงานปัจจุบัน"
+
+msgid "Tasks"
+msgstr "งาน"
+
+msgid "Weekly"
+msgstr "รายสัปดาห์"
+
+msgid "Current"
+msgstr "ปัจจุบัน"
+
+msgid "Filters"
+msgstr "ตัวกรอง"
+
+msgid "Permissions"
+msgstr "สิทธิ์การใช้งาน"
+
+msgid "Unable to load"
+msgstr "ไม่สามารถโหลดได้"
+
+msgid "Rotating Shift"
+msgstr "กะงานหมุนเวียน"
+
+msgid "Customize Dashboard"
+msgstr "ปรับแต่งแดชบอร์ด"
+
+msgid "more"
+msgstr "เพิ่มเติม"
+
+msgid "Taxable"
+msgstr "ที่ต้องเสียภาษี"
+
+msgid "From Date"
+msgstr "ตั้งแต่วันที่"
+
+msgid "Unarchive"
+msgstr "ยกเลิกการเก็บถาวร"
+
+msgid "Requested Till"
+msgstr "ขอถึงวันที่"
+
+msgid "Personal Details"
+msgstr "ข้อมูลส่วนบุคคล"
+
+msgid "No group result found!"
+msgstr "ไม่พบผลการจัดกลุ่ม!"
+
+msgid "and"
+msgstr "และ"
+
+msgid "Reason"
+msgstr "เหตุผล"
+
+msgid "Allocated"
+msgstr "จัดสรรแล้ว"
+
+msgid "Interview"
+msgstr "การสัมภาษณ์"
+
+msgid "Work Information"
+msgstr "ข้อมูลการทำงาน"
+
+msgid "Mon"
+msgstr "จ."
+
+msgid "Fixed"
+msgstr "คงที่"
+
+msgid "Assignees"
+msgstr "ผู้รับผิดชอบ"
+
+msgid "Save Changes"
+msgstr "บันทึกการเปลี่ยนแปลง"
+
+msgid "Show Password"
+msgstr "แสดงรหัสผ่าน"
+
+msgid "Hide Password"
+msgstr "ซ่อนรหัสผ่าน"
+
+msgid "Year"
+msgstr "ปี"
+
+msgid "m ago"
+msgstr "นาทีที่แล้ว"
+
+msgid "leave"
+msgstr "การลา"
+
+msgid "stage"
+msgstr "ขั้นตอน"
+
+msgid "Category"
+msgstr "หมวดหมู่"
+
+msgid "Username"
+msgstr "ชื่อผู้ใช้"
+
+msgid "Return Date"
+msgstr "วันที่ส่งคืน"
+
+msgid "Employee Type"
+msgstr "ประเภทพนักงาน"
+
+msgid "Rotate every "
+msgstr "หมุนเวียนทุก "
+
+msgid "Auto-refresh OFF"
+msgstr "รีเฟรชอัตโนมัติ: ปิด"
+
+msgid "Auto-refresh ON (5 min)"
+msgstr "รีเฟรชอัตโนมัติ: เปิด (5 นาที)"
+
+msgid "Bad"
+msgstr "ไม่ดี"
+
+msgid "Feedback"
+msgstr "ข้อเสนอแนะ"
+
+msgid "Condition"
+msgstr "สภาพ"
+
+msgid "Leave Request"
+msgstr "คำขอลา"
+
+msgid "Rejection Reason"
+msgstr "เหตุผลในการปฏิเสธ"
+
+msgid "Exits"
+msgstr "การออกจากงาน"
+
+msgid "weekly"
+msgstr "รายสัปดาห์"
+
+msgid "monthly"
+msgstr "รายเดือน"
+
+msgid "This month"
+msgstr "เดือนนี้"
+
+msgid "Requested Shift"
+msgstr "กะงานที่ร้องขอ"
+
+msgid "Condition Based"
+msgstr "ตามเงื่อนไข"
+
+msgid "Carryforward Days"
+msgstr "จำนวนวันที่ยกยอด"
+
+msgid "No filtered records found at the moment"
+msgstr "ไม่พบข้อมูลที่กรองในขณะนี้"
+
+msgid "Key"
+msgstr "คีย์"
+
+msgid "Show"
+msgstr "แสดง"
+
+msgid "Time"
+msgstr "เวลา"
+
+msgid "Basic"
+msgstr "พื้นฐาน"
+
+msgid "Regular"
+msgstr "ปกติ"
+
+msgid "Net Pay"
+msgstr "เงินเดือนสุทธิ"
+
+msgid "Templates"
+msgstr "แม่แบบ"
+
+msgid "Forward to"
+msgstr "ส่งต่อไปยัง"
+
+msgid "Key Results"
+msgstr "ผลลัพธ์หลัก"
+
+msgid "Upload Photo"
+msgstr "อัปโหลดรูปภาพ"
+
+msgid "Do you want to reject this request?"
+msgstr "คุณต้องการปฏิเสธคำขอนี้หรือไม่?"
+
+msgid "Enter a page number and press Enter"
+msgstr "ใส่หมายเลขหน้าแล้วกด Enter"
+
+msgid "Monthly"
+msgstr "รายเดือน"
+
+msgid "Bank Code"
+msgstr "รหัสธนาคาร"
+
+msgid "Rotate after"
+msgstr "หมุนเวียนหลังจาก"
+
+msgid "Weekly every"
+msgstr "รายสัปดาห์ทุก"
+
+msgid "Target Value"
+msgstr "ค่าเป้าหมาย"
+
+msgid "Add / View Comment"
+msgstr "เพิ่ม / ดูความคิดเห็น"
+
+msgid "Rotate every last day of month"
+msgstr "หมุนเวียนทุกวันสุดท้ายของเดือน"
+
+msgid "Are you sure you want to delete ?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ?"
+
+msgid "by"
+msgstr "โดย"
+
+msgid "User"
+msgstr "ผู้ใช้"
+
+msgid "Login"
+msgstr "เข้าสู่ระบบ"
+
+msgid "Unpaid"
+msgstr "ไม่ได้รับค่าจ้าง"
+
+msgid "At Risk"
+msgstr "เสี่ยง"
+
+msgid "Check In"
+msgstr "เข้างาน"
+
+msgid "Emergency Contact"
+msgstr "ผู้ติดต่อฉุกเฉิน"
+
+msgid "Note"
+msgstr "หมายเหตุ"
+
+msgid "for:"
+msgstr "สำหรับ:"
+
+msgid "equals"
+msgstr "เท่ากับ"
+
+msgid "Equals"
+msgstr "เท่ากับ"
+
+msgid "In From"
+msgstr "เข้างานตั้งแต่"
+
+msgid "In Till"
+msgstr "เข้างานถึง"
+
+msgid "Out From"
+msgstr "ออกงานตั้งแต่"
+
+msgid "Out Till"
+msgstr "ออกงานถึง"
+
+msgid "Is Empty"
+msgstr "ว่างเปล่า"
+
+msgid "Objective"
+msgstr "วัตถุประสงค์"
+
+msgid "Not Equals"
+msgstr "ไม่เท่ากับ"
+
+msgid "Answer View"
+msgstr "ดูคำตอบ"
+
+msgid "Bank Details"
+msgstr "รายละเอียดบัญชีธนาคาร"
+
+msgid "Personal Info"
+msgstr "ข้อมูลส่วนบุคคล"
+
+msgid "Employee Onboarding"
+msgstr "การปฐมนิเทศพนักงานใหม่"
+
+msgid "At Work Greater or Equal"
+msgstr "ทำงานมากกว่าหรือเท่ากับ"
+
+msgid "Days"
+msgstr "วัน"
+
+msgid "Upcoming"
+msgstr "กำลังจะมาถึง"
+
+msgid "Badge Id"
+msgstr "รหัสพนักงาน"
+
+msgid "Penalties"
+msgstr "ค่าปรับ"
+
+msgid "Bank Info"
+msgstr "ข้อมูลบัญชีธนาคาร"
+
+msgid "View File"
+msgstr "ดูไฟล์"
+
+msgid "Serial No."
+msgstr "ลำดับที่"
+
+msgid "Next Shift"
+msgstr "กะงานถัดไป"
+
+msgid "Job position"
+msgstr "ตำแหน่งงาน"
+
+msgid "installments"
+msgstr "งวดผ่อนชำระ"
+
+msgid "Pending Hours"
+msgstr "ชั่วโมงที่ค้าง"
+
+msgid "to"
+msgstr "ถึง"
+
+msgid "Off"
+msgstr "ปิด"
+
+msgid "Card"
+msgstr "การ์ด"
+
+msgid "Totals"
+msgstr "ยอดรวม"
+
+msgid "Preview"
+msgstr "ดูตัวอย่าง"
+
+msgid "On Track"
+msgstr "เป็นไปตามแผน"
+
+msgid "Check Out"
+msgstr "ออกงาน"
+
+msgid "Documents"
+msgstr "เอกสาร"
+
+msgid "Unassigned"
+msgstr "ยังไม่ได้มอบหมาย"
+
+msgid "Regularized"
+msgstr "ปรับปรุงการเข้างานแล้ว"
+
+msgid "Late Arrival"
+msgstr "มาสาย"
+
+msgid "Current Value"
+msgstr "ค่าปัจจุบัน"
+
+msgid "Filing Status"
+msgstr "สถานะการยื่นภาษี"
+
+msgid "Applied Filters: "
+msgstr "ตัวกรองที่ใช้: "
+
+msgid "Scheduled Interviews"
+msgstr "การสัมภาษณ์ที่นัดหมายไว้"
+
+msgid "Do you want Delete this Feedback ?"
+msgstr "คุณต้องการลบข้อเสนอแนะนี้หรือไม่?"
+
+msgid "List"
+msgstr "รายการ"
+
+msgid "Icon"
+msgstr "ไอคอน"
+
+msgid "Pays"
+msgstr "วันจ่ายเงิน"
+
+msgid "Ticket"
+msgstr "ตั๋วแจ้งปัญหา"
+
+msgid "Vacancy"
+msgstr "ตำแหน่งงานว่าง"
+
+msgid "Applied"
+msgstr "สมัครแล้ว"
+
+msgid "Allowance"
+msgstr "เบี้ยเลี้ยง"
+
+msgid "Asset Name"
+msgstr "ชื่อสินทรัพย์"
+
+msgid "Joining Date"
+msgstr "วันที่เริ่มงาน"
+
+msgid "No records found."
+msgstr "ไม่พบข้อมูล"
+
+msgid "Mandatory Question"
+msgstr "คำถามที่จำเป็นต้องตอบ"
+
+msgid "Personal Information"
+msgstr "ข้อมูลส่วนบุคคล"
+
+msgid "Don't refresh the page"
+msgstr "โปรดอย่ารีเฟรชหน้านี้"
+
+msgid "No records available at the moment."
+msgstr "ไม่มีข้อมูลในขณะนี้"
+
+msgid "Collapse"
+msgstr "ยุบ"
+
+msgid "Archived"
+msgstr "เก็บถาวรแล้ว"
+
+msgid "Experience"
+msgstr "ประสบการณ์"
+
+msgid "Task Status"
+msgstr "สถานะงาน"
+
+msgid "Asset Category"
+msgstr "หมวดหมู่สินทรัพย์"
+
+msgid "Rotating Work Type"
+msgstr "ประเภทการทำงานแบบหมุนเวียน"
+
+msgid "Draft"
+msgstr "ฉบับร่าง"
+
+msgid "Hired"
+msgstr "จ้างแล้ว"
+
+msgid "Failed"
+msgstr "ล้มเหลว"
+
+msgid "Behind"
+msgstr "ล่าช้ากว่ากำหนด"
+
+msgid "Columns"
+msgstr "คอลัมน์"
+
+msgid "Complete"
+msgstr "เสร็จสมบูรณ์"
+
+msgid "Timesheet"
+msgstr "ใบบันทึกเวลา"
+
+msgid "Wage Type"
+msgstr "ประเภทค่าจ้าง"
+
+msgid "Not Started"
+msgstr "ยังไม่เริ่ม"
+
+msgid "Requested Work Type"
+msgstr "ประเภทการทำงานที่ร้องขอ"
+
+msgid "Zip"
+msgstr "รหัสไปรษณีย์"
+
+msgid "Rate"
+msgstr "อัตรา"
+
+msgid "Claim"
+msgstr "เบิกค่าใช้จ่าย"
+
+msgid "Pretax"
+msgstr "ก่อนหักภาษี"
+
+msgid "History"
+msgstr "ประวัติ"
+
+msgid "Validated"
+msgstr "ตรวจสอบแล้ว"
+
+msgid "Recurring"
+msgstr "เกิดซ้ำ"
+
+msgid "Validated?"
+msgstr "ตรวจสอบแล้วหรือไม่?"
+
+msgid "Amount Per"
+msgstr "จำนวนเงินต่อ"
+
+msgid "OT Approved?"
+msgstr "อนุมัติค่าล่วงเวลาแล้วหรือไม่?"
+
+msgid "Profile Setup"
+msgstr "ตั้งค่าโปรไฟล์"
+
+msgid "Claim Requests"
+msgstr "คำขอเบิกค่าใช้จ่าย"
+
+msgid "Authentication"
+msgstr "การยืนยันตัวตน"
+
+msgid "Interview Today"
+msgstr "สัมภาษณ์วันนี้"
+
+msgid "OT Greater or Equal"
+msgstr "ล่วงเวลามากกว่าหรือเท่ากับ"
+
+msgid "Available Leave Days"
+msgstr "จำนวนวันลาคงเหลือ"
+
+msgid "Reason for Rejection"
+msgstr "เหตุผลในการปฏิเสธ"
+
+msgid "OT Less Than or Equal"
+msgstr "ล่วงเวลาน้อยกว่าหรือเท่ากับ"
+
+msgid "Previous/Current Shift"
+msgstr "กะงานก่อนหน้า/ปัจจุบัน"
+
+msgid "Carryforward Leave Days"
+msgstr "จำนวนวันลาที่ยกยอด"
+
+msgid "At Work Less Than or Equal"
+msgstr "ทำงานน้อยกว่าหรือเท่ากับ"
+
+msgid "Validate Attendances Request"
+msgstr "ตรวจสอบคำขอปรับปรุงการเข้างาน"
+
+msgid "There are no comments to show."
+msgstr "ไม่มีความคิดเห็นที่จะแสดง"
+
+msgid "Do you want to delete this record"
+msgstr "คุณต้องการลบรายการนี้หรือไม่"
+
+msgid "has interview in the requested date."
+msgstr "มีการสัมภาษณ์ในวันที่ร้องขอแล้ว"
+
+msgid "Prior"
+msgstr "ก่อนหน้า"
+
+msgid "Badge"
+msgstr "รหัส"
+
+msgid "Reveal"
+msgstr "แสดง"
+
+msgid "Change"
+msgstr "เปลี่ยน"
+
+msgid "Template"
+msgstr "แม่แบบ"
+
+msgid "New Hires"
+msgstr "พนักงานใหม่"
+
+msgid "Authenticate"
+msgstr "ยืนยันตัวตน"
+
+msgid "Do You really want to reject the request?"
+msgstr "คุณต้องการปฏิเสธคำขอนี้จริงหรือไม่?"
+
+msgid "Hours"
+msgstr "ชั่วโมง"
+
+msgid "Returned"
+msgstr "ส่งคืนแล้ว"
+
+msgid "View all"
+msgstr "ดูทั้งหมด"
+
+msgid "Imported"
+msgstr "นำเข้าแล้ว"
+
+msgid "Leave type"
+msgstr "ประเภทการลา"
+
+msgid "Attachments"
+msgstr "ไฟล์แนบ"
+
+msgid "Shortlisted"
+msgstr "ผ่านการคัดเลือกเบื้องต้น"
+
+msgid "Join Meeting"
+msgstr "เข้าร่วมประชุม"
+
+msgid "Contract wage"
+msgstr "ค่าจ้างตามสัญญา"
+
+msgid "Employer share"
+msgstr "ส่วนที่นายจ้างจ่าย"
+
+msgid "Compensatory Leave"
+msgstr "ลาชดเชย"
+
+msgid "Late Arrival & Early Departure"
+msgstr "มาสายและออกก่อนเวลา"
+
+msgid "OR"
+msgstr "หรือ"
+
+msgid "AND"
+msgstr "และ"
+
+msgid "As PDF"
+msgstr "เป็น PDF"
+
+msgid "As CSV"
+msgstr "เป็น CSV"
+
+msgid "View As"
+msgstr "ดูเป็น"
+
+msgid "You have"
+msgstr "คุณมี"
+
+msgid "As Excel"
+msgstr "เป็น Excel"
+
+msgid "Scheduled"
+msgstr "นัดหมายแล้ว"
+
+msgid "Basic Pay"
+msgstr "เงินเดือนพื้นฐาน"
+
+msgid "Not Marked"
+msgstr "ยังไม่ได้บันทึก"
+
+msgid "Monthly CTC"
+msgstr "ต้นทุนรวมต่อเดือน (CTC)"
+
+msgid "Enter value"
+msgstr "ใส่ค่า"
+
+msgid "Export Table"
+msgstr "ส่งออกตาราง"
+
+msgid "Select Field"
+msgstr "เลือกฟิลด์"
+
+msgid "Shift Request"
+msgstr "คำขอเปลี่ยนกะงาน"
+
+msgid "Qualification"
+msgstr "คุณวุฒิ"
+
+msgid "Next Work Type"
+msgstr "ประเภทการทำงานถัดไป"
+
+msgid "Reimbursements"
+msgstr "การเบิกคืนค่าใช้จ่าย"
+
+msgid "Add more filter"
+msgstr "เพิ่มตัวกรองเพิ่มเติม"
+
+msgid "Applied Filters"
+msgstr "ตัวกรองที่ใช้"
+
+msgid "Select Operator"
+msgstr "เลือกตัวดำเนินการ"
+
+msgid "View attachment"
+msgstr "ดูไฟล์แนบ"
+
+msgid "Confirm Password"
+msgstr "ยืนยันรหัสผ่าน"
+
+msgid "Current Work Type"
+msgstr "ประเภทการทำงานปัจจุบัน"
+
+msgid "Export Candidates"
+msgstr "ส่งออกผู้สมัคร"
+
+msgid "Save Current Arrangement"
+msgstr "บันทึกการจัดเรียงปัจจุบัน"
+
+msgid "Add To Rejected Candidates"
+msgstr "เพิ่มในรายชื่อผู้สมัครที่ถูกปฏิเสธ"
+
+msgid "Click to expand or collapse"
+msgstr "คลิกเพื่อขยายหรือยุบ"
+
+msgid "Other"
+msgstr "อื่น ๆ"
+
+msgid "Online"
+msgstr "ออนไลน์"
+
+msgid "Offline"
+msgstr "ออฟไลน์"
+
+msgid "Updated"
+msgstr "อัปเดตแล้ว"
+
+msgid "Average"
+msgstr "ค่าเฉลี่ย"
+
+msgid "Payroll"
+msgstr "เงินเดือน"
+
+msgid "Confirmed"
+msgstr "ยืนยันแล้ว"
+
+msgid "Date & Time"
+msgstr "วันที่และเวลา"
+
+msgid "Employee Tag"
+msgstr "แท็กพนักงาน"
+
+msgid "Update Image"
+msgstr "อัปเดตรูปภาพ"
+
+msgid "Asset Request"
+msgstr "คำขอสินทรัพย์"
+
+msgid "Requested days"
+msgstr "จำนวนวันที่ขอ"
+
+msgid "Approve Overtime"
+msgstr "อนุมัติค่าล่วงเวลา"
+
+msgid "Compensatory Leave Request"
+msgstr "คำขอลาชดเชย"
+
+msgid "Added In Rejected Candidates"
+msgstr "เพิ่มในรายชื่อผู้สมัครที่ถูกปฏิเสธแล้ว"
+
+msgid "total"
+msgstr "รวม"
+
+msgid "Agree"
+msgstr "เห็นด้วย"
+
+msgid "Groups"
+msgstr "กลุ่ม"
+
+msgid "In use"
+msgstr "กำลังใช้งาน"
+
+msgid "Add to"
+msgstr "เพิ่มไปยัง"
+
+msgid "Define"
+msgstr "กำหนด"
+
+msgid "Subject"
+msgstr "หัวข้อ"
+
+msgid "Neutral"
+msgstr "เป็นกลาง"
+
+msgid "Disagree"
+msgstr "ไม่เห็นด้วย"
+
+msgid "Job Roles"
+msgstr "บทบาทงาน"
+
+msgid "Cancelled"
+msgstr "ยกเลิกแล้ว"
+
+msgid "Option #1"
+msgstr "ตัวเลือกที่ 1"
+
+msgid "Option #2"
+msgstr "ตัวเลือกที่ 2"
+
+msgid "Component"
+msgstr "องค์ประกอบ"
+
+msgid "Select Row"
+msgstr "เลือกแถว"
+
+msgid "In progress"
+msgstr "กำลังดำเนินการ"
+
+msgid "View Comment"
+msgstr "ดูความคิดเห็น"
+
+msgid "Job Positions"
+msgstr "ตำแหน่งงาน"
+
+msgid "Strongly Agree"
+msgstr "เห็นด้วยอย่างยิ่ง"
+
+msgid "Asset Allocation"
+msgstr "การจัดสรรสินทรัพย์"
+
+msgid "Require Approval"
+msgstr "ต้องได้รับการอนุมัติ"
+
+msgid "Strongly Disagree"
+msgstr "ไม่เห็นด้วยอย่างยิ่ง"
+
+msgid "Carry Forward Days"
+msgstr "จำนวนวันที่ยกยอด"
+
+msgid "Require Attachment"
+msgstr "ต้องแนบไฟล์"
+
+msgid "Do you want to archive this ticket?"
+msgstr "คุณต้องการเก็บถาวรตั๋วแจ้งปัญหานี้หรือไม่?"
+
+msgid "Tag"
+msgstr "แท็ก"
+
+msgid "Exit"
+msgstr "ออกจากงาน"
+
+msgid "Branch"
+msgstr "สาขา"
+
+msgid "Due In"
+msgstr "ครบกำหนดใน"
+
+msgid "Rating"
+msgstr "คะแนน"
+
+msgid "Survey"
+msgstr "แบบสำรวจ"
+
+msgid "Default"
+msgstr "ค่าเริ่มต้น"
+
+msgid "User ID"
+msgstr "รหัสผู้ใช้"
+
+msgid "Overdue"
+msgstr "เกินกำหนด"
+
+msgid "Conflict"
+msgstr "ขัดแย้ง"
+
+msgid "Children"
+msgstr "บุตร"
+
+msgid "Position"
+msgstr "ตำแหน่ง"
+
+msgid "Add Files"
+msgstr "เพิ่มไฟล์"
+
+msgid "Bank Name"
+msgstr "ชื่อธนาคาร"
+
+msgid "Allowances"
+msgstr "เบี้ยเลี้ยง"
+
+msgid "Departments"
+msgstr "แผนก"
+
+msgid "Ticket Type"
+msgstr "ประเภทตั๋วแจ้งปัญหา"
+
+msgid "Add Manager"
+msgstr "เพิ่มผู้จัดการ"
+
+msgid "Offboarding"
+msgstr "การออกจากงาน"
+
+msgid "Interviewer"
+msgstr "ผู้สัมภาษณ์"
+
+msgid "Key results"
+msgstr "ผลลัพธ์หลัก"
+
+msgid "Request Date"
+msgstr "วันที่ร้องขอ"
+
+msgid "Not Available"
+msgstr "ไม่ว่าง"
+
+msgid "Returned Date"
+msgstr "วันที่ส่งคืน"
+
+msgid "Based On Week"
+msgstr "ตามสัปดาห์"
+
+msgid "Not available"
+msgstr "ไม่ว่าง"
+
+msgid "Date of Birth"
+msgstr "วันเกิด"
+
+msgid "No leave data"
+msgstr "ไม่มีข้อมูลการลา"
+
+msgid "Provided Date"
+msgstr "วันที่ให้"
+
+msgid "Marital Status"
+msgstr "สถานภาพสมรส"
+
+msgid "Active employees"
+msgstr "พนักงานที่ใช้งานอยู่"
+
+msgid "Expired Interview"
+msgstr "การสัมภาษณ์ที่หมดเวลา"
+
+msgid "Question Template"
+msgstr "แม่แบบคำถาม"
+
+msgid "Upcoming Interview"
+msgstr "การสัมภาษณ์ที่กำลังจะมาถึง"
+
+msgid "Update Stage Order"
+msgstr "อัปเดตลำดับขั้นตอน"
+
+msgid "Total Installments"
+msgstr "จำนวนงวดทั้งหมด"
+
+msgid "Could not load data"
+msgstr "ไม่สามารถโหลดข้อมูลได้"
+
+msgid "Interview Completed"
+msgstr "สัมภาษณ์เสร็จสิ้น"
+
+msgid "Reject Cancellation"
+msgstr "ปฏิเสธการยกเลิก"
+
+msgid "Employee Permissions"
+msgstr "สิทธิ์ของพนักงาน"
+
+msgid "Approve Cancellation"
+msgstr "อนุมัติการยกเลิก"
+
+msgid "Installment Start Date"
+msgstr "วันที่เริ่มงวดผ่อนชำระ"
+
+msgid "Emergency Contact Relation"
+msgstr "ความสัมพันธ์กับผู้ติดต่อฉุกเฉิน"
+
+msgid "There are no FAQs at the moment."
+msgstr "ยังไม่มีคำถามที่พบบ่อยในขณะนี้"
+
+msgid "Do you want to un-archive this ticket?"
+msgstr "คุณต้องการยกเลิกการเก็บถาวรตั๋วแจ้งปัญหานี้หรือไม่?"
+
+msgid "You don't have access to export this data"
+msgstr "คุณไม่มีสิทธิ์ส่งออกข้อมูลนี้"
+
+msgid "There are no attendance records to display."
+msgstr "ไม่มีข้อมูลการเข้างานที่จะแสดง"
+
+msgid "Skip"
+msgstr "ข้าม"
+
+msgid "Rows"
+msgstr "แถว"
+
+msgid "Short"
+msgstr "สั้น"
+
+msgid "types"
+msgstr "ประเภท"
+
+msgid "Tickets"
+msgstr "ตั๋วแจ้งปัญหา"
+
+msgid "Canceled"
+msgstr "ยกเลิกแล้ว"
+
+msgid "Birthday"
+msgstr "วันเกิด"
+
+msgid "Loading…"
+msgstr "กำลังโหลด…"
+
+msgid "Payslips"
+msgstr "สลิปเงินเดือน"
+
+msgid "statuses"
+msgstr "สถานะ"
+
+msgid "Basic pay"
+msgstr "เงินเดือนพื้นฐาน"
+
+msgid "Rejection"
+msgstr "การปฏิเสธ"
+
+msgid "Grouped by"
+msgstr "จัดกลุ่มตาม"
+
+msgid "Components"
+msgstr "องค์ประกอบ"
+
+msgid "OT Approved"
+msgstr "อนุมัติค่าล่วงเวลาแล้ว"
+
+msgid "Announcements"
+msgstr "ประกาศ"
+
+msgid "Start Date From"
+msgstr "ตั้งแต่วันที่เริ่มต้น"
+
+msgid "Send Meeting Link"
+msgstr "ส่งลิงก์ประชุม"
+
+msgid "Schedule Interview"
+msgstr "นัดหมายสัมภาษณ์"
+
+msgid "Are you sure you want to delete this stage?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบขั้นตอนนี้?"
+
+msgid "Charts"
+msgstr "แผนภูมิ"
+
+msgid "Salary"
+msgstr "เงินเดือน"
+
+msgid "Records"
+msgstr "รายการ"
+
+msgid "Overall"
+msgstr "ภาพรวม"
+
+msgid "On Hold"
+msgstr "พักไว้"
+
+msgid "Between"
+msgstr "ระหว่าง"
+
+msgid "Contact"
+msgstr "ติดต่อ"
+
+msgid "Profile"
+msgstr "โปรไฟล์"
+
+msgid "Conflicts"
+msgstr "ความขัดแย้ง"
+
+msgid "Clear all"
+msgstr "ล้างทั้งหมด"
+
+msgid "Colleague"
+msgstr "เพื่อนร่วมงาน"
+
+msgid "Reset Day"
+msgstr "รีเซ็ตวัน"
+
+msgid "onboarding"
+msgstr "การปฐมนิเทศ"
+
+msgid "Un Archive"
+msgstr "ยกเลิกการเก็บถาวร"
+
+msgid "Encashable"
+msgstr "แปลงเป็นเงินสดได้"
+
+msgid "No Document"
+msgstr "ไม่มีเอกสาร"
+
+msgid "Reset Month"
+msgstr "รีเซ็ตเดือน"
+
+msgid "Working Days"
+msgstr "วันทำงาน"
+
+msgid "Review Ongoing"
+msgstr "อยู่ระหว่างการตรวจสอบ"
+
+msgid "Reporting manager"
+msgstr "ผู้บังคับบัญชา"
+
+msgid "Carryforward Type"
+msgstr "ประเภทการยกยอด"
+
+msgid "Download Error File"
+msgstr "ดาวน์โหลดไฟล์ข้อผิดพลาด"
+
+msgid "Do you want to cancel this request?"
+msgstr "คุณต้องการยกเลิกคำขอนี้หรือไม่?"
+
+msgid "Do you want to delete this candidate?"
+msgstr "คุณต้องการลบผู้สมัครรายนี้หรือไม่?"
+
+msgid "Do you really want to approve this request?"
+msgstr "คุณต้องการอนุมัติคำขอนี้จริงหรือไม่?"
+
+msgid "OK"
+msgstr "ตกลง"
+
+msgid "File"
+msgstr "ไฟล์"
+
+msgid "Full"
+msgstr "เต็ม"
+
+msgid "Test"
+msgstr "ทดสอบ"
+
+msgid "after"
+msgstr "หลังจาก"
+
+msgid "Added "
+msgstr "เพิ่มแล้ว "
+
+msgid "On Time"
+msgstr "ตรงเวลา"
+
+msgid "Applies"
+msgstr "ใช้กับ"
+
+msgid "Add level"
+msgstr "เพิ่มระดับ"
+
+msgid "Date range"
+msgstr "ช่วงวันที่"
+
+msgid "Add Comment"
+msgstr "เพิ่มความคิดเห็น"
+
+msgid "Leave Rules"
+msgstr "กฎการลา"
+
+msgid "Resignation"
+msgstr "การลาออก"
+
+msgid "Request User"
+msgstr "ผู้ร้องขอ"
+
+msgid "Allocated By"
+msgstr "จัดสรรโดย"
+
+msgid "New Password"
+msgstr "รหัสผ่านใหม่"
+
+msgid "Created Date"
+msgstr "วันที่สร้าง"
+
+msgid "Delete Image"
+msgstr "ลบรูปภาพ"
+
+msgid "Notification"
+msgstr "การแจ้งเตือน"
+
+msgid "Assign Leave"
+msgstr "มอบหมายวันลา"
+
+msgid "Return Status"
+msgstr "สถานะการส่งคืน"
+
+msgid "Hours Balance"
+msgstr "ยอดคงเหลือชั่วโมง"
+
+msgid "Not-completed"
+msgstr "ยังไม่เสร็จสมบูรณ์"
+
+msgid "Question Type"
+msgstr "ประเภทคำถาม"
+
+msgid "Notifications"
+msgstr "การแจ้งเตือน"
+
+msgid "Pay Frequency"
+msgstr "ความถี่ในการจ่ายเงิน"
+
+msgid "Employee share"
+msgstr "ส่วนที่ลูกจ้างจ่าย"
+
+msgid "Export Holidays"
+msgstr "ส่งออกวันหยุด"
+
+msgid "Export Payslips"
+msgstr "ส่งออกสลิปเงินเดือน"
+
+msgid "Return Condition"
+msgstr "สภาพเมื่อส่งคืน"
+
+msgid "No announcements"
+msgstr "ไม่มีประกาศ"
+
+msgid "Export Worktypes"
+msgstr "ส่งออกประเภทการทำงาน"
+
+msgid "Bank Information"
+msgstr "ข้อมูลบัญชีธนาคาร"
+
+msgid "Reallocate Shift."
+msgstr "จัดสรรกะงานใหม่"
+
+msgid "Create Leave Type"
+msgstr "สร้างประเภทการลา"
+
+msgid "Offer Letter Status"
+msgstr "สถานะจดหมายเสนองาน"
+
+msgid "Select All Worktypes"
+msgstr "เลือกประเภทการทำงานทั้งหมด"
+
+msgid "Unselect All Worktypes"
+msgstr "ยกเลิกการเลือกประเภทการทำงานทั้งหมด"
+
+msgid "Emergency Contact Name"
+msgstr "ชื่อผู้ติดต่อฉุกเฉิน"
+
+msgid "Return Condition Images"
+msgstr "รูปภาพสภาพเมื่อส่งคืน"
+
+msgid "Database Authentication"
+msgstr "การยืนยันตัวตนด้วยฐานข้อมูล"
+
+msgid "Reason for Cancellation"
+msgstr "เหตุผลในการยกเลิก"
+
+msgid "Check-in / Check-out Log"
+msgstr "บันทึกการเข้างาน/ออกงาน"
+
+msgid "Previous/Current Work Type"
+msgstr "ประเภทการทำงานก่อนหน้า/ปัจจุบัน"
+
+msgid "There are no tickets at the moment."
+msgstr "ไม่มีตั๋วแจ้งปัญหาในขณะนี้"
+
+msgid "Do you want to archive this candidate?"
+msgstr "คุณต้องการเก็บถาวรผู้สมัครรายนี้หรือไม่?"
+
+msgid "You have No leave requests for this filter."
+msgstr "คุณไม่มีคำขอลาสำหรับตัวกรองนี้"
+
+msgid "About"
+msgstr "เกี่ยวกับ"
+
+msgid "Review"
+msgstr "ตรวจสอบ"
+
+msgid "Format"
+msgstr "รูปแบบ"
+
+msgid "Activities"
+msgstr "กิจกรรม"
+
+msgid "Announcement"
+msgstr "ประกาศ"
+
+msgid "Choose Report"
+msgstr "เลือกรายงาน"
+
+msgid "Add Candidate"
+msgstr "เพิ่มผู้สมัคร"
+
+msgid "Shift Requests"
+msgstr "คำขอเปลี่ยนกะงาน"
+
+msgid "All caught up!"
+msgstr "ไม่มีรายการค้างแล้ว!"
+
+msgid "View in browser"
+msgstr "ดูในเบราว์เซอร์"
+
+msgid "Unsubscribe here"
+msgstr "ยกเลิกการสมัครรับที่นี่"
+
+msgid "Contract End Date"
+msgstr "วันที่สิ้นสุดสัญญา"
+
+msgid "Requested Date From"
+msgstr "วันที่ร้องขอตั้งแต่"
+
+msgid "Requested Date Till"
+msgstr "วันที่ร้องขอถึง"
+
+msgid "Nothing to save yet."
+msgstr "ยังไม่มีสิ่งที่ต้องบันทึก"
+
+msgid "Are you sure you want to delete?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ?"
+
+msgid "You have no new notifications at the moment."
+msgstr "ไม่มีการแจ้งเตือนใหม่ในขณะนี้"
+
+msgid "Male"
+msgstr "ชาย"
+
+msgid "Done"
+msgstr "เสร็จสิ้น"
+
+msgid "Loan"
+msgstr "เงินกู้"
+
+msgid "Good"
+msgstr "ดี"
+
+msgid "Value"
+msgstr "ค่า"
+
+msgid "Error"
+msgstr "ข้อผิดพลาด"
+
+msgid "Female"
+msgstr "หญิง"
+
+msgid "ago by"
+msgstr "ที่แล้วโดย"
+
+msgid "Skipped"
+msgstr "ข้ามแล้ว"
+
+msgid "Payment"
+msgstr "การชำระเงิน"
+
+msgid "Balance"
+msgstr "ยอดคงเหลือ"
+
+msgid "Add MoM"
+msgstr "เพิ่มบันทึกการประชุม"
+
+msgid "Earning"
+msgstr "รายได้"
+
+msgid "Based on"
+msgstr "อ้างอิงตาม"
+
+msgid "Generate"
+msgstr "สร้าง"
+
+msgid "Earnings"
+msgstr "รายได้"
+
+msgid "Companies"
+msgstr "บริษัท"
+
+msgid "Ticket ID"
+msgstr "รหัสตั๋วแจ้งปัญหา"
+
+msgid "Yesterday"
+msgstr "เมื่อวาน"
+
+msgid "Paid days"
+msgstr "วันที่ได้รับค่าจ้าง"
+
+msgid "Leave Icon"
+msgstr "ไอคอนการลา"
+
+msgid "Share Link"
+msgstr "แชร์ลิงก์"
+
+msgid "Objectives"
+msgstr "วัตถุประสงค์"
+
+msgid "Onboarding"
+msgstr "การปฐมนิเทศ"
+
+msgid "In Progress"
+msgstr "กำลังดำเนินการ"
+
+msgid "Loss of pay"
+msgstr "ขาดงานไม่รับค่าจ้าง"
+
+msgid "Deduct From"
+msgstr "หักจาก"
+
+msgid "Add Employee"
+msgstr "เพิ่มพนักงาน"
+
+msgid "Reimbursement"
+msgstr "การเบิกคืนค่าใช้จ่าย"
+
+msgid "Carry Forward"
+msgstr "ยกยอดไปปีถัดไป"
+
+msgid "Responsibility"
+msgstr "ความรับผิดชอบ"
+
+msgid "Could not load"
+msgstr "ไม่สามารถโหลดได้"
+
+msgid "Available Leave"
+msgstr "วันลาคงเหลือ"
+
+msgid "Hire vs Turnover"
+msgstr "การจ้างงานเทียบกับการลาออก"
+
+msgid "Exclude Holidays"
+msgstr "ไม่รวมวันหยุด"
+
+msgid "Show managing records"
+msgstr "แสดงรายการที่ดูแล"
+
+msgid "Do you want to approve this request"
+msgstr "คุณต้องการอนุมัติคำขอนี้หรือไม่"
+
+msgid "Do You really want to approve the request"
+msgstr "คุณต้องการอนุมัติคำขอนี้จริงหรือไม่"
+
+msgid "Map"
+msgstr "แมป"
+
+msgid "Row"
+msgstr "แถว"
+
+msgid "Half"
+msgstr "ครึ่ง"
+
+msgid "with"
+msgstr "กับ"
+
+msgid "Data"
+msgstr "ข้อมูล"
+
+msgid "Items"
+msgstr "รายการ"
+
+msgid "Enable"
+msgstr "เปิดใช้งาน"
+
+msgid "1 Star"
+msgstr "1 ดาว"
+
+msgid "Batches"
+msgstr "ชุดงาน"
+
+msgid "Careers"
+msgstr "ร่วมงานกับเรา"
+
+msgid "5 Stars"
+msgstr "5 ดาว"
+
+msgid "4 Stars"
+msgstr "4 ดาว"
+
+msgid "3 Stars"
+msgstr "3 ดาว"
+
+msgid "2 Stars"
+msgstr "2 ดาว"
+
+msgid "Perfect"
+msgstr "สมบูรณ์แบบ"
+
+msgid "Answers"
+msgstr "คำตอบ"
+
+msgid "Oops..."
+msgstr "อุ๊ปส์..."
+
+msgid "Batch No"
+msgstr "หมายเลขชุด"
+
+msgid "Add Fine"
+msgstr "เพิ่มค่าปรับ"
+
+msgid "Activity"
+msgstr "กิจกรรม"
+
+msgid "Holidays"
+msgstr "วันหยุด"
+
+msgid "Progress"
+msgstr "ความคืบหน้า"
+
+msgid "On Leave"
+msgstr "ลาอยู่"
+
+msgid "Settings"
+msgstr "การตั้งค่า"
+
+msgid "Projects"
+msgstr "โครงการ"
+
+msgid "leave(s)"
+msgstr "การลา"
+
+msgid "View FAQs"
+msgstr "ดูคำถามที่พบบ่อย"
+
+msgid "Portfolio"
+msgstr "พอร์ตโฟลิโอ"
+
+msgid "Anonymous"
+msgstr "ไม่ระบุชื่อ"
+
+msgid "Grace Time"
+msgstr "ระยะผ่อนผัน"
+
+msgid "Date Range"
+msgstr "ช่วงวันที่"
+
+msgid "No tickets"
+msgstr "ไม่มีตั๋วแจ้งปัญหา"
+
+msgid "Create Tag"
+msgstr "สร้างแท็ก"
+
+msgid "Income Tax"
+msgstr "ภาษีเงินได้"
+
+msgid "Attachment"
+msgstr "ไฟล์แนบ"
+
+msgid "Leave Days"
+msgstr "จำนวนวันลา"
+
+msgid "Income tax"
+msgstr "ภาษีเงินได้"
+
+msgid "Time Spent"
+msgstr "เวลาที่ใช้"
+
+msgid "candidates"
+msgstr "ผู้สมัคร"
+
+msgid " Activities"
+msgstr " กิจกรรม"
+
+msgid "Upload File"
+msgstr "อัปโหลดไฟล์"
+
+msgid "Paid Amount"
+msgstr "จำนวนเงินที่จ่าย"
+
+msgid "Talent Pool"
+msgstr "ฐานข้อมูลผู้มีความสามารถ"
+
+msgid "Leave Types"
+msgstr "ประเภทการลา"
+
+msgid "Loss Of Pay"
+msgstr "ขาดงานไม่รับค่าจ้าง"
+
+msgid "Performance"
+msgstr "ประสิทธิภาพการทำงาน"
+
+msgid "Holiday Name"
+msgstr "ชื่อวันหยุด"
+
+msgid "day of month"
+msgstr "วันของเดือน"
+
+msgid "Map Employee"
+msgstr "จับคู่พนักงาน"
+
+msgid "Action Taken"
+msgstr "การดำเนินการที่ทำ"
+
+msgid "Bank Address"
+msgstr "ที่อยู่ธนาคาร"
+
+msgid "No documents"
+msgstr "ไม่มีเอกสาร"
+
+msgid "Total Amount"
+msgstr "จำนวนเงินรวม"
+
+msgid "Offer Status"
+msgstr "สถานะข้อเสนอ"
+
+msgid "Open tickets"
+msgstr "ตั๋วแจ้งปัญหาที่เปิดอยู่"
+
+msgid "Asset History"
+msgstr "ประวัติสินทรัพย์"
+
+msgid "Employee Tags"
+msgstr "แท็กพนักงาน"
+
+msgid "Leave Balance"
+msgstr "ยอดคงเหลือวันลา"
+
+msgid "Allocated Date"
+msgstr "วันที่จัดสรร"
+
+msgid "Update Request"
+msgstr "อัปเดตคำขอ"
+
+msgid "Weekly Off Day"
+msgstr "วันหยุดประจำสัปดาห์"
+
+msgid "Account Number"
+msgstr "เลขที่บัญชี"
+
+msgid "Upload Resumes"
+msgstr "อัปโหลดเรซูเม่"
+
+msgid "Open Positions"
+msgstr "ตำแหน่งงานที่เปิดรับ"
+
+msgid "Returned Status"
+msgstr "สถานะการส่งคืน"
+
+msgid "Edit Attendance"
+msgstr "แก้ไขการเข้างาน"
+
+msgid "Early Departure"
+msgstr "ออกก่อนเวลา"
+
+msgid "Department-wise"
+msgstr "แยกตามแผนก"
+
+msgid "Condition Value"
+msgstr "ค่าเงื่อนไข"
+
+msgid "Currency Symbol"
+msgstr "สัญลักษณ์สกุลเงิน"
+
+msgid "Change Password"
+msgstr "เปลี่ยนรหัสผ่าน"
+
+msgid "Forgot password"
+msgstr "ลืมรหัสผ่าน"
+
+msgid "Change Username"
+msgstr "เปลี่ยนชื่อผู้ใช้"
+
+msgid "Import Holidays"
+msgstr "นำเข้าวันหยุด"
+
+msgid "Forgot Password"
+msgstr "ลืมรหัสผ่าน"
+
+msgid "Reset to default"
+msgstr "รีเซ็ตเป็นค่าเริ่มต้น"
+
+msgid "Export Employees"
+msgstr "ส่งออกพนักงาน"
+
+msgid "Candidate Filter"
+msgstr "ตัวกรองผู้สมัคร"
+
+msgid "Based On Week Day"
+msgstr "ตามวันในสัปดาห์"
+
+msgid "Other Attachments"
+msgstr "ไฟล์แนบอื่น ๆ"
+
+msgid "Work type request"
+msgstr "คำขอเปลี่ยนประเภทการทำงาน"
+
+msgid "Asset Batch Number"
+msgstr "หมายเลขชุดสินทรัพย์"
+
+msgid "Return Description"
+msgstr "รายละเอียดการส่งคืน"
+
+msgid "Toggle auto-refresh"
+msgstr "สลับการรีเฟรชอัตโนมัติ"
+
+msgid "Requested to return"
+msgstr "ร้องขอให้ส่งคืน"
+
+msgid "Select All Requests"
+msgstr "เลือกคำขอทั้งหมด"
+
+msgid "Carryforward Expire"
+msgstr "การยกยอดหมดอายุ"
+
+msgid "Scheduled Interview"
+msgstr "การสัมภาษณ์ที่นัดหมายไว้"
+
+msgid "Asset Allocated Date"
+msgstr "วันที่จัดสรรสินทรัพย์"
+
+msgid "INTERVIEW : Today at"
+msgstr "สัมภาษณ์: วันนี้เวลา"
+
+msgid "Application Tracking"
+msgstr "การติดตามใบสมัคร"
+
+msgid "Requested days Up To"
+msgstr "จำนวนวันที่ขอไม่เกิน"
+
+msgid "Unselect All Requests"
+msgstr "ยกเลิกการเลือกคำขอทั้งหมด"
+
+msgid "Select All Candidates"
+msgstr "เลือกผู้สมัครทั้งหมด"
+
+msgid "Contract wage at most"
+msgstr "ค่าจ้างตามสัญญาไม่เกิน"
+
+msgid "This field is required"
+msgstr "จำเป็นต้องกรอกช่องนี้"
+
+msgid "Upload JPG, PNG or SVG"
+msgstr "อัปโหลด JPG, PNG หรือ SVG"
+
+msgid "Clashed Leave Requests"
+msgstr "คำขอลาที่ซ้อนทับกัน"
+
+msgid "Contract End Date From"
+msgstr "วันที่สิ้นสุดสัญญาตั้งแต่"
+
+msgid "Contract End Date Till"
+msgstr "วันที่สิ้นสุดสัญญาถึง"
+
+msgid "Contract wage at least"
+msgstr "ค่าจ้างตามสัญญาไม่ต่ำกว่า"
+
+msgid "Unable to load tickets"
+msgstr "ไม่สามารถโหลดตั๋วแจ้งปัญหาได้"
+
+msgid "Approval depends on the"
+msgstr "การอนุมัติขึ้นอยู่กับ"
+
+msgid "Unselect All Candidates"
+msgstr "ยกเลิกการเลือกผู้สมัครทั้งหมด"
+
+msgid "Candidate is Converted "
+msgstr "ผู้สมัครถูกแปลงแล้ว "
+
+msgid "Return to the main page"
+msgstr "กลับสู่หน้าหลัก"
+
+msgid "Contract Start Date From"
+msgstr "วันที่เริ่มสัญญาตั้งแต่"
+
+msgid "Contract Start Date Till"
+msgstr "วันที่เริ่มสัญญาถึง"
+
+msgid "Net Pay Greater or Equal"
+msgstr "เงินเดือนสุทธิมากกว่าหรือเท่ากับ"
+
+msgid "Attendance Daily Overview"
+msgstr "ภาพรวมการเข้างานรายวัน"
+
+msgid "Rotating Work Type Assign"
+msgstr "มอบหมายประเภทการทำงานแบบหมุนเวียน"
+
+msgid "Requested days More Than "
+msgstr "จำนวนวันที่ขอมากกว่า "
+
+msgid "Gross Pay Greater or Equal"
+msgstr "เงินเดือนรวมมากกว่าหรือเท่ากับ"
+
+msgid "Deduction Greater or Equal"
+msgstr "รายการหักมากกว่าหรือเท่ากับ"
+
+msgid "Net Pay Less Than or Equal"
+msgstr "เงินเดือนสุทธิน้อยกว่าหรือเท่ากับ"
+
+msgid "OT Account Greater or Equal"
+msgstr "บัญชีล่วงเวลามากกว่าหรือเท่ากับ"
+
+msgid "Current Value Cannot be -ve"
+msgstr "ค่าปัจจุบันต้องไม่เป็นค่าลบ"
+
+msgid "For working days on a month"
+msgstr "สำหรับวันทำงานในเดือน"
+
+msgid "Gross Pay Less Than or Equal"
+msgstr "เงินเดือนรวมน้อยกว่าหรือเท่ากับ"
+
+msgid "Deduction Less Than or Equal"
+msgstr "รายการหักน้อยกว่าหรือเท่ากับ"
+
+msgid "Worked Hours Greater or Equal"
+msgstr "ชั่วโมงทำงานมากกว่าหรือเท่ากับ"
+
+msgid "OT Account Less Than or Equal"
+msgstr "บัญชีล่วงเวลาน้อยกว่าหรือเท่ากับ"
+
+msgid "There is no comments to show."
+msgstr "ไม่มีความคิดเห็นที่จะแสดง"
+
+msgid "Rotate every 3rd day of month"
+msgstr "หมุนเวียนทุกวันที่ 3 ของเดือน"
+
+msgid "Pending Hours Greater or Equal"
+msgstr "ชั่วโมงที่ค้างมากกว่าหรือเท่ากับ"
+
+msgid "Rotate every 1st day of month "
+msgstr "หมุนเวียนทุกวันที่ 1 ของเดือน "
+
+msgid "Rotate every 2nd day of month "
+msgstr "หมุนเวียนทุกวันที่ 2 ของเดือน "
+
+msgid "Do you want archive this OKR ?"
+msgstr "คุณต้องการเก็บถาวร OKR นี้หรือไม่?"
+
+msgid "Worked Hours Less Than or Equal"
+msgstr "ชั่วโมงทำงานน้อยกว่าหรือเท่ากับ"
+
+msgid "Open positions across our teams"
+msgstr "ตำแหน่งงานที่เปิดรับในทีมของเรา"
+
+msgid "Available Days Greater or Equal"
+msgstr "จำนวนวันที่ใช้ได้มากกว่าหรือเท่ากับ"
+
+msgid "Pending Hours Less Than or Equal"
+msgstr "ชั่วโมงที่ค้างน้อยกว่าหรือเท่ากับ"
+
+msgid "Do you want to delete this asset?"
+msgstr "คุณต้องการลบสินทรัพย์นี้หรือไม่?"
+
+msgid "Available Days Less Than or Equal"
+msgstr "จำนวนวันที่ใช้ได้น้อยกว่าหรือเท่ากับ"
+
+msgid "Total Leave Days Greater or Equal"
+msgstr "จำนวนวันลาทั้งหมดมากกว่าหรือเท่ากับ"
+
+msgid "Do you want un-archive this OKR ?"
+msgstr "คุณต้องการยกเลิกการเก็บถาวร OKR นี้หรือไม่?"
+
+msgid "Carryforward Days Greater or Equal"
+msgstr "จำนวนวันที่ยกยอดมากกว่าหรือเท่ากับ"
+
+msgid "There are no Objectives available."
+msgstr "ไม่มีวัตถุประสงค์ที่ใช้ได้"
+
+msgid "Total Leave Days Less Than or Equal"
+msgstr "จำนวนวันลาทั้งหมดน้อยกว่าหรือเท่ากับ"
+
+msgid "Track Late Arrival & Early Departure"
+msgstr "ติดตามการมาสายและการออกก่อนเวลา"
+
+msgid "No documents have been uploaded yet."
+msgstr "ยังไม่มีการอัปโหลดเอกสาร"
+
+msgid "Carryforward Days Less Than or Equal"
+msgstr "จำนวนวันที่ยกยอดน้อยกว่าหรือเท่ากับ"
+
+msgid "This leave request is for the month of"
+msgstr "คำขอลานี้สำหรับเดือน"
+
+msgid "Do you want to archive this objective?"
+msgstr "คุณต้องการเก็บถาวรวัตถุประสงค์นี้หรือไม่?"
+
+msgid "Do you want to unarchive this objective?"
+msgstr "คุณต้องการยกเลิกการเก็บถาวรวัตถุประสงค์นี้หรือไม่?"
+
+msgid "Do you want to un-archive this candidate?"
+msgstr "คุณต้องการยกเลิกการเก็บถาวรผู้สมัครรายนี้หรือไม่?"
+
+msgid "No notes have been added for this employee"
+msgstr "ยังไม่มีการเพิ่มหมายเหตุสำหรับพนักงานคนนี้"
+
+msgid "Do You really want to Approve this request?"
+msgstr "คุณต้องการอนุมัติคำขอนี้จริงหรือไม่?"
+
+msgid "having available leave days for this month."
+msgstr "ที่มีวันลาคงเหลือสำหรับเดือนนี้"
+
+msgid "When"
+msgstr "เมื่อ"
+
+msgid "Wage"
+msgstr "ค่าจ้าง"
+
+msgid "Expand"
+msgstr "ขยาย"
+
+msgid "Source"
+msgstr "แหล่งที่มา"
+
+msgid "Settled"
+msgstr "ชำระแล้ว"
+
+msgid "Net pay"
+msgstr "เงินเดือนสุทธิ"
+
+msgid "Add Note"
+msgstr "เพิ่มหมายเหตุ"
+
+msgid "Half Day"
+msgstr "ครึ่งวัน"
+
+msgid "Pay date"
+msgstr "วันที่จ่ายเงิน"
+
+msgid "Contracts"
+msgstr "สัญญา"
+
+msgid "Converted"
+msgstr "แปลงแล้ว"
+
+msgid "Add a note"
+msgstr "เพิ่มหมายเหตุ"
+
+msgid "No manager"
+msgstr "ไม่มีผู้จัดการ"
+
+msgid "Interviews"
+msgstr "การสัมภาษณ์"
+
+msgid "Permission"
+msgstr "สิทธิ์"
+
+msgid "Attendances"
+msgstr "การเข้างาน"
+
+msgid "Application"
+msgstr "ใบสมัคร"
+
+msgid "No managers"
+msgstr "ไม่มีผู้จัดการ"
+
+msgid "Bonus Points"
+msgstr "คะแนนโบนัส"
+
+msgid "Current Stage"
+msgstr "ขั้นตอนปัจจุบัน"
+
+msgid "Work Type Request"
+msgstr "คำขอเปลี่ยนประเภทการทำงาน"
+
+msgid "Work Type Requests"
+msgstr "คำขอเปลี่ยนประเภทการทำงาน"
+
+msgid "Add more options.."
+msgstr "เพิ่มตัวเลือกเพิ่มเติม.."
+
+msgid "Validate Attendance"
+msgstr "ตรวจสอบการเข้างาน"
+
+msgid "Do you want to download the template?"
+msgstr "คุณต้องการดาวน์โหลดแม่แบบหรือไม่?"
+
+msgid "Seq"
+msgstr "ลำดับ"
+
+msgid "Home"
+msgstr "หน้าหลัก"
+
+msgid "Color"
+msgstr "สี"
+
+msgid "Audit"
+msgstr "การตรวจสอบ"
+
+msgid "Prefix"
+msgstr "คำนำหน้า"
+
+msgid "Skills"
+msgstr "ทักษะ"
+
+msgid "General"
+msgstr "ทั่วไป"
+
+msgid "Optional"
+msgstr "ไม่บังคับ"
+
+msgid "Start Value"
+msgstr "ค่าเริ่มต้น"
+
+msgid "Loss of Pay"
+msgstr "ขาดงานไม่รับค่าจ้าง"
+
+msgid "Subordinate"
+msgstr "ผู้ใต้บังคับบัญชา"
+
+msgid "Portal Sent"
+msgstr "ส่งพอร์ทัลแล้ว"
+
+msgid "Group Assign"
+msgstr "มอบหมายเป็นกลุ่ม"
+
+msgid "Basic Salary"
+msgstr "เงินเดือนพื้นฐาน"
+
+msgid "Purchase Date"
+msgstr "วันที่ซื้อ"
+
+msgid "By Department"
+msgstr "ตามแผนก"
+
+msgid "Reset Weekday"
+msgstr "รีเซ็ตวันในสัปดาห์"
+
+msgid "Taxable gross"
+msgstr "เงินได้รวมที่ต้องเสียภาษี"
+
+msgid "Add Questions"
+msgstr "เพิ่มคำถาม"
+
+msgid "Notice Period"
+msgstr "ระยะเวลาแจ้งล่วงหน้า"
+
+msgid "Progress Type"
+msgstr "ประเภทความคืบหน้า"
+
+msgid "All caught up"
+msgstr "ไม่มีรายการค้างแล้ว"
+
+msgid "Reset Password"
+msgstr "รีเซ็ตรหัสผ่าน"
+
+msgid "Welcome Aboard"
+msgstr "ยินดีต้อนรับสู่ทีม"
+
+msgid "No records found"
+msgstr "ไม่พบข้อมูล"
+
+msgid "Document Requests"
+msgstr "คำขอเอกสาร"
+
+msgid "Selected Employees"
+msgstr "พนักงานที่เลือก"
+
+msgid "End Date Breakdown"
+msgstr "แยกตามวันที่สิ้นสุด"
+
+msgid "Specific Employees"
+msgstr "พนักงานเฉพาะราย"
+
+msgid "Excluded Employees"
+msgstr "พนักงานที่ถูกยกเว้น"
+
+msgid "Disciplinary Action"
+msgstr "การลงโทษทางวินัย"
+
+msgid "Resignation Request"
+msgstr "คำขอลาออก"
+
+msgid "Warranty Expiry Date"
+msgstr "วันที่หมดอายุการรับประกัน"
+
+msgid "Start Date Breakdown"
+msgstr "แยกตามวันที่เริ่มต้น"
+
+msgid "Request Cancellation"
+msgstr "ขอยกเลิก"
+
+msgid "Rotating Shift Assign"
+msgstr "มอบหมายกะงานหมุนเวียน"
+
+msgid "---Choose Job Role---"
+msgstr "---เลือกบทบาทงาน---"
+
+msgid "Attendance To Validate"
+msgstr "การเข้างานที่ต้องตรวจสอบ"
+
+msgid "Approve cancellation request"
+msgstr "อนุมัติคำขอยกเลิก"
+
+msgid "Are you sure to delete this objective?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบวัตถุประสงค์นี้?"
+
+msgid "Do You really want to approve the request?"
+msgstr "คุณต้องการอนุมัติคำขอนี้จริงหรือไม่?"
+
+msgid "You have no new notifications at the moment"
+msgstr "ไม่มีการแจ้งเตือนใหม่ในขณะนี้"
+
+msgid "Any"
+msgstr "ใดก็ได้"
+
+msgid "Sort"
+msgstr "เรียงลำดับ"
+
+msgid "Left"
+msgstr "ออกแล้ว"
+
+msgid "Fine"
+msgstr "ค่าปรับ"
+
+msgid "Your"
+msgstr "ของคุณ"
+
+msgid "Daily"
+msgstr "รายวัน"
+
+msgid "Model"
+msgstr "โมเดล"
+
+msgid "Slabs"
+msgstr "ขั้นเงินเดือน"
+
+msgid "Logout"
+msgstr "ออกจากระบบ"
+
+msgid "Leaves"
+msgstr "การลา"
+
+msgid "Mobile"
+msgstr "มือถือ"
+
+msgid "Due On"
+msgstr "ครบกำหนดวันที่"
+
+msgid "Publish"
+msgstr "เผยแพร่"
+
+msgid "Sign In"
+msgstr "เข้าสู่ระบบ"
+
+msgid "Meeting"
+msgstr "การประชุม"
+
+msgid "Currency"
+msgstr "สกุลเงิน"
+
+msgid "End date"
+msgstr "วันที่สิ้นสุด"
+
+msgid "Zip Code"
+msgstr "รหัสไปรษณีย์"
+
+msgid "Tomorrow"
+msgstr "พรุ่งนี้"
+
+msgid "Resolved"
+msgstr "แก้ไขแล้ว"
+
+msgid "Due Date"
+msgstr "วันครบกำหนด"
+
+msgid "Add note"
+msgstr "เพิ่มหมายเหตุ"
+
+msgid "Added on"
+msgstr "เพิ่มเมื่อ"
+
+msgid "Add Task"
+msgstr "เพิ่มงาน"
+
+msgid "To remit"
+msgstr "ที่ต้องนำส่ง"
+
+msgid "Regards,"
+msgstr "ด้วยความเคารพ,"
+
+msgid " Actions"
+msgstr " การดำเนินการ"
+
+msgid "Helpdesk"
+msgstr "ศูนย์ช่วยเหลือ"
+
+msgid "Shift Day"
+msgstr "วันกะงาน"
+
+msgid "Published"
+msgstr "เผยแพร่แล้ว"
+
+msgid "Bulk Mail"
+msgstr "ส่งอีเมลจำนวนมาก"
+
+msgid "Ticket Id"
+msgstr "รหัสตั๋วแจ้งปัญหา"
+
+msgid "Attendees"
+msgstr "ผู้เข้าร่วม"
+
+msgid "Period In"
+msgstr "ช่วงเวลาเข้า"
+
+msgid "Remaining"
+msgstr "คงเหลือ"
+
+msgid "Mail Sent"
+msgstr "ส่งอีเมลแล้ว"
+
+msgid "Add Report"
+msgstr "เพิ่มรายงาน"
+
+msgid "Expand All"
+msgstr "ขยายทั้งหมด"
+
+msgid "Time sheet"
+msgstr "ใบบันทึกเวลา"
+
+msgid "My Company"
+msgstr "บริษัทของฉัน"
+
+msgid "Go To Home"
+msgstr "ไปที่หน้าหลัก"
+
+msgid "Allocation"
+msgstr "การจัดสรร"
+
+msgid "Bulk Reject"
+msgstr "ปฏิเสธเป็นกลุ่ม"
+
+msgid "Hours Chart"
+msgstr "แผนภูมิชั่วโมง"
+
+msgid "Assigned As"
+msgstr "มอบหมายเป็น"
+
+msgid "Update Note"
+msgstr "อัปเดตหมายเหตุ"
+
+msgid "Create role"
+msgstr "สร้างบทบาท"
+
+msgid "Unpaid days"
+msgstr "วันที่ไม่ได้รับค่าจ้าง"
+
+msgid "Reset Based"
+msgstr "รีเซ็ตตาม"
+
+msgid "Will Update"
+msgstr "จะอัปเดต"
+
+msgid "Calculation"
+msgstr "การคำนวณ"
+
+msgid "Batch Number"
+msgstr "หมายเลขชุด"
+
+msgid "Full Present"
+msgstr "มาทำงานเต็มวัน"
+
+msgid "Add to batch"
+msgstr "เพิ่มในชุด"
+
+msgid "Collapse All"
+msgstr "ยุบทั้งหมด"
+
+msgid "Comment here"
+msgstr "แสดงความคิดเห็นที่นี่"
+
+msgid "Deduct Leave"
+msgstr "หักวันลา"
+
+msgid "My Dashboard"
+msgstr "แดชบอร์ดของฉัน"
+
+msgid "Next 30 days"
+msgstr "30 วันข้างหน้า"
+
+msgid "Edit Profile"
+msgstr "แก้ไขโปรไฟล์"
+
+msgid "Loan Details"
+msgstr "รายละเอียดเงินกู้"
+
+msgid "Subordinates"
+msgstr "ผู้ใต้บังคับบัญชา"
+
+msgid "Closing soon"
+msgstr "ใกล้ครบกำหนด"
+
+msgid "Link Expired"
+msgstr "ลิงก์หมดอายุ"
+
+msgid "Needs a look"
+msgstr "ต้องตรวจสอบ"
+
+msgid "Check In Date"
+msgstr "วันที่เข้างาน"
+
+msgid "Import failed"
+msgstr "นำเข้าไม่สำเร็จ"
+
+msgid "Export Shifts"
+msgstr "ส่งออกกะงาน"
+
+msgid "Import Result"
+msgstr "ผลการนำเข้า"
+
+msgid "No candidates"
+msgstr "ไม่มีผู้สมัคร"
+
+msgid "End Date From"
+msgstr "วันที่สิ้นสุดตั้งแต่"
+
+msgid "End Date Till"
+msgstr "วันที่สิ้นสุดถึง"
+
+msgid "Create Period"
+msgstr "สร้างรอบ"
+
+msgid "All Objective"
+msgstr "วัตถุประสงค์ทั้งหมด"
+
+msgid "Project Stage"
+msgstr "ขั้นตอนโครงการ"
+
+msgid "Helpdesk Tags"
+msgstr "แท็กศูนย์ช่วยเหลือ"
+
+msgid "Return Request"
+msgstr "คำขอส่งคืน"
+
+msgid "Check Out Date"
+msgstr "วันที่ออกงาน"
+
+msgid "IP Restriction"
+msgstr "การจำกัด IP"
+
+msgid "Penalty Amount"
+msgstr "จำนวนเงินค่าปรับ"
+
+msgid "Audit Tracking"
+msgstr "การติดตามการตรวจสอบ"
+
+msgid "Requested date"
+msgstr "วันที่ร้องขอ"
+
+msgid "Requested till"
+msgstr "ร้องขอถึง"
+
+msgid "Basic Identity"
+msgstr "ข้อมูลระบุตัวตนพื้นฐาน"
+
+msgid "Secure Sign-up"
+msgstr "การลงทะเบียนอย่างปลอดภัย"
+
+msgid "Load Demo Data"
+msgstr "โหลดข้อมูลตัวอย่าง"
+
+msgid "Payment Method"
+msgstr "วิธีการชำระเงิน"
+
+msgid "Probation ends"
+msgstr "สิ้นสุดการทดลองงาน"
+
+msgid "Salary Advance"
+msgstr "เงินเดือนล่วงหน้า"
+
+msgid "Self Objective"
+msgstr "วัตถุประสงค์ส่วนตัว"
+
+msgid "Weekly Off Days"
+msgstr "วันหยุดประจำสัปดาห์"
+
+msgid "Condition Field"
+msgstr "ฟิลด์เงื่อนไข"
+
+msgid "Total Employees"
+msgstr "จำนวนพนักงานทั้งหมด"
+
+msgid "Date of Joining"
+msgstr "วันที่เริ่มงาน"
+
+msgid "Conversion Rate"
+msgstr "อัตราการแปลง"
+
+msgid "Medium Priority"
+msgstr "ลำดับความสำคัญปานกลาง"
+
+msgid "Used Leave Days"
+msgstr "จำนวนวันลาที่ใช้ไป"
+
+msgid "Export Requests"
+msgstr "ส่งออกคำขอ"
+
+msgid "Bonus to encash"
+msgstr "โบนัสที่แปลงเป็นเงินสด"
+
+msgid "Employer Rate :"
+msgstr "อัตราของนายจ้าง :"
+
+msgid "Employee Rate :"
+msgstr "อัตราของลูกจ้าง :"
+
+msgid "Start Date Till"
+msgstr "วันที่เริ่มต้นถึง"
+
+msgid "Add to Rejected"
+msgstr "เพิ่มในรายชื่อที่ถูกปฏิเสธ"
+
+msgid "Checked In Today"
+msgstr "เข้างานวันนี้แล้ว"
+
+msgid "Hired Candidates"
+msgstr "ผู้สมัครที่จ้างแล้ว"
+
+msgid "Document Request"
+msgstr "คำขอเอกสาร"
+
+msgid "Request Document"
+msgstr "ขอเอกสาร"
+
+msgid "Pending approval"
+msgstr "รออนุมัติ"
+
+msgid "Activity history"
+msgstr "ประวัติกิจกรรม"
+
+msgid "'s leave request"
+msgstr "คำขอลาของ"
+
+msgid "Total Deductions"
+msgstr "รายการหักทั้งหมด"
+
+msgid "Export Contracts"
+msgstr "ส่งออกสัญญา"
+
+msgid "Already Answered"
+msgstr "ตอบแล้ว"
+
+msgid "Total candidates"
+msgstr "ผู้สมัครทั้งหมด"
+
+msgid "Of Scheduled Days"
+msgstr "ของวันที่กำหนดไว้"
+
+msgid "Approval Managers"
+msgstr "ผู้อนุมัติ"
+
+msgid "Select All Shifts"
+msgstr "เลือกกะงานทั้งหมด"
+
+msgid "Selected Holidays"
+msgstr "วันหยุดที่เลือก"
+
+msgid "Biometric Devices"
+msgstr "อุปกรณ์ biometric"
+
+msgid "Import Successful"
+msgstr "นำเข้าสำเร็จ"
+
+msgid "Shift Information"
+msgstr "ข้อมูลกะงาน"
+
+msgid "Total Leave taken"
+msgstr "จำนวนวันลาที่ใช้ทั้งหมด"
+
+msgid "Forgot Password ?"
+msgstr "ลืมรหัสผ่าน?"
+
+msgid "Contact & Address"
+msgstr "ข้อมูลติดต่อและที่อยู่"
+
+msgid "Username or email"
+msgstr "ชื่อผู้ใช้หรืออีเมล"
+
+msgid "All Notifications"
+msgstr "การแจ้งเตือนทั้งหมด"
+
+msgid "Reset my password"
+msgstr "รีเซ็ตรหัสผ่านของฉัน"
+
+msgid "Requested Employee"
+msgstr "พนักงานที่ร้องขอ"
+
+msgid "Import Attendances"
+msgstr "นำเข้าข้อมูลการเข้างาน"
+
+msgid "Export Attendances"
+msgstr "ส่งออกข้อมูลการเข้างาน"
+
+msgid "Check In/Check Out"
+msgstr "เข้างาน/ออกงาน"
+
+msgid "Condition Operator"
+msgstr "ตัวดำเนินการเงื่อนไข"
+
+msgid "Anonymous Feedback"
+msgstr "ข้อเสนอแนะแบบไม่ระบุชื่อ"
+
+msgid "Multiple Approvals"
+msgstr "การอนุมัติหลายระดับ"
+
+msgid "Repayment Schedule"
+msgstr "ตารางการชำระคืน"
+
+msgid "Request a new link"
+msgstr "ขอลิงก์ใหม่"
+
+msgid "Request Description"
+msgstr "รายละเอียดคำขอ"
+
+msgid "Overtime To Approve"
+msgstr "ค่าล่วงเวลาที่รออนุมัติ"
+
+msgid "users in this group"
+msgstr "ผู้ใช้ในกลุ่มนี้"
+
+msgid "Unselect All Shifts"
+msgstr "ยกเลิกการเลือกกะงานทั้งหมด"
+
+msgid "Initialize Database"
+msgstr "เริ่มต้นฐานข้อมูล"
+
+msgid "Progress Percentage"
+msgstr "เปอร์เซ็นต์ความคืบหน้า"
+
+msgid "Amount Per One Hour"
+msgstr "จำนวนเงินต่อชั่วโมง"
+
+msgid "Biometric Attendance"
+msgstr "การเข้างานด้วย biometric"
+
+msgid "Not Checked In Today"
+msgstr "ยังไม่ได้เข้างานวันนี้"
+
+msgid "LinkedIn Integration"
+msgstr "การเชื่อมต่อ LinkedIn"
+
+msgid "No upcoming holidays"
+msgstr "ไม่มีวันหยุดที่กำลังจะมาถึง"
+
+msgid "View Timesheet Chart"
+msgstr "ดูแผนภูมิใบบันทึกเวลา"
+
+msgid "Confirm New Password"
+msgstr "ยืนยันรหัสผ่านใหม่"
+
+msgid "Trying to connect..."
+msgstr "กำลังพยายามเชื่อมต่อ..."
+
+msgid "Import Rotating Shift"
+msgstr "นำเข้ากะงานหมุนเวียน"
+
+msgid "Add more work types.."
+msgstr "เพิ่มประเภทการทำงานเพิ่มเติม.."
+
+msgid "6-month turnover rate"
+msgstr "อัตราการลาออก 6 เดือน"
+
+msgid "Default Notice Period"
+msgstr "ระยะเวลาแจ้งล่วงหน้าเริ่มต้น"
+
+msgid "Amount Per Attendance"
+msgstr "จำนวนเงินต่อการเข้างาน"
+
+msgid "net pay zero or below"
+msgstr "เงินเดือนสุทธิเป็นศูนย์หรือต่ำกว่า"
+
+msgid "Select All Objectives"
+msgstr "เลือกวัตถุประสงค์ทั้งหมด"
+
+msgid "Split Day (two halves)"
+msgstr "แบ่งวัน (สองช่วงครึ่ง)"
+
+msgid "Calculate Leave Amount"
+msgstr "คำนวณจำนวนเงินวันลา"
+
+msgid "installments completed"
+msgstr "งวดที่ชำระครบแล้ว"
+
+msgid "Dashboard Chart Select"
+msgstr "เลือกแผนภูมิแดชบอร์ด"
+
+msgid "No active recruitments"
+msgstr "ไม่มีการสรรหาที่เปิดอยู่"
+
+msgid "Recruitment Information"
+msgstr "ข้อมูลการสรรหา"
+
+msgid "Leave Payment Reduction"
+msgstr "การลดการจ่ายเงินสำหรับวันลา"
+
+msgid "Unselect All Objectives"
+msgstr "ยกเลิกการเลือกวัตถุประสงค์ทั้งหมด"
+
+msgid "Edit Rejected Candidate"
+msgstr "แก้ไขผู้สมัครที่ถูกปฏิเสธ"
+
+msgid "Deduct From Carryforward"
+msgstr "หักจากวันลาที่ยกยอด"
+
+msgid "Disciplinary Action Type"
+msgstr "ประเภทการลงโทษทางวินัย"
+
+msgid "Restricted Leave Periods"
+msgstr "ช่วงเวลาที่จำกัดการลา"
+
+msgid "Available days to encash"
+msgstr "จำนวนวันที่แปลงเป็นเงินสดได้"
+
+msgid "Report added successfully."
+msgstr "เพิ่มรายงานสำเร็จแล้ว"
+
+msgid "Monthly Attendance Summary"
+msgstr "สรุปการเข้างานรายเดือน"
+
+msgid "Would you like to proceed?"
+msgstr "คุณต้องการดำเนินการต่อหรือไม่?"
+
+msgid "Also Created Along The Way"
+msgstr "ที่ถูกสร้างขึ้นพร้อมกันด้วย"
+
+msgid "Multiple Approval Condition"
+msgstr "เงื่อนไขการอนุมัติหลายระดับ"
+
+msgid "Could not reach the server."
+msgstr "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้"
+
+msgid "No columns match your search"
+msgstr "ไม่พบคอลัมน์ที่ตรงกับการค้นหา"
+
+msgid "Slabs, adjustments & formula"
+msgstr "ขั้นเงินเดือน การปรับปรุง และสูตร"
+
+msgid "Import Completed with Warnings"
+msgstr "นำเข้าเสร็จสิ้นพร้อมคำเตือน"
+
+msgid "Deduction Amount For One Leave"
+msgstr "จำนวนเงินที่หักต่อการลาหนึ่งครั้ง"
+
+msgid "No attendance records available"
+msgstr "ไม่มีข้อมูลการเข้างาน"
+
+msgid "Enter your new password to reset"
+msgstr "ใส่รหัสผ่านใหม่เพื่อรีเซ็ต"
+
+msgid "New hires vs exits — last 6 months"
+msgstr "พนักงานใหม่เทียบกับผู้ลาออก - 6 เดือนที่ผ่านมา"
+
+msgid "No answers have been submitted yet"
+msgstr "ยังไม่มีการส่งคำตอบ"
+
+msgid "Please login to access the dashboard."
+msgstr "กรุณาเข้าสู่ระบบเพื่อเข้าถึงแดชบอร์ด"
+
+msgid "File format not supported for preview."
+msgstr "ไม่รองรับรูปแบบไฟล์สำหรับการแสดงตัวอย่าง"
+
+msgid "Installment schedule & repayment status"
+msgstr "ตารางงวดผ่อนชำระและสถานะการชำระคืน"
+
+msgid "Fill in the template and upload it here."
+msgstr "กรอกข้อมูลในแม่แบบแล้วอัปโหลดที่นี่"
+
+msgid "You have No leave requests for this month."
+msgstr "คุณไม่มีคำขอลาสำหรับเดือนนี้"
+
+msgid "Please correct the file and upload it again."
+msgstr "กรุณาแก้ไขไฟล์แล้วอัปโหลดอีกครั้ง"
+
+msgid "This employee is not assigned to any groups."
+msgstr "พนักงานคนนี้ยังไม่ได้อยู่ในกลุ่มใด"
+
+msgid "No template groups have been established yet."
+msgstr "ยังไม่มีการสร้างกลุ่มแม่แบบ"
+
+msgid "Slab"
+msgstr "ขั้นเงินเดือน"
+
+msgid " Add"
+msgstr " เพิ่ม"
+
+msgid "After"
+msgstr "หลังจาก"
+
+msgid "Hires"
+msgstr "การจ้างงาน"
+
+msgid "Before"
+msgstr "ก่อน"
+
+msgid "Requests"
+msgstr "คำขอ"
+
+msgid "Required"
+msgstr "จำเป็น"
+
+msgid "Approval"
+msgstr "การอนุมัติ"
+
+msgid "Referral"
+msgstr "การแนะนำ"
+
+msgid "Gross pay"
+msgstr "เงินเดือนรวม"
+
+msgid "Less Than"
+msgstr "น้อยกว่า"
+
+msgid "Generated"
+msgstr "สร้างแล้ว"
+
+msgid "Questions"
+msgstr "คำถาม"
+
+msgid "Full Name"
+msgstr "ชื่อ-นามสกุล"
+
+msgid "My Profile"
+msgstr "โปรไฟล์ของฉัน"
+
+msgid "Stage Type"
+msgstr "ประเภทขั้นตอน"
+
+msgid "Key result"
+msgstr "ผลลัพธ์หลัก"
+
+msgid "Converted "
+msgstr "แปลงแล้ว "
+
+msgid "Send Portal"
+msgstr "ส่งพอร์ทัล"
+
+msgid "Asset Return"
+msgstr "การส่งคืนสินทรัพย์"
+
+msgid "Add Comments"
+msgstr "เพิ่มความคิดเห็น"
+
+msgid "Greater Than"
+msgstr "มากกว่า"
+
+msgid "Leave Trends"
+msgstr "แนวโน้มการลา"
+
+msgid "Offer letter"
+msgstr "จดหมายเสนองาน"
+
+msgid "Claim Request"
+msgstr "คำขอเบิกค่าใช้จ่าย"
+
+msgid "Send via mail"
+msgstr "ส่งทางอีเมล"
+
+msgid "Till End Date"
+msgstr "จนถึงวันที่สิ้นสุด"
+
+msgid "No objectives"
+msgstr "ไม่มีวัตถุประสงค์"
+
+msgid "Access Denied"
+msgstr "ปฏิเสธการเข้าถึง"
+
+msgid "Penalty amount"
+msgstr "จำนวนเงินค่าปรับ"
+
+msgid "Employee Shift"
+msgstr "กะงานของพนักงาน"
+
+msgid "Validate Hours"
+msgstr "ตรวจสอบชั่วโมง"
+
+msgid "Upload Document"
+msgstr "อัปโหลดเอกสาร"
+
+msgid "Overdue Tickets"
+msgstr "ตั๋วแจ้งปัญหาที่เกินกำหนด"
+
+msgid "No turnover data"
+msgstr "ไม่มีข้อมูลการลาออก"
+
+msgid "Application Form"
+msgstr "แบบฟอร์มใบสมัคร"
+
+msgid "Planned To Leave"
+msgstr "วางแผนลา"
+
+msgid "Deduction Amount"
+msgstr "จำนวนเงินที่หัก"
+
+msgid "Validate OT Hours"
+msgstr "ตรวจสอบชั่วโมงล่วงเวลา"
+
+msgid "Assignee Job Role"
+msgstr "บทบาทงานของผู้รับผิดชอบ"
+
+msgid "No department data"
+msgstr "ไม่มีข้อมูลแผนก"
+
+msgid "Bonus Point Setting"
+msgstr "การตั้งค่าคะแนนโบนัส"
+
+msgid "Gender Distribution"
+msgstr "การกระจายตามเพศ"
+
+msgid "Validate Attendances"
+msgstr "ตรวจสอบการเข้างาน"
+
+msgid "Leave Request Alert."
+msgstr "แจ้งเตือนคำขอลา"
+
+msgid "Department Headcount"
+msgstr "จำนวนพนักงานแยกตามแผนก"
+
+msgid "Leave Type Breakdown"
+msgstr "แยกตามประเภทการลา"
+
+msgid "Allowance & Deduction"
+msgstr "เบี้ยเลี้ยงและรายการหัก"
+
+msgid "Shortlisting Timeline"
+msgstr "ไทม์ไลน์การคัดเลือกเบื้องต้น"
+
+msgid "All open recruitments"
+msgstr "การสรรหาที่เปิดอยู่ทั้งหมด"
+
+msgid "Template as Attachment"
+msgstr "แม่แบบเป็นไฟล์แนบ"
+
+msgid "This field is required."
+msgstr "จำเป็นต้องกรอกช่องนี้"
+
+msgid "Candidate Self Tracking"
+msgstr "การติดตามสถานะด้วยตนเองของผู้สมัคร"
+
+msgid "Leave Allocation Request"
+msgstr "คำขอจัดสรรวันลา"
+
+msgid "Open Tickets by Priority"
+msgstr "ตั๋วแจ้งปัญหาที่เปิดอยู่ตามลำดับความสำคัญ"
+
+msgid "Recruitment Pipeline Trend"
+msgstr "แนวโน้มกระบวนการสรรหา"
+
+msgid "Use alphanumeric characters"
+msgstr "ใช้ตัวอักษรและตัวเลขเท่านั้น"
+
+msgid "Do you want to reject this request"
+msgstr "คุณต้องการปฏิเสธคำขอนี้หรือไม่"
+
+msgid "Do you want to delete this template"
+msgstr "คุณต้องการลบแม่แบบนี้หรือไม่"
+
+msgid "Are you sure to delete this meeting?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบการประชุมนี้?"
+
+msgid "Something on this step needs attention"
+msgstr "มีบางอย่างในขั้นตอนนี้ที่ต้องตรวจสอบ"
+
+msgid "Are you sure want to cancel the request?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกคำขอ?"
+
+msgid "Are you sure you want to delete this comment?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบความคิดเห็นนี้?"
+
+msgid "SN"
+msgstr "ลำดับ"
+
+msgid "CTC"
+msgstr "ต้นทุนรวมของนายจ้าง (CTC)"
+
+msgid "FAQ"
+msgstr "คำถามที่พบบ่อย"
+
+msgid "Body"
+msgstr "เนื้อหา"
+
+msgid "Used"
+msgstr "ใช้แล้ว"
+
+msgid "Roles"
+msgstr "บทบาท"
+
+msgid "Write"
+msgstr "เขียน"
+
+msgid "Chart"
+msgstr "แผนภูมิ"
+
+msgid "Scope"
+msgstr "ขอบเขต"
+
+msgid "Redeem"
+msgstr "แลกเปลี่ยน"
+
