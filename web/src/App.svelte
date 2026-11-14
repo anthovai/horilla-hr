@@ -10,6 +10,7 @@
 </script>
 
 <main class="mx-auto max-w-3xl p-6 font-sans text-slate-800">
+  <img src="/orvahr-logo.png" alt="OrvaHR" class="mb-6 h-10 w-auto" />
   <div class="mb-6 flex gap-2 border-b border-slate-200" role="tablist">
     {#each tabs as t (t.id)}
       <button
