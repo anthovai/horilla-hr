@@ -828,7 +828,7 @@ class FeedbackForm(HorillaModelForm):
                 else Employee.objects.none()
             )
 
-        # # Horilla multi-select filter for subordinates
+        # # OrvaHR multi-select filter for subordinates
         # self.fields["subordinate_id"] = HorillaMultiSelectField(
         #     queryset=Employee.objects.all(),
         #     widget=HorillaMultiSelectWidget(

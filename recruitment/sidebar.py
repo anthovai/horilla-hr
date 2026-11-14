@@ -1,7 +1,7 @@
 """
 recruitment/sidebar.py
 
-To set Horilla sidebar for onboarding
+To set OrvaHR sidebar for onboarding
 """
 
 from django.apps import apps

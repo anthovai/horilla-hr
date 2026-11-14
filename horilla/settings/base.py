@@ -1,5 +1,5 @@
 """
-base.py — Main Django settings for Horilla
+base.py — Main Django settings for OrvaHR
 """
 
 import os
@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     # rotation silently leaves every superseded token usable.
     "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
-    # Core Horilla apps
+    # Core OrvaHR apps
     "horilla_auth",
     THEME_APP,
     "base",
@@ -336,7 +336,7 @@ TEMPLATES = [
                 "django.template.context_processors.i18n",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # Horilla dynamic context processors
+                # OrvaHR dynamic context processors
                 "horilla.config.get_MENUS",
                 "base.context_processors.horilla_version",
                 "base.context_processors.get_companies",

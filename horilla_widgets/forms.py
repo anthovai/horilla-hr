@@ -1,7 +1,7 @@
 """
 forms.py
 
-Horilla forms
+OrvaHR forms
 """
 
 from typing import Any, Dict

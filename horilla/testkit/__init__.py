@@ -1,5 +1,5 @@
 """
-Shared Django test helpers for Horilla unit tests.
+Shared Django test helpers for OrvaHR unit tests.
 
 Prefer these factories over copying setUp boilerplate across apps.
 """

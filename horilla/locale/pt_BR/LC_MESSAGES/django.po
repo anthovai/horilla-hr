@@ -5298,9 +5298,9 @@ msgstr "Defina os tipos de contratação — Integral, Meio Período, Contrato."
 msgid "Mail Server"
 msgstr "Servidor de email"
 
-msgid "Configure an outgoing mail server so Horilla can send emails."
+msgid "Configure an outgoing mail server so OrvaHR can send emails."
 msgstr ""
-"Configure um servidor de e-mail de saída para o Horilla enviar mensagens."
+"Configure um servidor de e-mail de saída para o OrvaHR enviar mensagens."
 
 msgid "All companies"
 msgstr "Todas as empresas"
@@ -6614,7 +6614,7 @@ msgstr "Data de Criação"
 msgid "Import Data"
 msgstr "Exportar dados"
 
-msgid "Bring employees into Horilla from a CSV or Excel file"
+msgid "Bring employees into OrvaHR from a CSV or Excel file"
 msgstr ""
 
 #, fuzzy
@@ -6908,8 +6908,8 @@ msgstr "Salvar senha"
 msgid "Forgot password"
 msgstr "Esqueceu a senha"
 
-msgid "Horilla"
-msgstr "Horilla"
+msgid "OrvaHR"
+msgstr "OrvaHR"
 
 msgid "Assign"
 msgstr "Atribuir"
@@ -7127,9 +7127,9 @@ msgid "Unsubscribe here"
 msgstr "Cancelar inscrição aqui"
 
 #, fuzzy, python-format
-#| msgid "Test mail from Horilla"
+#| msgid "Test mail from OrvaHR"
 msgid "Test mail from %(company)s"
-msgstr "Email de teste da Horilla"
+msgstr "Email de teste da OrvaHR"
 
 msgid ""
 "This is a test email to confirm your mail server configuration is working."
@@ -7583,9 +7583,6 @@ msgstr "Controles de dados e acesso"
 msgid "About"
 msgstr "SOBRE"
 
-msgid "Horilla HR"
-msgstr "Horilla HR"
-
 msgid "Quote this version when reporting a problem."
 msgstr "Cite esta versão ao relatar um problema."
 
@@ -7595,8 +7592,8 @@ msgstr "Notas de versão"
 msgid "HR setup checklist"
 msgstr "Checklist de configuração de RH"
 
-msgid "Get started with Horilla HR"
-msgstr "Comece com o Horilla HR"
+msgid "Get started with OrvaHR"
+msgstr "Comece com o OrvaHR"
 
 #, fuzzy
 #| msgid "finish setup to unlock your full HR system"
@@ -13621,7 +13618,7 @@ msgstr "Data desconhecida"
 msgid "Yesterday"
 msgstr "ontem"
 
-msgid "Horilla Bot"
+msgid "OrvaHR Bot"
 msgstr "Horila Bot"
 
 msgid "record created"
@@ -13768,8 +13765,8 @@ msgstr "Configuração do servidor de e-mail não encontrada"
 msgid "Tracked fields updated for %(model)s."
 msgstr "Campos rastreados atualizados para %(model)s."
 
-msgid "Horilla Auth"
-msgstr "Autenticação Horilla"
+msgid "OrvaHR Auth"
+msgstr "Autenticação OrvaHR"
 
 msgid "Users"
 msgstr "Usuários"
@@ -14497,12 +14494,12 @@ msgstr "Integração com Google Meet"
 msgid "Enable Google meet"
 msgstr "Ative o Google Meet"
 
-msgid "Enable this to integrate Google meet to Horilla."
-msgstr "Ative isso para integrar o Google Meet ao Horilla."
+msgid "Enable this to integrate Google meet to OrvaHR."
+msgstr "Ative isso para integrar o Google Meet ao OrvaHR."
 
-msgid "Schedule and join Google Meet video calls directly from Horilla."
+msgid "Schedule and join Google Meet video calls directly from OrvaHR."
 msgstr ""
-"Agende e participe de videochamadas do Google Meet diretamente do Horilla."
+"Agende e participe de videochamadas do Google Meet diretamente do OrvaHR."
 
 msgid "Google Cloud Credential not found."
 msgstr "Credencial do Google Cloud não encontrada."
@@ -16139,17 +16136,14 @@ msgstr "Minha Empresa"
 msgid "Main navigation"
 msgstr "Navegação principal"
 
-msgid "Horilla HR version"
-msgstr "Versão do Horilla HR"
+msgid "OrvaHR version"
+msgstr "Versão do OrvaHR"
 
 msgid "Version"
 msgstr "Versão"
 
 msgid "Select all users"
 msgstr "Selecionar todos os usuários"
-
-msgid "Horilla HRMS"
-msgstr "Horilla HRMS"
 
 msgid "Sign Up"
 msgstr "Criar conta"
@@ -16174,16 +16168,14 @@ msgstr "Autenticação"
 msgid "Database Authentication"
 msgstr "Autenticação do Banco"
 
-msgid ""
-"Authenticate with your password to initialize the Horilla HRMS database."
-msgstr ""
-"Autenticar com sua senha para inicializar o banco de dados do Horilla HRMS."
+msgid "Authenticate with your password to initialize the OrvaHR database."
+msgstr "Autenticar com sua senha para inicializar o banco de dados do OrvaHR."
 
 msgid "Database authentication password"
 msgstr "Senha de autenticação do banco de dados"
 
-msgid "Please sign up to access the Horilla HRMS."
-msgstr "Inscreva-se para acessar o Horilla HRMS."
+msgid "Please sign up to access the OrvaHR."
+msgstr "Inscreva-se para acessar o OrvaHR."
 
 msgid "e.g. Adam"
 msgstr "por exemplo, Adam"
@@ -16191,7 +16183,7 @@ msgstr "por exemplo, Adam"
 msgid "e.g. Luis"
 msgstr "ex.: Luís"
 
-msgid "e.g. adam.luis@horilla.com"
+msgid "e.g. adam.luis@example.com"
 msgstr "ex.: adam.luis@horilla.com"
 
 msgid "e.g. 9865324512"
@@ -17987,14 +17979,14 @@ msgstr "Nenhuma configuração encontrada"
 msgid "Enable Linkedin"
 msgstr "Habilitar LinkedIn"
 
-msgid "Enable this to integrate linkedin to Horilla."
-msgstr "Ative isso para integrar o LinkedIn ao Horilla."
+msgid "Enable this to integrate linkedin to OrvaHR."
+msgstr "Ative isso para integrar o LinkedIn ao OrvaHR."
 
 msgid ""
-"Post job openings directly to LinkedIn and manage applicants from Horilla."
+"Post job openings directly to LinkedIn and manage applicants from OrvaHR."
 msgstr ""
 "Publique vagas diretamente no LinkedIn e gerencie candidatos a partir do "
-"Horilla."
+"OrvaHR."
 
 msgid "Prefix added to every auto-generated employee badge ID (e.g. PEP0001)."
 msgstr ""
@@ -20477,7 +20469,7 @@ msgid "Master Data Import"
 msgstr ""
 
 msgid ""
-"Bring your data into Horilla. Every file is matched and checked before "
+"Bring your data into OrvaHR. Every file is matched and checked before "
 "anything is saved."
 msgstr ""
 
@@ -23305,7 +23297,7 @@ msgstr ""
 
 msgid ""
 "Python formulas are turned off on this server. Use tax slabs, or ask whoever "
-"runs Horilla to set HORILLA_ALLOW_PYTHON_TAX_FORMULAS=True."
+"runs OrvaHR to set HORILLA_ALLOW_PYTHON_TAX_FORMULAS=True."
 msgstr ""
 
 msgid "Tax code is empty."
@@ -26625,9 +26617,9 @@ msgid "Tax from slabs"
 msgstr ""
 
 #, fuzzy
-#| msgid "Test mail from Horilla"
+#| msgid "Test mail from OrvaHR"
 msgid "Tax from formula"
-msgstr "Email de teste da Horilla"
+msgstr "Email de teste da OrvaHR"
 
 msgid "Rebate applies: taxable income"
 msgstr ""
@@ -31069,8 +31061,8 @@ msgid "Error occurred while deleting candidate rejection"
 msgstr "Ocorreu um erro ao excluir a rejeição do candidato"
 
 #, python-format
-msgid "Horilla report ready: %(name)s"
-msgstr "Relatório do Horilla pronto: %(name)s"
+msgid "OrvaHR report ready: %(name)s"
+msgstr "Relatório do OrvaHR pronto: %(name)s"
 
 #, python-format
 msgid ""
@@ -31085,8 +31077,8 @@ msgstr ""
 "Formato: %(fmt)s"
 
 #, python-format
-msgid "Horilla report export failed: %(name)s"
-msgstr "Falha ao exportar o relatório do Horilla: %(name)s"
+msgid "OrvaHR report export failed: %(name)s"
+msgstr "Falha ao exportar o relatório do OrvaHR: %(name)s"
 
 #, python-format
 msgid ""
@@ -31139,8 +31131,8 @@ msgstr "Assinatura atualizada."
 msgid "Comparison"
 msgstr "Comparação"
 
-msgid "Attached is your scheduled Horilla report:"
-msgstr "Em anexo está o seu relatório agendado do Horilla:"
+msgid "Attached is your scheduled OrvaHR report:"
+msgstr "Em anexo está o seu relatório agendado do OrvaHR:"
 
 #, python-format
 msgid "Showing first %(n)s rows."
@@ -33379,12 +33371,12 @@ msgstr "Segredo do aplicativo"
 
 msgid ""
 "Meta app secret, used to verify the X-Hub-Signature-256 header on incoming "
-"webhook calls. Without it Horilla cannot tell a real delivery from a forged "
+"webhook calls. Without it OrvaHR cannot tell a real delivery from a forged "
 "one, so unsigned payloads are rejected. Find it under App Settings > Basic "
 "in the Meta developer console."
 msgstr ""
 "Segredo do aplicativo Meta, usado para verificar o cabeçalho X-Hub-"
-"Signature-256 nas chamadas de webhook recebidas. Sem ele, o Horilla não "
+"Signature-256 nas chamadas de webhook recebidas. Sem ele, o OrvaHR não "
 "consegue distinguir uma entrega real de uma falsificada, portanto payloads "
 "não assinados são rejeitados. Encontre-o em App Settings > Basic no console "
 "de desenvolvedores da Meta."
@@ -33392,8 +33384,8 @@ msgstr ""
 msgid "WhatsApp Integration"
 msgstr "Integração com WhatsApp"
 
-msgid "Enable this to integrate WhatsApp to Horilla."
-msgstr "Ative isso para integrar o WhatsApp ao Horilla."
+msgid "Enable this to integrate WhatsApp to OrvaHR."
+msgstr "Ative isso para integrar o WhatsApp ao OrvaHR."
 
 msgid ""
 "Send HR notifications and updates directly through WhatsApp for better "

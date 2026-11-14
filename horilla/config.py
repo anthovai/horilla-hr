@@ -1,7 +1,7 @@
 """
 horilla/config.py
 
-Horilla app configurations
+OrvaHR app configurations
 """
 
 import importlib

@@ -67,7 +67,7 @@ msgid "Default Accessibility"
 msgstr "預設可訪問性"
 
 msgid "Limit default view access to horilla feature"
-msgstr "限制預設檢視存取至 Horilla 功能"
+msgstr "限制預設檢視存取至 OrvaHR 功能"
 
 msgid "Actions"
 msgstr "操作"
@@ -5266,8 +5266,8 @@ msgstr "設定聘用類型 — 全職、兼職、合約。"
 msgid "Mail Server"
 msgstr "郵件伺服器"
 
-msgid "Configure an outgoing mail server so Horilla can send emails."
-msgstr "設定外寄郵件伺服器，以便 Horilla 可以傳送電子郵件。"
+msgid "Configure an outgoing mail server so OrvaHR can send emails."
+msgstr "設定外寄郵件伺服器，以便 OrvaHR 可以傳送電子郵件。"
 
 msgid "All companies"
 msgstr "所有公司"
@@ -6549,7 +6549,7 @@ msgstr "建立日期"
 msgid "Import Data"
 msgstr "匯出數據"
 
-msgid "Bring employees into Horilla from a CSV or Excel file"
+msgid "Bring employees into OrvaHR from a CSV or Excel file"
 msgstr ""
 
 #, fuzzy
@@ -6816,8 +6816,8 @@ msgstr "儲存密碼"
 msgid "Forgot password"
 msgstr "忘記密碼"
 
-msgid "Horilla"
-msgstr "Horilla"
+msgid "OrvaHR"
+msgstr "OrvaHR"
 
 msgid "Assign"
 msgstr "分配"
@@ -7029,9 +7029,9 @@ msgid "Unsubscribe here"
 msgstr "點此取消訂閱"
 
 #, fuzzy, python-format
-#| msgid "Test mail from Horilla"
+#| msgid "Test mail from OrvaHR"
 msgid "Test mail from %(company)s"
-msgstr "來自 Horilla 的測試郵件"
+msgstr "來自 OrvaHR 的測試郵件"
 
 msgid ""
 "This is a test email to confirm your mail server configuration is working."
@@ -7456,9 +7456,6 @@ msgstr "資料與存取控制"
 msgid "About"
 msgstr "關於"
 
-msgid "Horilla HR"
-msgstr "Horilla HR"
-
 msgid "Quote this version when reporting a problem."
 msgstr "回報問題時請引用此版本。"
 
@@ -7468,8 +7465,8 @@ msgstr "版本說明"
 msgid "HR setup checklist"
 msgstr "人資設定檢查清單"
 
-msgid "Get started with Horilla HR"
-msgstr "開始使用 Horilla HR"
+msgid "Get started with OrvaHR"
+msgstr "開始使用 OrvaHR"
 
 #, fuzzy
 #| msgid "finish setup to unlock your full HR system"
@@ -13447,8 +13444,8 @@ msgstr "未知日期"
 msgid "Yesterday"
 msgstr "昨天"
 
-msgid "Horilla Bot"
-msgstr "Horilla 機器人"
+msgid "OrvaHR Bot"
+msgstr "OrvaHR 機器人"
 
 msgid "record created"
 msgstr "紀錄已建立"
@@ -13588,8 +13585,8 @@ msgstr "找不到郵件伺服器設定"
 msgid "Tracked fields updated for %(model)s."
 msgstr "已更新 %(model)s 的追蹤欄位。"
 
-msgid "Horilla Auth"
-msgstr "Horilla 驗證"
+msgid "OrvaHR Auth"
+msgstr "OrvaHR 驗證"
 
 msgid "Users"
 msgstr "使用者"
@@ -14283,11 +14280,11 @@ msgstr "銀行資訊"
 msgid "Enable Google meet"
 msgstr "啟用 Google Meet"
 
-msgid "Enable this to integrate Google meet to Horilla."
-msgstr "啟用此選項以將 Google Meet 整合至 Horilla。"
+msgid "Enable this to integrate Google meet to OrvaHR."
+msgstr "啟用此選項以將 Google Meet 整合至 OrvaHR。"
 
-msgid "Schedule and join Google Meet video calls directly from Horilla."
-msgstr "直接從 Horilla 排定並加入 Google Meet 視訊會議。"
+msgid "Schedule and join Google Meet video calls directly from OrvaHR."
+msgstr "直接從 OrvaHR 排定並加入 Google Meet 視訊會議。"
 
 msgid "Google Cloud Credential not found."
 msgstr "未找到 Google Cloud 憑證。"
@@ -15885,17 +15882,14 @@ msgstr "我的公司"
 msgid "Main navigation"
 msgstr "主導覽"
 
-msgid "Horilla HR version"
-msgstr "Horilla HR 版本"
+msgid "OrvaHR version"
+msgstr "OrvaHR 版本"
 
 msgid "Version"
 msgstr "版本"
 
 msgid "Select all users"
 msgstr "選擇所有用戶"
-
-msgid "Horilla HRMS"
-msgstr "Horilla HRMS"
 
 msgid "Sign Up"
 msgstr "報名"
@@ -15920,15 +15914,14 @@ msgstr "驗證"
 msgid "Database Authentication"
 msgstr "資料庫身份驗證"
 
-msgid ""
-"Authenticate with your password to initialize the Horilla HRMS database."
-msgstr "使用您的密碼進行身份驗證以初始化 Horilla HRMS 資料庫。"
+msgid "Authenticate with your password to initialize the OrvaHR database."
+msgstr "使用您的密碼進行身份驗證以初始化 OrvaHR 資料庫。"
 
 msgid "Database authentication password"
 msgstr "資料庫驗證密碼"
 
-msgid "Please sign up to access the Horilla HRMS."
-msgstr "請註冊以存取 Horilla HRMS。"
+msgid "Please sign up to access the OrvaHR."
+msgstr "請註冊以存取 OrvaHR。"
 
 msgid "e.g. Adam"
 msgstr "例如：Adam"
@@ -15936,7 +15929,7 @@ msgstr "例如：Adam"
 msgid "e.g. Luis"
 msgstr "例如：Luis"
 
-msgid "e.g. adam.luis@horilla.com"
+msgid "e.g. adam.luis@example.com"
 msgstr "例如：adam.luis@horilla.com"
 
 msgid "e.g. 9865324512"
@@ -17697,12 +17690,12 @@ msgstr "找不到設定"
 msgid "Enable Linkedin"
 msgstr "啟用面"
 
-msgid "Enable this to integrate linkedin to Horilla."
-msgstr "啟用此選項以將 LinkedIn 整合至 Horilla。"
+msgid "Enable this to integrate linkedin to OrvaHR."
+msgstr "啟用此選項以將 LinkedIn 整合至 OrvaHR。"
 
 msgid ""
-"Post job openings directly to LinkedIn and manage applicants from Horilla."
-msgstr "直接將職缺發布至 LinkedIn，並在 Horilla 中管理應徵者。"
+"Post job openings directly to LinkedIn and manage applicants from OrvaHR."
+msgstr "直接將職缺發布至 LinkedIn，並在 OrvaHR 中管理應徵者。"
 
 msgid "Prefix added to every auto-generated employee badge ID (e.g. PEP0001)."
 msgstr "自動產生的員工工號前綴（例如 PEP0001）。"
@@ -20121,7 +20114,7 @@ msgid "Master Data Import"
 msgstr ""
 
 msgid ""
-"Bring your data into Horilla. Every file is matched and checked before "
+"Bring your data into OrvaHR. Every file is matched and checked before "
 "anything is saved."
 msgstr ""
 
@@ -22947,7 +22940,7 @@ msgstr ""
 
 msgid ""
 "Python formulas are turned off on this server. Use tax slabs, or ask whoever "
-"runs Horilla to set HORILLA_ALLOW_PYTHON_TAX_FORMULAS=True."
+"runs OrvaHR to set HORILLA_ALLOW_PYTHON_TAX_FORMULAS=True."
 msgstr ""
 
 msgid "Tax code is empty."
@@ -26232,9 +26225,9 @@ msgid "Tax from slabs"
 msgstr ""
 
 #, fuzzy
-#| msgid "Test mail from Horilla"
+#| msgid "Test mail from OrvaHR"
 msgid "Tax from formula"
-msgstr "來自 Horilla 的測試郵件"
+msgstr "來自 OrvaHR 的測試郵件"
 
 msgid "Rebate applies: taxable income"
 msgstr ""
@@ -30625,8 +30618,8 @@ msgid "Error occurred while deleting candidate rejection"
 msgstr "刪除拒絕的候選人時發生錯誤"
 
 #, python-format
-msgid "Horilla report ready: %(name)s"
-msgstr "Horilla 報表已就緒：%(name)s"
+msgid "OrvaHR report ready: %(name)s"
+msgstr "OrvaHR 報表已就緒：%(name)s"
 
 #, python-format
 msgid ""
@@ -30641,8 +30634,8 @@ msgstr ""
 "格式：%(fmt)s"
 
 #, python-format
-msgid "Horilla report export failed: %(name)s"
-msgstr "Horilla 報表匯出失敗：%(name)s"
+msgid "OrvaHR report export failed: %(name)s"
+msgstr "OrvaHR 報表匯出失敗：%(name)s"
 
 #, python-format
 msgid ""
@@ -30695,8 +30688,8 @@ msgstr "訂閱已更新。"
 msgid "Comparison"
 msgstr "比較"
 
-msgid "Attached is your scheduled Horilla report:"
-msgstr "隨附您排程的 Horilla 報表："
+msgid "Attached is your scheduled OrvaHR report:"
+msgstr "隨附您排程的 OrvaHR 報表："
 
 #, python-format
 msgid "Showing first %(n)s rows."
@@ -32879,19 +32872,19 @@ msgstr "應用程式密鑰"
 
 msgid ""
 "Meta app secret, used to verify the X-Hub-Signature-256 header on incoming "
-"webhook calls. Without it Horilla cannot tell a real delivery from a forged "
+"webhook calls. Without it OrvaHR cannot tell a real delivery from a forged "
 "one, so unsigned payloads are rejected. Find it under App Settings > Basic "
 "in the Meta developer console."
 msgstr ""
 "Meta 應用程式密鑰，用於驗證傳入 Webhook 呼叫的 X-Hub-Signature-256 標頭。若無"
-"此密鑰，Horilla 無法分辨傳送內容是否遭偽造，因此未簽署的資料將被拒絕。可於 "
+"此密鑰，OrvaHR 無法分辨傳送內容是否遭偽造，因此未簽署的資料將被拒絕。可於 "
 "Meta 開發者主控台的「應用程式設定 > 基本」中找到。"
 
 msgid "WhatsApp Integration"
 msgstr "WhatsApp 整合"
 
-msgid "Enable this to integrate WhatsApp to Horilla."
-msgstr "啟用此選項以將 WhatsApp 整合至 Horilla。"
+msgid "Enable this to integrate WhatsApp to OrvaHR."
+msgstr "啟用此選項以將 WhatsApp 整合至 OrvaHR。"
 
 msgid ""
 "Send HR notifications and updates directly through WhatsApp for better "

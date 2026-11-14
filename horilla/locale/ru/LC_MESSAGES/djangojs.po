@@ -1,7 +1,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Horilla\n"
+"Project-Id-Version: OrvaHR\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2026-08-28 00:00+0000\n"
 "Last-Translator: Claude (Anthropic) — machine-assisted, glossary-checked\n"
@@ -21,19 +21,26 @@ msgid "No rows are selected from Validate Attendances."
 msgstr "Не выбрано ни одной строки для подтверждения посещаемости."
 
 msgid "Do you really want to approve OT for all the selected attendances?"
-msgstr "Вы действительно хотите утвердить сверхурочные для всех выбранных записей посещаемости?"
+msgstr ""
+"Вы действительно хотите утвердить сверхурочные для всех выбранных записей "
+"посещаемости?"
 
 msgid "No rows are selected from OT Attendances."
 msgstr "Не выбрано ни одной строки в разделе сверхурочных."
 
 msgid "Do you really want to reject all the selected attendance requests?"
-msgstr "Вы действительно хотите отклонить все выбранные запросы по посещаемости?"
+msgstr ""
+"Вы действительно хотите отклонить все выбранные запросы по посещаемости?"
 
 msgid "Pending Attendance Update Request!"
 msgstr "Есть запрос на изменение посещаемости в ожидании!"
 
-msgid "An attendance request exists for updating this attendance prior to validation."
-msgstr "Для этой записи посещаемости уже существует запрос на изменение, ожидающий подтверждения."
+msgid ""
+"An attendance request exists for updating this attendance prior to "
+"validation."
+msgstr ""
+"Для этой записи посещаемости уже существует запрос на изменение, ожидающий "
+"подтверждения."
 
 msgid "View Request"
 msgstr "Просмотреть запрос"

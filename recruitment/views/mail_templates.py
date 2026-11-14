@@ -1,7 +1,7 @@
 """
 offerletter.py
 
-This module is related offerletter feature in Horilla
+This module is related offerletter feature in OrvaHR
 """
 
 from django import template

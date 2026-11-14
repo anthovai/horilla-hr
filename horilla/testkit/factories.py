@@ -1,4 +1,4 @@
-"""Lightweight model factories for Horilla TestCase suites."""
+"""Lightweight model factories for OrvaHR TestCase suites."""
 
 from __future__ import annotations
 

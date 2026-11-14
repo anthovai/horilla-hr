@@ -28,7 +28,9 @@ msgid "No rows are selected from Validate Attendances."
 msgstr "Не обрано жодного рядка з підтверджень відвідуваності."
 
 msgid "Do you really want to approve OT for all the selected attendances?"
-msgstr "Ви дійсно хочете затвердити понаднормові для всіх обраних записів відвідуваності?"
+msgstr ""
+"Ви дійсно хочете затвердити понаднормові для всіх обраних записів "
+"відвідуваності?"
 
 msgid "No rows are selected from OT Attendances."
 msgstr "Не обрано жодного рядка з понаднормових відвідувань."
@@ -167,8 +169,8 @@ msgstr "Послідовність етапів оновлено"
 msgid "Dashboard"
 msgstr "Панель"
 
-msgid "Horilla dashboard section"
-msgstr "Розділ панелі Horilla"
+msgid "OrvaHR dashboard section"
+msgstr "Розділ панелі OrvaHR"
 
 msgid "Mark Attendance"
 msgstr "Відмітити присутність"
@@ -209,8 +211,8 @@ msgstr "Параметри профілю та зміни пароля"
 msgid "Dashboard Tiles"
 msgstr "Плитки панелі"
 
-msgid "Horilla Dashboard Tiles"
-msgstr "Плитки панелі Horilla"
+msgid "OrvaHR Dashboard Tiles"
+msgstr "Плитки панелі OrvaHR"
 
 msgid "Dashboard Actions"
 msgstr "Дії панелі"
@@ -239,8 +241,8 @@ msgstr "Ваш поточний доступ до компанії"
 msgid "App"
 msgstr "Додаток"
 
-msgid "Horilla Hr Apps. eg Dashboard"
-msgstr "Додатки Horilla HR, напр. Панель"
+msgid "OrvaHR Hr Apps. eg Dashboard"
+msgstr "Додатки OrvaHR, напр. Панель"
 
 msgid "Pipeline"
 msgstr "Воронка"

@@ -1,7 +1,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Horilla\n"
+"Project-Id-Version: OrvaHR\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-05 12:04+0530\n"
 "PO-Revision-Date: 2026-08-14 12:00+0300\n"
@@ -63,7 +63,7 @@ msgid "Default Accessibility"
 msgstr "Доступність за замовчуванням"
 
 msgid "Limit default view access to horilla feature"
-msgstr "Обмежити доступ до функції Horilla за замовчуванням"
+msgstr "Обмежити доступ до функції OrvaHR за замовчуванням"
 
 msgid "Actions"
 msgstr "Дії"
@@ -5293,8 +5293,8 @@ msgstr "Визначте типи зайнятості — повна, част�
 msgid "Mail Server"
 msgstr "Поштовий сервер"
 
-msgid "Configure an outgoing mail server so Horilla can send emails."
-msgstr "Налаштуйте вихідний поштовий сервер, щоб Horilla міг надсилати листи."
+msgid "Configure an outgoing mail server so OrvaHR can send emails."
+msgstr "Налаштуйте вихідний поштовий сервер, щоб OrvaHR міг надсилати листи."
 
 msgid "All companies"
 msgstr "Усі компанії"
@@ -5783,7 +5783,7 @@ msgid ""
 "Time at which the horilla will automatically check out the employee "
 "attendance if they forget."
 msgstr ""
-"Час, коли Horilla автоматично зафіксує вихід співробітника, якщо він забуде "
+"Час, коли OrvaHR автоматично зафіксує вихід співробітника, якщо він забуде "
 "це зробити."
 
 msgid "Employee Shift Schedule"
@@ -6609,7 +6609,7 @@ msgstr "Дата створення"
 msgid "Import Data"
 msgstr "Експорт даних"
 
-msgid "Bring employees into Horilla from a CSV or Excel file"
+msgid "Bring employees into OrvaHR from a CSV or Excel file"
 msgstr ""
 
 #, fuzzy
@@ -6896,8 +6896,8 @@ msgstr "Зберегти пароль"
 msgid "Forgot password"
 msgstr "Забули пароль"
 
-msgid "Horilla"
-msgstr "Horilla"
+msgid "OrvaHR"
+msgstr "OrvaHR"
 
 msgid "Assign"
 msgstr "Призначити"
@@ -7111,9 +7111,9 @@ msgid "Unsubscribe here"
 msgstr "Відписатися тут"
 
 #, fuzzy, python-format
-#| msgid "Test mail from Horilla"
+#| msgid "Test mail from OrvaHR"
 msgid "Test mail from %(company)s"
-msgstr "Тестовий лист від Horilla"
+msgstr "Тестовий лист від OrvaHR"
 
 msgid ""
 "This is a test email to confirm your mail server configuration is working."
@@ -7561,9 +7561,6 @@ msgstr "Контроль даних і доступу"
 msgid "About"
 msgstr "Про співробітника"
 
-msgid "Horilla HR"
-msgstr "Horilla HR"
-
 msgid "Quote this version when reporting a problem."
 msgstr "Зазначайте цю версію, повідомляючи про проблему."
 
@@ -7573,8 +7570,8 @@ msgstr "Нотатки випуску"
 msgid "HR setup checklist"
 msgstr "Чек-лист налаштування HR"
 
-msgid "Get started with Horilla HR"
-msgstr "Початок роботи з Horilla HR"
+msgid "Get started with OrvaHR"
+msgstr "Початок роботи з OrvaHR"
 
 #, fuzzy
 #| msgid "finish setup to unlock your full HR system"
@@ -13569,8 +13566,8 @@ msgstr "Невідома дата"
 msgid "Yesterday"
 msgstr "Вчора"
 
-msgid "Horilla Bot"
-msgstr "Horilla Bot"
+msgid "OrvaHR Bot"
+msgstr "OrvaHR Bot"
 
 msgid "record created"
 msgstr "запис створено"
@@ -13715,8 +13712,8 @@ msgstr "Конфігурацію поштового сервера не знай
 msgid "Tracked fields updated for %(model)s."
 msgstr "Відстежувані поля оновлено для %(model)s."
 
-msgid "Horilla Auth"
-msgstr "Horilla Auth"
+msgid "OrvaHR Auth"
+msgstr "OrvaHR Auth"
 
 msgid "Users"
 msgstr "Користувачі"
@@ -14443,11 +14440,11 @@ msgstr "Інтеграція Google Meet"
 msgid "Enable Google meet"
 msgstr "Увімкніть Google Meet"
 
-msgid "Enable this to integrate Google meet to Horilla."
-msgstr "Увімкніть, щоб інтегрувати Google Meet у Horilla."
+msgid "Enable this to integrate Google meet to OrvaHR."
+msgstr "Увімкніть, щоб інтегрувати Google Meet у OrvaHR."
 
-msgid "Schedule and join Google Meet video calls directly from Horilla."
-msgstr "Плануйте та приєднуйтесь до відеозвінків Google Meet прямо з Horilla."
+msgid "Schedule and join Google Meet video calls directly from OrvaHR."
+msgstr "Плануйте та приєднуйтесь до відеозвінків Google Meet прямо з OrvaHR."
 
 msgid "Google Cloud Credential not found."
 msgstr "Облікові дані Google Cloud не знайдено."
@@ -16077,17 +16074,14 @@ msgstr "Моя компанія"
 msgid "Main navigation"
 msgstr "Основна навігація"
 
-msgid "Horilla HR version"
-msgstr "Версія Horilla HR"
+msgid "OrvaHR version"
+msgstr "Версія OrvaHR"
 
 msgid "Version"
 msgstr "Версія"
 
 msgid "Select all users"
 msgstr "Вибрати всіх користувачів"
-
-msgid "Horilla HRMS"
-msgstr "Horilla HRMS"
 
 msgid "Sign Up"
 msgstr "Реєстрація"
@@ -16112,15 +16106,14 @@ msgstr "Автентифікація"
 msgid "Database Authentication"
 msgstr "Автентифікація бази даних"
 
-msgid ""
-"Authenticate with your password to initialize the Horilla HRMS database."
-msgstr "Введіть пароль для ініціалізації бази даних Horilla HRMS."
+msgid "Authenticate with your password to initialize the OrvaHR database."
+msgstr "Введіть пароль для ініціалізації бази даних OrvaHR."
 
 msgid "Database authentication password"
 msgstr "Пароль автентифікації бази даних"
 
-msgid "Please sign up to access the Horilla HRMS."
-msgstr "Будь ласка, зареєструйтеся для доступу до Horilla HRMS."
+msgid "Please sign up to access the OrvaHR."
+msgstr "Будь ласка, зареєструйтеся для доступу до OrvaHR."
 
 msgid "e.g. Adam"
 msgstr "напр. Адам"
@@ -16128,7 +16121,7 @@ msgstr "напр. Адам"
 msgid "e.g. Luis"
 msgstr "напр. Луїс"
 
-msgid "e.g. adam.luis@horilla.com"
+msgid "e.g. adam.luis@example.com"
 msgstr "напр. adam.luis@horilla.com"
 
 msgid "e.g. 9865324512"
@@ -17915,12 +17908,12 @@ msgstr "Налаштувань не знайдено"
 msgid "Enable Linkedin"
 msgstr "Увімкніть LinkedIn"
 
-msgid "Enable this to integrate linkedin to Horilla."
-msgstr "Увімкніть, щоб інтегрувати LinkedIn у Horilla."
+msgid "Enable this to integrate linkedin to OrvaHR."
+msgstr "Увімкніть, щоб інтегрувати LinkedIn у OrvaHR."
 
 msgid ""
-"Post job openings directly to LinkedIn and manage applicants from Horilla."
-msgstr "Публікуйте вакансії прямо в LinkedIn і керуйте відгуками з Horilla."
+"Post job openings directly to LinkedIn and manage applicants from OrvaHR."
+msgstr "Публікуйте вакансії прямо в LinkedIn і керуйте відгуками з OrvaHR."
 
 msgid "Prefix added to every auto-generated employee badge ID (e.g. PEP0001)."
 msgstr ""
@@ -20385,7 +20378,7 @@ msgid "Master Data Import"
 msgstr ""
 
 msgid ""
-"Bring your data into Horilla. Every file is matched and checked before "
+"Bring your data into OrvaHR. Every file is matched and checked before "
 "anything is saved."
 msgstr ""
 
@@ -23216,7 +23209,7 @@ msgstr ""
 
 msgid ""
 "Python formulas are turned off on this server. Use tax slabs, or ask whoever "
-"runs Horilla to set HORILLA_ALLOW_PYTHON_TAX_FORMULAS=True."
+"runs OrvaHR to set HORILLA_ALLOW_PYTHON_TAX_FORMULAS=True."
 msgstr ""
 
 msgid "Tax code is empty."
@@ -26543,9 +26536,9 @@ msgid "Tax from slabs"
 msgstr ""
 
 #, fuzzy
-#| msgid "Test mail from Horilla"
+#| msgid "Test mail from OrvaHR"
 msgid "Tax from formula"
-msgstr "Тестовий лист від Horilla"
+msgstr "Тестовий лист від OrvaHR"
 
 msgid "Rebate applies: taxable income"
 msgstr ""
@@ -30960,8 +30953,8 @@ msgid "Error occurred while deleting candidate rejection"
 msgstr "Під час видалення відхилення кандидата сталася помилка"
 
 #, python-format
-msgid "Horilla report ready: %(name)s"
-msgstr "Звіт Horilla готовий: %(name)s"
+msgid "OrvaHR report ready: %(name)s"
+msgstr "Звіт OrvaHR готовий: %(name)s"
 
 #, python-format
 msgid ""
@@ -30976,8 +30969,8 @@ msgstr ""
 "Формат: %(fmt)s"
 
 #, python-format
-msgid "Horilla report export failed: %(name)s"
-msgstr "Не вдалося експортувати звіт Horilla: %(name)s"
+msgid "OrvaHR report export failed: %(name)s"
+msgstr "Не вдалося експортувати звіт OrvaHR: %(name)s"
 
 #, python-format
 msgid ""
@@ -31030,8 +31023,8 @@ msgstr "Підписку оновлено."
 msgid "Comparison"
 msgstr "Порівняння"
 
-msgid "Attached is your scheduled Horilla report:"
-msgstr "У вкладенні — ваш запланований звіт Horilla:"
+msgid "Attached is your scheduled OrvaHR report:"
+msgstr "У вкладенні — ваш запланований звіт OrvaHR:"
 
 #, python-format
 msgid "Showing first %(n)s rows."
@@ -33274,20 +33267,20 @@ msgstr "Секрет застосунку"
 
 msgid ""
 "Meta app secret, used to verify the X-Hub-Signature-256 header on incoming "
-"webhook calls. Without it Horilla cannot tell a real delivery from a forged "
+"webhook calls. Without it OrvaHR cannot tell a real delivery from a forged "
 "one, so unsigned payloads are rejected. Find it under App Settings > Basic "
 "in the Meta developer console."
 msgstr ""
 "Секрет застосунку Meta, який використовується для перевірки заголовка X-Hub-"
-"Signature-256 у вхідних викликах webhook. Без нього Horilla не може "
+"Signature-256 у вхідних викликах webhook. Без нього OrvaHR не може "
 "відрізнити справжню доставку від підробленої, тому непідписані запити "
 "відхиляються. Знайдіть його в App Settings > Basic консолі розробника Meta."
 
 msgid "WhatsApp Integration"
 msgstr "Інтеграція з WhatsApp"
 
-msgid "Enable this to integrate WhatsApp to Horilla."
-msgstr "Увімкніть це, щоб інтегрувати WhatsApp із Horilla."
+msgid "Enable this to integrate WhatsApp to OrvaHR."
+msgstr "Увімкніть це, щоб інтегрувати WhatsApp із OrvaHR."
 
 msgid ""
 "Send HR notifications and updates directly through WhatsApp for better "
