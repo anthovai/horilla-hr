@@ -36,6 +36,11 @@ from base.models import (
     validate_time_format,
 )
 from employee.methods.duration_methods import format_time, strtime_seconds
+from employee.thai_validators import (
+    mask_id,
+    normalize_digits,
+    validate_thai_national_id,
+)
 from horilla import horilla_middlewares
 from horilla.horilla_middlewares import _thread_locals
 from horilla.methods import get_horilla_model_class
@@ -1158,6 +1163,162 @@ class EmployeeBankDetails(HorillaModel):
                         )
                     }
                 )
+
+
+class EmployeeThaiProfile(HorillaModel):
+    """
+    Thai identity, tax, social-security and banking data for an employee.
+
+    PDPA: national_id, tax_id, social_security_no and promptpay_id are personal
+    data. They are masked in __str__/__repr__, are not offered by any list,
+    filter, search or export in this app, and the model is deliberately NOT in
+    horilla_audit DEFAULT_TRACKED_MODELS (audit log entries would copy the
+    values in plaintext). Do not add it to the audit config without
+    restricting ``tracked_fields`` to non-sensitive fields.
+    """
+
+    TITLE_CHOICES = [
+        ("นาย", _("Mr. (นาย)")),
+        ("นางสาว", _("Miss (นางสาว)")),
+        ("นาง", _("Mrs. (นาง)")),
+        ("other", _("Other")),
+    ]
+    # Bank of Thailand 3-digit institution codes.
+    # NEEDS VERIFICATION against the current BOT list before payroll
+    # bank-file generation relies on it.
+    BANK_CHOICES = [
+        ("002", _("Bangkok Bank (BBL)")),
+        ("004", _("Kasikornbank (KBank)")),
+        ("006", _("Krungthai Bank (KTB)")),
+        ("011", _("TMBThanachart Bank (TTB)")),
+        ("014", _("Siam Commercial Bank (SCB)")),
+        ("022", _("CIMB Thai Bank")),
+        ("024", _("United Overseas Bank (Thai) (UOB)")),
+        ("025", _("Bank of Ayudhya (Krungsri)")),
+        ("030", _("Government Savings Bank (GSB)")),
+        ("034", _("Bank for Agriculture and Agricultural Cooperatives (BAAC)")),
+    ]
+
+    employee_id = models.OneToOneField(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="thai_profile",
+        verbose_name=_("Employee"),
+    )
+    name_title = models.CharField(
+        max_length=10, choices=TITLE_CHOICES, blank=True, verbose_name=_("Title")
+    )
+    first_name_th = models.CharField(
+        max_length=100, blank=True, verbose_name=_("First name (Thai)")
+    )
+    last_name_th = models.CharField(
+        max_length=100, blank=True, verbose_name=_("Last name (Thai)")
+    )
+    national_id = models.CharField(
+        max_length=13,
+        null=True,
+        blank=True,
+        unique=True,
+        validators=[validate_thai_national_id],
+        verbose_name=_("National ID"),
+    )
+    tax_id = models.CharField(
+        max_length=13,
+        null=True,
+        blank=True,
+        validators=[validate_thai_national_id],
+        verbose_name=_("Tax ID"),
+        help_text=_("Defaults to the National ID for individuals."),
+    )
+    social_security_no = models.CharField(
+        max_length=13,
+        null=True,
+        blank=True,
+        validators=[RegexValidator(r"^\d{13}$", _("Must be exactly 13 digits."))],
+        verbose_name=_("Social security number"),
+    )
+    sso_hospital = models.CharField(
+        max_length=150, blank=True, verbose_name=_("SSO registered hospital")
+    )
+    bank_code = models.CharField(
+        max_length=3, choices=BANK_CHOICES, blank=True, verbose_name=_("Bank")
+    )
+    promptpay_id = models.CharField(
+        max_length=15,
+        null=True,
+        blank=True,
+        validators=[
+            RegexValidator(
+                r"^(\d{10}|\d{13}|\d{15})$",
+                _("Must be a 10-digit phone, 13-digit ID or 15-digit e-wallet ID."),
+            )
+        ],
+        verbose_name=_("PromptPay ID"),
+    )
+    address_line = models.CharField(
+        max_length=255, blank=True, verbose_name=_("Address")
+    )
+    subdistrict = models.CharField(
+        max_length=100, blank=True, verbose_name=_("Subdistrict (tambon/khwaeng)")
+    )
+    district = models.CharField(
+        max_length=100, blank=True, verbose_name=_("District (amphoe/khet)")
+    )
+    province = models.CharField(max_length=100, blank=True, verbose_name=_("Province"))
+    postcode = models.CharField(
+        max_length=5,
+        blank=True,
+        validators=[RegexValidator(r"^\d{5}$", _("Must be exactly 5 digits."))],
+        verbose_name=_("Postcode"),
+    )
+    objects = HorillaCompanyManager(
+        related_company_field="employee_id__employee_work_info__company_id"
+    )
+
+    # Fields that must never appear in lists, exports, search or audit diffs.
+    SENSITIVE_FIELDS = ("national_id", "tax_id", "social_security_no", "promptpay_id")
+
+    class Meta:
+        verbose_name = _("Employee Thai Profile")
+        verbose_name_plural = _("Employee Thai Profiles")
+
+    def __str__(self) -> str:
+        return f"{self.employee_id} (ID {mask_id(self.national_id)})"
+
+    def __repr__(self) -> str:
+        return (
+            f"<EmployeeThaiProfile pk={self.pk} "
+            f"national_id={mask_id(self.national_id)!r}>"
+        )
+
+    def clean_fields(self, exclude=None):
+        self._normalize()
+        # HorillaModel.clean_fields only runs the XSS check and does not call
+        # Django's, so field validators (checksum, regex) must be run
+        # explicitly. save() calls clean_fields(), so this is enforced on
+        # every write, not only via forms.
+        errors = {}
+        try:
+            models.Model.clean_fields(self, exclude=exclude)
+        except ValidationError as e:
+            errors = e.update_error_dict(errors)
+        try:
+            super().clean_fields(exclude=exclude)
+        except ValidationError as e:
+            errors = e.update_error_dict(errors)
+        if errors:
+            raise ValidationError(errors)
+
+    def _normalize(self):
+        for name in self.SENSITIVE_FIELDS:
+            value = normalize_digits(getattr(self, name))
+            setattr(self, name, value or None)
+        if not self.tax_id and self.national_id:
+            self.tax_id = self.national_id
+
+    def save(self, *args, **kwargs):
+        self._normalize()
+        super().save(*args, **kwargs)
 
 
 class NoteFiles(HorillaModel):

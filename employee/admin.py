@@ -14,6 +14,7 @@ from employee.models import (
     Employee,
     EmployeeBankDetails,
     EmployeeNote,
+    EmployeeThaiProfile,
     EmployeeTag,
     EmployeeWorkInformation,
     Policy,
@@ -75,3 +76,16 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(EmployeeWorkInformation, EmployeeWorkInformationAdmin)
+
+
+class EmployeeThaiProfileAdmin(admin.ModelAdmin):
+    # PDPA: never list, search or filter on national_id / tax_id etc.
+    list_display = ("employee_id", "name_title", "bank_code", "province")
+    search_fields = (
+        "employee_id__employee_first_name",
+        "employee_id__employee_last_name",
+    )
+    list_filter = ("bank_code",)
+
+
+admin.site.register(EmployeeThaiProfile, EmployeeThaiProfileAdmin)
