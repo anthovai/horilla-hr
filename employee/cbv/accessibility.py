@@ -379,3 +379,15 @@ def delete_accessibility(
     To delete the employee
     """
     return request.user.has_perm("employee.delete_employee")
+
+
+def thai_info_accessibility(
+    request, instance: object = None, user_perms: PermWrapper = [], *args, **kwargs
+) -> bool:
+    """
+    Thai Info tab: HR (view/change employee) and the employee themselves.
+    Only change_employee sees unmasked IDs and may edit; see employee/thai_info.py.
+    """
+    from employee.thai_info import can_view_thai_info
+
+    return can_view_thai_info(request.user, instance)

@@ -15,6 +15,7 @@ from employee import (
     not_in_out_dashboard,
     policies,
     requests,
+    thai_info,
     views,
     work_schedules,
 )
@@ -348,6 +349,29 @@ urlpatterns = [
     ),
     path("employee-widget-filter/", views.widget_filter, name="employee-widget-filter"),
     path("note-tab/<int:pk>/", views.note_tab, name="note-tab"),
+    path(
+        "thai-info/<int:pk>/", thai_info.thai_info_tab, name="employee-thai-info-tab"
+    ),
+    path(
+        "thai-info/<int:pk>/edit/",
+        thai_info.thai_profile_edit,
+        name="employee-thai-profile-edit",
+    ),
+    path(
+        "thai-info/<int:pk>/claims/add/",
+        thai_info.tax_claim_add,
+        name="employee-tax-claim-add",
+    ),
+    path(
+        "thai-info/claims/<int:claim_id>/edit/",
+        thai_info.tax_claim_edit,
+        name="employee-tax-claim-edit",
+    ),
+    path(
+        "thai-info/claims/<int:claim_id>/delete/",
+        thai_info.tax_claim_delete,
+        name="employee-tax-claim-delete",
+    ),
     path("add-employee-note/<int:emp_id>/", views.add_note, name="add-employee-note"),
     path("add-employee-note-post/", views.add_note, name="add-employee-note-post"),
     path(

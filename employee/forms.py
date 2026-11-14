@@ -34,6 +34,8 @@ from django.utils.translation import gettext_lazy as _
 
 from base.methods import eval_validate, reload_queryset
 from employee.filters import EmployeeFilter
+from employee.tax_claims import PER_UNIT_CODES
+from employee.thai_validators import is_valid_thai_national_id, normalize_digits
 from employee.models import (
     Actiontype,
     BonusPoint,
@@ -43,6 +45,8 @@ from employee.models import (
     EmployeeGeneralSetting,
     EmployeeNote,
     EmployeeTag,
+    EmployeeTaxClaim,
+    EmployeeThaiProfile,
     EmployeeWorkInformation,
     NoteFiles,
     Policy,
@@ -946,3 +950,198 @@ class EmployeeGeneralSettingPrefixForm(forms.ModelForm):
         widgets = {
             "badge_id_prefix": forms.TextInput(attrs={"class": "oh-input w-100"}),
         }
+
+
+_THAI_ID_LENGTH_ERROR = _("Must be exactly 13 digits.")
+_THAI_ID_CHECKSUM_ERROR = _(
+    "Invalid Thai ID number: the check digit does not match. "
+    "Please re-check all 13 digits."
+)
+
+
+def _clean_thai_id(value):
+    """Normalise a typed 13-digit Thai ID and check its mod-11 check digit."""
+    value = normalize_digits(value)
+    if not value:
+        return None
+    if not re.fullmatch(r"\d{13}", value):
+        raise forms.ValidationError(_THAI_ID_LENGTH_ERROR, code="invalid_length")
+    if not is_valid_thai_national_id(value):
+        raise forms.ValidationError(_THAI_ID_CHECKSUM_ERROR, code="invalid_checksum")
+    return value
+
+
+class EmployeeThaiProfileForm(ModelForm):
+    """
+    HR form for an employee's Thai identity, tax, SSO, bank and address data.
+
+    The model validators (checksum, digit formats) still run on save; this form
+    normalises typed separators first and gives clearer messages. The fields
+    are PDPA-sensitive: never log the cleaned data.
+    """
+
+    # Wider than the model's 13 so "1-2345-67890-12-1" can be typed; the
+    # value is normalised to digits before the model sees it.
+    national_id = forms.CharField(
+        max_length=20, required=False, label=_("National ID")
+    )
+    tax_id = forms.CharField(
+        max_length=20,
+        required=False,
+        label=_("Tax ID"),
+        help_text=_("Leave empty to use the National ID."),
+    )
+    social_security_no = forms.CharField(
+        max_length=20, required=False, label=_("Social security number")
+    )
+    promptpay_id = forms.CharField(
+        max_length=20, required=False, label=_("PromptPay ID")
+    )
+
+    class Meta:
+        model = EmployeeThaiProfile
+        fields = (
+            "name_title",
+            "first_name_th",
+            "last_name_th",
+            "national_id",
+            "tax_id",
+            "social_security_no",
+            "sso_hospital",
+            "bank_code",
+            "promptpay_id",
+            "address_line",
+            "subdistrict",
+            "district",
+            "province",
+            "postcode",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name in EmployeeThaiProfile.SENSITIVE_FIELDS:
+            self.fields[name].widget.attrs.update(
+                {"autocomplete": "off", "inputmode": "numeric"}
+            )
+        self.fields["postcode"].widget.attrs["inputmode"] = "numeric"
+        for field in self.fields.values():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs["class"] = "oh-select w-100"
+            else:
+                field.widget.attrs["class"] = "oh-input w-100"
+
+    def clean_national_id(self):
+        value = _clean_thai_id(self.cleaned_data.get("national_id"))
+        # _base_manager: the default manager is company-scoped, but the
+        # unique constraint is global.
+        if (
+            value
+            and EmployeeThaiProfile._base_manager.filter(national_id=value)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError(
+                _("This National ID is already recorded for another employee.")
+            )
+        return value
+
+    def validate_unique(self):
+        # national_id uniqueness is checked in clean_national_id across all
+        # companies; skip the scoped default-manager check (and its message
+        # naming the model).
+        exclude = self._get_validation_exclusions()
+        exclude.add("national_id")
+        try:
+            self.instance.validate_unique(exclude=exclude)
+        except forms.ValidationError as e:
+            self._update_errors(e)
+
+    def clean_tax_id(self):
+        return _clean_thai_id(self.cleaned_data.get("tax_id"))
+
+    def clean_social_security_no(self):
+        value = normalize_digits(self.cleaned_data.get("social_security_no"))
+        if not value:
+            return None
+        if not re.fullmatch(r"\d{13}", value):
+            raise forms.ValidationError(_THAI_ID_LENGTH_ERROR)
+        return value
+
+    def clean_promptpay_id(self):
+        value = normalize_digits(self.cleaned_data.get("promptpay_id"))
+        if not value:
+            return None
+        if not re.fullmatch(r"\d{10}|\d{13}|\d{15}", value):
+            raise forms.ValidationError(
+                _("Must be a 10-digit phone, 13-digit ID or 15-digit e-wallet ID.")
+            )
+        return value
+
+    def clean_postcode(self):
+        value = (self.cleaned_data.get("postcode") or "").strip()
+        if value and not re.fullmatch(r"\d{5}", value):
+            raise forms.ValidationError(_("Must be exactly 5 digits."))
+        return value
+
+
+class EmployeeTaxClaimForm(ModelForm):
+    """
+    One tax allowance claim. Per-person codes take ``units``, the others take
+    ``amount`` (model.clean enforces it). Allowance caps are applied by the
+    payroll engine, not here.
+    """
+
+    class Meta:
+        model = EmployeeTaxClaim
+        fields = ("tax_year", "code", "units", "amount")
+
+    def __init__(self, *args, employee=None, **kwargs):
+        self.employee = employee
+        super().__init__(*args, **kwargs)
+        if self.employee is not None:
+            self.instance.employee_id = self.employee
+        self.fields["units"].help_text = _(
+            "Only for spouse, children and parents: number of people."
+        )
+        self.fields["amount"].help_text = _(
+            "For the other allowances: the amount actually paid in the year."
+        )
+        self.fields["amount"].widget.attrs["min"] = "0"
+        self.fields["units"].widget.attrs["min"] = "1"
+        for field in self.fields.values():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs["class"] = "oh-select w-100"
+            else:
+                field.widget.attrs["class"] = "oh-input w-100"
+
+    def clean_tax_year(self):
+        year = self.cleaned_data.get("tax_year")
+        if year is not None and year > 2200:
+            raise forms.ValidationError(
+                _(
+                    "Enter the tax year in the Gregorian calendar (e.g. 2026), "
+                    "not the Buddhist Era year."
+                )
+            )
+        if year is not None and year < 2000:
+            raise forms.ValidationError(_("Enter a tax year from 2000 onwards."))
+        return year
+
+    def clean(self):
+        cleaned = super().clean()
+        code = cleaned.get("code")
+        year = cleaned.get("tax_year")
+        # Blank the field that does not apply only when it was left at zero,
+        # otherwise let model.clean report the mix-up.
+        if code in PER_UNIT_CODES and cleaned.get("amount") == 0:
+            cleaned["amount"] = None
+        if code and year and self.employee is not None:
+            duplicate = EmployeeTaxClaim.objects.filter(
+                employee_id=self.employee, tax_year=year, code=code
+            ).exclude(pk=self.instance.pk)
+            if duplicate.exists():
+                self.add_error(
+                    "code",
+                    _("This allowance is already claimed for that tax year."),
+                )
+        return cleaned

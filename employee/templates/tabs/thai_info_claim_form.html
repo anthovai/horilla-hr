@@ -1,0 +1,36 @@
+{% load i18n %}
+<div id="thaiInfoTab{{ employee.pk }}" class="oh-thai-info">
+    <div class="oh-card oh-card--margin">
+        <div class="oh-card__header">
+            <span class="oh-card__title oh-card__title--sm fw-bold">
+                {% if claim %}{% trans "Edit tax allowance claim" %}{% else %}{% trans "Add tax allowance claim" %}{% endif %}
+            </span>
+        </div>
+        <div class="oh-card__body mt-3">
+            <form hx-post="{% if claim %}{% url 'employee-tax-claim-edit' claim.pk %}{% else %}{% url 'employee-tax-claim-add' employee.pk %}{% endif %}"
+                hx-target="#thaiInfoTab{{ employee.pk }}" hx-swap="outerHTML">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="text-danger mb-2">{{ form.non_field_errors }}</div>{% endif %}
+                <div class="row">
+                    {% for field in form %}
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="oh-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<small class="text-muted d-block">{{ field.help_text }}</small>{% endif %}
+                            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <p class="text-muted small">
+                    {% trans "Enter the number of people for spouse, children and parents, and the amount paid for the other allowances. Allowance limits are enforced by the payroll engine, not by this form." %}
+                </p>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="oh-btn oh-btn--light-bkg"
+                        hx-get="{% url 'employee-thai-info-tab' employee.pk %}?year={% if claim %}{{ claim.tax_year }}{% else %}{{ form.tax_year.value|default_if_none:'' }}{% endif %}"
+                        hx-target="#thaiInfoTab{{ employee.pk }}" hx-swap="outerHTML">{% trans "Cancel" %}</button>
+                    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Save" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

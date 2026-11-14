@@ -18,7 +18,7 @@ from base.cbv.mail_log_tab import MailLogTabList
 from base.cbv.work_shift_tab import WorkAndShiftTabView
 from base.context_processors import enable_profile_edit
 from base.forms import AddToUserGroupForm
-from employee import views
+from employee import thai_info, views
 from employee.cbv.document_request import DocumentIndividualTabShell
 from employee.filters import EmployeeFilter
 from employee.history import (
@@ -366,6 +366,11 @@ EmployeeProfileView.add_tab(
         {
             "title": _("About"),
             "view": views.about_tab,
+        },
+        {
+            "title": _("Thai Info"),
+            "view": thai_info.thai_info_tab,
+            "accessibility": "employee.cbv.accessibility.thai_info_accessibility",
         },
         {
             "title": _("Work Type & Shift"),

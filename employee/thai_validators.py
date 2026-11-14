@@ -44,3 +44,21 @@ def mask_id(value, visible=4):
         return ""
     value = str(value)
     return "X" * max(len(value) - visible, 0) + value[-visible:]
+
+
+def format_thai_id(value, masked=True):
+    """
+    Show a 13-digit Thai ID grouped as printed on the ID card.
+
+    ``masked=True`` hides the nine middle digits: '1-XXXX-XXXXX-12-1'.
+    ``masked=False`` shows the full ID: '1-2345-67890-12-1' (privileged viewers
+    only). Values that are not 13 digits fall back to ``mask_id``.
+    """
+    value = normalize_digits(value)
+    if not value:
+        return ""
+    if not _DIGITS_13.match(value):
+        return mask_id(value) if masked else value
+    if masked:
+        value = value[0] + "X" * 9 + value[10:]
+    return f"{value[0]}-{value[1:5]}-{value[5:10]}-{value[10:12]}-{value[12]}"
