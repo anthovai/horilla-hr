@@ -606,6 +606,10 @@ def view_payslip_pdf(request, payslip_id):
                     formatted_end_date = end_date.strftime(format_string)
             data["month_start_name"] = month_start_name
             data["month_end_name"] = month_end_name
+            # Dates, so the template can write them for the active language
+            # (Buddhist era under Thai, see orvahr_th's local_date filter).
+            data["period_start"] = start_date
+            data["period_end"] = end_date
             data["formatted_start_date"] = formatted_start_date
             data["formatted_end_date"] = formatted_end_date
             # Every day in the period, week offs and holidays included --
@@ -1524,12 +1528,21 @@ def generate_payslip_pdf(template_path, context, html=False):
         HttpResponse: A response with the generated PDF file or raw HTML.
     """
 
+    from base.methods import pdfkit_configuration
     from horilla.horilla_middlewares import _thread_locals
+    from orvahr_th.pdf import ENGINE_WKHTMLTOPDF, ENGINE_XHTML2PDF, html_to_pdf_xhtml2pdf
 
     try:
+        # wkhtmltopdf is optional (the Docker image does not ship it). Without
+        # it the payslip is rendered with xhtml2pdf rather than failing; the
+        # template picks a font source each engine can load (Thai needs an
+        # embedded font in both).
+        configuration = None if html else pdfkit_configuration()
+        engine = ENGINE_WKHTMLTOPDF if (html or configuration) else ENGINE_XHTML2PDF
+        context = {**context, "pdf_engine": None if html else engine}
         # Render the HTML content from the template and context
         html_content = render_to_string(template_path, context)
-        request = getattr(_thread_locals, "request")
+        request = getattr(_thread_locals, "request", None)
         cookies = None
         if request:
             cookies = request.META.get("HTTP_COOKIE", "")
@@ -1537,6 +1550,14 @@ def generate_payslip_pdf(template_path, context, html=False):
         # Return raw HTML if requested
         if html:
             return HttpResponse(html_content, content_type="text/html")
+
+        if engine == ENGINE_XHTML2PDF:
+            host = request.get_host() if request is not None else None
+            pdf = html_to_pdf_xhtml2pdf(html_content, request_host=host)
+            response = HttpResponse(pdf, content_type="application/pdf")
+            response["Content-Disposition"] = "inline; filename=payslip.pdf"
+            response["Cache-Control"] = "no-store, no-cache, must-revalidate"
+            return response
 
         # PDF options for pdfkit
         pdf_options = {
@@ -1566,13 +1587,11 @@ def generate_payslip_pdf(template_path, context, html=False):
             )
 
         # Generate the PDF as binary content
-        from base.methods import pdfkit_configuration
-
         pdf = pdfkit.from_string(
             html_content,
             False,
             options=pdf_options,
-            configuration=pdfkit_configuration(),
+            configuration=configuration,
         )
 
         # Return an HttpResponse containing the PDF content
@@ -1649,6 +1668,8 @@ def payslip_pdf(request, id):
                 {
                     "month_start_name": start_date.strftime("%B %d, %Y"),
                     "month_end_name": end_date.strftime("%B %d, %Y"),
+                    "period_start": start_date,
+                    "period_end": end_date,
                     "formatted_start_date": formatted_start_date,
                     "formatted_end_date": formatted_end_date,
                     # Every day in the period, week offs and holidays

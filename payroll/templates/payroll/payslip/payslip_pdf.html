@@ -1,15 +1,20 @@
-{% load static i18n horillafilters %}
+{% load static i18n horillafilters thai %}
+{% get_current_language as LANGUAGE_CODE %}{% thai_language as is_thai %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter" media="all">
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-            rel="stylesheet"
-        >
+        {% if pdf_engine != "xhtml2pdf" %}
+            {% comment %}xhtml2pdf would fetch these at render time; it gets Sarabun only.{% endcomment %}
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter" media="all">
+            <link
+                href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+                rel="stylesheet"
+            >
+        {% endif %}
         <style>
+            {% thai_font_face pdf_engine %}
             {% comment %}
             Plain and monochrome on purpose: a payslip is a statement, not a
             marketing surface, and the reference this follows uses black text
@@ -26,7 +31,19 @@
             body row across a page break is what produced the overlapping
             "Deduction / Amount" header seen in review.
             {% endcomment %}
-            html { box-sizing: border-box; font-family: 'Inter', Arial, sans-serif; }
+            {% comment %}
+            Sarabun carries the Thai glyphs (Inter has none). Under a Thai
+            locale it leads so Latin and Thai share one face; otherwise Inter
+            leads and Sarabun is the per-glyph fallback for Thai names.
+            xhtml2pdf has no per-glyph fallback, so it is set in Sarabun only.
+            {% endcomment %}
+            {% if pdf_engine == "xhtml2pdf" %}
+            html, body, table, td, th, p, h1, h3 { font-family: 'Sarabun'; }
+            {% elif is_thai %}
+            html { box-sizing: border-box; font-family: 'Sarabun', 'Inter', Arial, sans-serif; }
+            {% else %}
+            html { box-sizing: border-box; font-family: 'Inter', 'Sarabun', Arial, sans-serif; }
+            {% endif %}
             *, *::before, *::after { box-sizing: inherit; }
             body { margin: 0; background: #fff; color: #111; font-size: 12.5px; }
             table { border-collapse: collapse; width: 100%; }
@@ -75,8 +92,28 @@
             table.netpay .lbl { font-weight: 700; padding-right: 10px; white-space: nowrap; }
             table.netpay tr.total td { font-weight: 700; font-size: 14px; border-top: 1px solid #999; padding-top: 8px; }
             .note { font-size: 11px; color: #444; margin-top: 8px; }
+            table.netpay .words td { font-size: 12px; font-weight: 400; padding-top: 2px; }
 
             tr, td, th { page-break-inside: avoid; }
+
+            {% if pdf_engine == "xhtml2pdf" %}
+            {% comment %}
+            xhtml2pdf (no wkhtmltopdf installed): it ignores width:auto and
+            gives every <p> paragraph spacing, so the letterhead is pinned to
+            fixed widths and paragraphs are tightened. Only for that engine.
+            {% endcomment %}
+            @page { size: A4; margin: 10mm; }
+            .doc { padding: 0; }
+            .letterhead-row { width: 70%; margin: 4px auto 0; }
+            .letterhead-row .logo-cell { width: 44px; padding: 0 8px 0 0; }
+            .letterhead-row .text { padding: 0; }
+            .letterhead p, .letterhead-row p { margin: 0; padding: 0; line-height: 1.25; }
+            h3.section { margin: 0 0 4px 0; padding: 0; }
+            table.lines { margin-bottom: 12px; }
+            table.lines th, table.lines td { padding-top: 5px; padding-bottom: 2px; }
+            .info { margin-bottom: 12px; }
+            .info td { padding: 1px 8px 1px 0; }
+            {% endif %}
         </style>
     </head>
 
@@ -114,7 +151,11 @@
                                     {{ company.zip }}
                                 </p>
                             {% endif %}
-                            <p class="period">{{ month_start_name }} {% trans "to" %} {{ month_end_name }}</p>
+                            <p class="period">
+                                {% if period_start %}{{ period_start|local_date }}{% else %}{{ month_start_name }}{% endif %}
+                                {% trans "to" %}
+                                {% if period_end %}{{ period_end|local_date }}{% else %}{{ month_end_name }}{% endif %}
+                            </p>
                         </td>
                     </tr></table>
                 </div>
@@ -310,6 +351,16 @@
                     <td class="lbl">{% trans "Total net pay:" %}</td>
                     <td>{{ net_pay|floatformat:2|currency_symbol_position }}</td>
                 </tr>
+                {% if currency|is_baht %}
+                    {% with words=net_pay|baht_text %}
+                        {% if words %}
+                            <tr class="words">
+                                <td class="lbl">{% trans "In words:" %}</td>
+                                <td>({{ words }})</td>
+                            </tr>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
             </table>
             {% if uncovered_deduction %}
                 <p class="note">

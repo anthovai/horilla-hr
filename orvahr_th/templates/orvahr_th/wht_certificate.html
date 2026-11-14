@@ -1,0 +1,142 @@
+{% load thai %}<!DOCTYPE html>
+{% comment %}
+    50 ทวิ DRAFT. Not the Revenue Department's form: we have no official
+    layout spec. Every rendering carries the draft notice, at the top and at
+    the bottom, and the title says (ร่าง). Do not remove either without the
+    official layout and a review against it.
+
+    Rendered by xhtml2pdf for the PDF (pdf_engine == "xhtml2pdf") and by the
+    browser otherwise: tables and plain CSS only, Sarabun throughout, wide
+    cells (xhtml2pdf cannot line-break Thai, which has no spaces).
+{% endcomment %}
+<html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex">
+        <title>หนังสือรับรองการหักภาษี ณ ที่จ่าย (ร่าง) {{ cert.be_year }}</title>
+        <style>
+            {% thai_font_face pdf_engine %}
+            @page { size: A4; margin: 14mm 14mm 14mm 14mm; }
+            html, body, table, td, th, p, h1, h2, div, span { font-family: 'Sarabun'; }
+            body { margin: 0; color: #111; font-size: 11.5pt; background: #fff; }
+            .sheet { max-width: 182mm; margin: 0 auto; }
+            .draft {
+                border: 2px solid #b00020; color: #b00020; padding: 6px 8px;
+                text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 8px;
+            }
+            .draft .en { font-weight: normal; font-size: 9pt; }
+            h1 { font-size: 15pt; text-align: center; margin: 4px 0 0 0; }
+            .subtitle { text-align: center; font-size: 10pt; color: #444; margin: 0 0 8px 0; }
+            table { width: 100%; border-collapse: collapse; }
+            .party td { padding: 3px 6px; vertical-align: top; }
+            .party { border: 1px solid #666; margin-bottom: 8px; }
+            .party .head { background: #eeeeee; font-weight: bold; }
+            .lbl { width: 32%; color: #333; }
+            .income th, .income td { border: 1px solid #666; padding: 4px 6px; }
+            .income th { background: #eeeeee; font-weight: bold; text-align: center; }
+            .num { text-align: right; }
+            .center { text-align: center; }
+            .total td { font-weight: bold; }
+            .words { margin: 6px 0 8px 0; }
+            .note { font-size: 9.5pt; color: #444; margin: 4px 0; }
+            .months th, .months td { border: 1px solid #aaa; padding: 2px 6px; font-size: 9.5pt; }
+            .months th { background: #f4f4f4; }
+            .sign { margin-top: 16px; }
+            .sign td { padding: 4px 6px; vertical-align: top; }
+            h2 { font-size: 11.5pt; margin: 10px 0 4px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="sheet">
+            <div class="draft">
+                {{ draft_notice_th }}<br>
+                <span class="en">{{ draft_notice_en }}</span>
+            </div>
+
+            <h1>หนังสือรับรองการหักภาษี ณ ที่จ่าย (ร่าง)</h1>
+            <p class="subtitle">ตามมาตรา 50 ทวิ แห่งประมวลรัษฎากร &middot; ปีภาษี {{ cert.be_year }}</p>
+
+            <table class="party">
+                <tr><td class="head" colspan="2">ผู้มีหน้าที่หักภาษี ณ ที่จ่าย (ผู้จ่ายเงิน)</td></tr>
+                <tr><td class="lbl">ชื่อ</td><td>{{ cert.payer_name|default:"—" }}</td></tr>
+                <tr><td class="lbl">ที่อยู่</td><td>{{ cert.payer_address|default:"—" }}</td></tr>
+                <tr>
+                    <td class="lbl">เลขประจำตัวผู้เสียภาษีอากร</td>
+                    <td>{{ cert.payer_tax_id|default:"........................................ (ยังไม่มีในระบบ กรอกเอง)" }}</td>
+                </tr>
+            </table>
+
+            <table class="party">
+                <tr><td class="head" colspan="2">ผู้ถูกหักภาษี ณ ที่จ่าย (ผู้มีเงินได้)</td></tr>
+                <tr><td class="lbl">ชื่อ</td><td>{{ cert.payee_name|default:"—" }}</td></tr>
+                <tr><td class="lbl">ที่อยู่</td><td>{{ cert.payee_address|default:"—" }}</td></tr>
+                <tr>
+                    <td class="lbl">เลขประจำตัวผู้เสียภาษีอากร</td>
+                    <td>{{ cert.payee_tax_id|default:"........................................ (ยังไม่มีในระบบ กรอกเอง)" }}</td>
+                </tr>
+            </table>
+
+            <table class="income">
+                <tr>
+                    <th style="width: 46%;">ประเภทเงินได้พึงประเมินที่จ่าย</th>
+                    <th style="width: 14%;">ปีภาษีที่จ่าย</th>
+                    <th style="width: 20%;">จำนวนเงินที่จ่าย (บาท)</th>
+                    <th style="width: 20%;">ภาษีที่หักนำส่ง (บาท)</th>
+                </tr>
+                <tr>
+                    <td>1. เงินเดือน ค่าจ้าง เบี้ยเลี้ยง โบนัส ฯลฯ ตามมาตรา 40 (1)</td>
+                    <td class="center">{{ cert.be_year }}</td>
+                    <td class="num">{{ cert.total_income|floatformat:"2g" }}</td>
+                    <td class="num">{{ cert.total_tax|floatformat:"2g" }}</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="2">รวมเงินที่จ่ายและภาษีที่หักนำส่ง</td>
+                    <td class="num">{{ cert.total_income|floatformat:"2g" }}</td>
+                    <td class="num">{{ cert.total_tax|floatformat:"2g" }}</td>
+                </tr>
+            </table>
+            <p class="words"><b>รวมเงินภาษีที่หักนำส่ง (ตัวอักษร):</b> ({{ cert.total_tax_text }})</p>
+
+            <p class="note">
+                เงินสมทบจ่ายเข้ากองทุนประกันสังคม / กองทุนสำรองเลี้ยงชีพ: ไม่ได้คำนวณในร่างนี้ — กรอกและตรวจสอบเอง
+            </p>
+            <p class="note">ผู้จ่ายเงิน: [ ] หัก ณ ที่จ่าย &nbsp; [ ] ออกให้ตลอดไป &nbsp; [ ] ออกให้ครั้งเดียว &nbsp; [ ] อื่น ๆ</p>
+
+            <h2>รายละเอียดจากสลิปเงินเดือนที่ออกแล้ว (ยืนยันแล้ว / จ่ายแล้ว)</h2>
+            {% if cert.has_payslips %}
+                <table class="months">
+                    <tr>
+                        <th>งวด</th>
+                        <th class="num">เงินได้ (บาท)</th>
+                        <th class="num">ภาษีที่หัก (บาท)</th>
+                    </tr>
+                    {% for line in cert.lines %}
+                        <tr>
+                            <td>{{ line.start_date|be_date:"short" }} – {{ line.end_date|be_date:"short" }}</td>
+                            <td class="num">{{ line.income|floatformat:"2g" }}</td>
+                            <td class="num">{{ line.tax|floatformat:"2g" }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p class="note">ไม่มีสลิปเงินเดือนที่ออกแล้วในปี {{ cert.be_year }}</p>
+            {% endif %}
+
+            <table class="sign">
+                <tr>
+                    <td style="width: 50%;"></td>
+                    <td class="center">
+                        ลงชื่อ ........................................................ ผู้จ่ายเงิน<br>
+                        วันที่ ........ / ........ / ............
+                    </td>
+                </tr>
+            </table>
+
+            <div class="draft" style="margin-top: 14px;">
+                {{ draft_notice_th }}<br>
+                <span class="en">{{ draft_notice_en }}</span>
+            </div>
+        </div>
+    </body>
+</html>

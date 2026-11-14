@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     "asset",
     "attendance",
     "payroll",
+    "orvahr_th",
     "accessibility",
     "horilla_audit",
     "horilla_widgets",
