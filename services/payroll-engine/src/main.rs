@@ -13,8 +13,8 @@ use axum::{
     Json, Router,
 };
 use payroll_engine::{
-    annual_tax, monthly_withholding, social_security, AnnualTax, Claim, EngineError, Rules, Satang,
-    RuleBook, Sso, Withholding, WithholdingInput,
+    annual_tax, monthly_withholding, social_security, AnnualTax, Claim, EngineError, RuleBook,
+    Rules, Satang, Sso, Withholding, WithholdingInput,
 };
 use serde::Deserialize;
 
@@ -71,7 +71,9 @@ async fn rules_info(State(book): State<Shared>) -> Json<serde_json::Value> {
 
 async fn annual(State(b): State<Shared>, Json(q): Json<AnnualReq>) -> ApiResult<AnnualTax> {
     let r = b.select(q.as_of.as_deref()).map_err(fail)?;
-    annual_tax(r, q.gross_income, &q.claims, q.sso_paid_year).map(Json).map_err(fail)
+    annual_tax(r, q.gross_income, &q.claims, q.sso_paid_year)
+        .map(Json)
+        .map_err(fail)
 }
 
 async fn sso(State(b): State<Shared>, Json(q): Json<SsoReq>) -> ApiResult<Sso> {
@@ -79,7 +81,10 @@ async fn sso(State(b): State<Shared>, Json(q): Json<SsoReq>) -> ApiResult<Sso> {
     social_security(r, q.wage).map(Json).map_err(fail)
 }
 
-async fn withholding(State(b): State<Shared>, Json(q): Json<WithholdingReq>) -> ApiResult<Withholding> {
+async fn withholding(
+    State(b): State<Shared>,
+    Json(q): Json<WithholdingReq>,
+) -> ApiResult<Withholding> {
     let r = b.select(q.as_of.as_deref()).map_err(fail)?;
     monthly_withholding(r, &q.input).map(Json).map_err(fail)
 }
@@ -102,19 +107,28 @@ pub fn app(rules: Rules) -> Router {
 async fn main() {
     let book = match (std::env::var("RULES_DIR"), std::env::var("RULES_FILE")) {
         (Ok(_), Ok(_)) => panic!("set only one of RULES_DIR and RULES_FILE"),
-        (Ok(dir), _) => RuleBook::from_dir(std::path::Path::new(&dir))
-            .unwrap_or_else(|e| panic!("{dir}: {e}")),
+        (Ok(dir), _) => {
+            RuleBook::from_dir(std::path::Path::new(&dir)).unwrap_or_else(|e| panic!("{dir}: {e}"))
+        }
         (_, Ok(path)) => {
-            let text = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("cannot read {path}: {e}"));
+            let text = std::fs::read_to_string(&path)
+                .unwrap_or_else(|e| panic!("cannot read {path}: {e}"));
             RuleBook::single(Rules::from_json(&text).unwrap_or_else(|e| panic!("{path}: {e}")))
         }
         _ => RuleBook::bundled(),
     };
     // Loopback by default: this service is called by the app tier, not the internet.
     let addr = std::env::var("BIND").unwrap_or_else(|_| "127.0.0.1:8090".into());
-    let listener = tokio::net::TcpListener::bind(&addr).await.expect("bind failed");
-    eprintln!("payroll-engine listening on {addr} ({} rule set(s))", book.sets().len());
-    axum::serve(listener, app_with_book(book)).await.expect("server error");
+    let listener = tokio::net::TcpListener::bind(&addr)
+        .await
+        .expect("bind failed");
+    eprintln!(
+        "payroll-engine listening on {addr} ({} rule set(s))",
+        book.sets().len()
+    );
+    axum::serve(listener, app_with_book(book))
+        .await
+        .expect("server error");
 }
 
 #[cfg(test)]
@@ -148,7 +162,11 @@ mod tests {
 
     #[tokio::test]
     async fn annual_endpoint_returns_the_breakdown() {
-        let (s, v) = post_json("/v1/tax/annual", serde_json::json!({ "gross_income": 60_000_000 })).await;
+        let (s, v) = post_json(
+            "/v1/tax/annual",
+            serde_json::json!({ "gross_income": 60_000_000 }),
+        )
+        .await;
         assert_eq!(s, StatusCode::OK);
         assert_eq!(v["tax"], 2_150_000);
     }
@@ -164,10 +182,7 @@ mod tests {
         assert!(v["error"].as_str().unwrap().contains("yacht"));
     }
 
-    async fn call(
-        book: RuleBook,
-        req: Request<Body>,
-    ) -> (StatusCode, serde_json::Value) {
+    async fn call(book: RuleBook, req: Request<Body>) -> (StatusCode, serde_json::Value) {
         let res = app_with_book(book).oneshot(req).await.unwrap();
         let status = res.status();
         let bytes = res.into_body().collect().await.unwrap().to_bytes();
@@ -193,16 +208,31 @@ mod tests {
 
     #[tokio::test]
     async fn as_of_selects_the_rule_set() {
-        let q = |d: &str| post_req("/v1/sso", serde_json::json!({ "wage": 3_000_000, "as_of": d }));
+        let q = |d: &str| {
+            post_req(
+                "/v1/sso",
+                serde_json::json!({ "wage": 3_000_000, "as_of": d }),
+            )
+        };
         let (s, v) = call(two_year_book(), q("2026-06-01")).await;
-        assert_eq!((s, &v["employee"]), (StatusCode::OK, &serde_json::json!(75_000)));
+        assert_eq!(
+            (s, &v["employee"]),
+            (StatusCode::OK, &serde_json::json!(75_000))
+        );
         let (s, v) = call(two_year_book(), q("2027-06-01")).await;
-        assert_eq!((s, &v["employee"]), (StatusCode::OK, &serde_json::json!(85_000)));
+        assert_eq!(
+            (s, &v["employee"]),
+            (StatusCode::OK, &serde_json::json!(85_000))
+        );
     }
 
     #[tokio::test]
     async fn as_of_before_any_rule_set_is_422() {
-        let (s, v) = post_json("/v1/sso", serde_json::json!({ "wage": 1, "as_of": "2020-01-01" })).await;
+        let (s, v) = post_json(
+            "/v1/sso",
+            serde_json::json!({ "wage": 1, "as_of": "2020-01-01" }),
+        )
+        .await;
         assert_eq!(s, StatusCode::UNPROCESSABLE_ENTITY);
         assert!(v["error"].as_str().unwrap().contains("2020-01-01"));
     }
@@ -210,9 +240,18 @@ mod tests {
     #[tokio::test]
     async fn invalid_as_of_is_422_on_every_endpoint() {
         for (path, body) in [
-            ("/v1/sso", serde_json::json!({ "wage": 1, "as_of": "2026-02-30" })),
-            ("/v1/tax/annual", serde_json::json!({ "gross_income": 1, "as_of": "yesterday" })),
-            ("/v1/withholding/monthly", serde_json::json!({ "month": 1, "salary": 1, "as_of": "2026-1-1" })),
+            (
+                "/v1/sso",
+                serde_json::json!({ "wage": 1, "as_of": "2026-02-30" }),
+            ),
+            (
+                "/v1/tax/annual",
+                serde_json::json!({ "gross_income": 1, "as_of": "yesterday" }),
+            ),
+            (
+                "/v1/withholding/monthly",
+                serde_json::json!({ "month": 1, "salary": 1, "as_of": "2026-1-1" }),
+            ),
         ] {
             let (s, _) = post_json(path, body).await;
             assert_eq!(s, StatusCode::UNPROCESSABLE_ENTITY, "{path}");
@@ -232,7 +271,11 @@ mod tests {
 
     #[tokio::test]
     async fn rules_endpoint_lists_sets_and_keeps_old_fields() {
-        let (s, v) = call(two_year_book(), Request::get("/v1/rules").body(Body::empty()).unwrap()).await;
+        let (s, v) = call(
+            two_year_book(),
+            Request::get("/v1/rules").body(Body::empty()).unwrap(),
+        )
+        .await;
         assert_eq!(s, StatusCode::OK);
         assert_eq!(v["country"], "TH");
         assert!(v["year"].is_number() && v["effective_from"].is_string());
@@ -267,6 +310,9 @@ mod tests {
         let book = RuleBook::from_dir(&dir).unwrap();
         std::fs::remove_dir_all(&dir).ok();
         assert_eq!(book.sets().len(), 2);
-        assert_eq!(book.select(Some("2027-05-05")).unwrap().effective_from, "2027-01-01");
+        assert_eq!(
+            book.select(Some("2027-05-05")).unwrap().effective_from,
+            "2027-01-01"
+        );
     }
 }

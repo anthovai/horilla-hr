@@ -92,7 +92,10 @@ pub enum AllowanceKind {
     /// Always applies (e.g. the personal allowance).
     Fixed { amount: Satang },
     /// `units` x `amount`, optionally limited to `max_units` (spouse, children).
-    PerUnit { amount: Satang, max_units: Option<u32> },
+    PerUnit {
+        amount: Satang,
+        max_units: Option<u32>,
+    },
     /// The declared amount, up to `cap` (insurance, funds).
     Capped { cap: Satang },
 }
@@ -133,31 +136,54 @@ impl Rules {
             }
         }
         if b.last().and_then(|x| x.to).is_some() {
-            return Err(EngineError::BadRules("top bracket must be open-ended".into()));
+            return Err(EngineError::BadRules(
+                "top bracket must be open-ended".into(),
+            ));
         }
         if self.social_security.base_min > self.social_security.base_max {
-            return Err(EngineError::BadRules("sso base_min exceeds base_max".into()));
+            return Err(EngineError::BadRules(
+                "sso base_min exceeds base_max".into(),
+            ));
         }
         if self.social_security.rounding_satang <= 0 {
-            return Err(EngineError::BadRules("sso rounding_satang must be positive".into()));
+            return Err(EngineError::BadRules(
+                "sso rounding_satang must be positive".into(),
+            ));
         }
         parse_date(&self.effective_from)
             .map_err(|e| EngineError::BadRules(format!("effective_from: {e}")))?;
         let mut seen_members: Vec<&str> = Vec::new();
         for (i, g) in self.tax.groups.iter().enumerate() {
             if self.tax.groups[..i].iter().any(|o| o.code == g.code) {
-                return Err(EngineError::BadRules(format!("duplicate group code {}", g.code)));
+                return Err(EngineError::BadRules(format!(
+                    "duplicate group code {}",
+                    g.code
+                )));
             }
             if g.members.is_empty() {
-                return Err(EngineError::BadRules(format!("group {} has no members", g.code)));
+                return Err(EngineError::BadRules(format!(
+                    "group {} has no members",
+                    g.code
+                )));
             }
             if g.cap < 0 || g.cap_percent_of_income_bp.is_some_and(|b| b < 0) {
-                return Err(EngineError::BadRules(format!("group {} has a negative cap", g.code)));
+                return Err(EngineError::BadRules(format!(
+                    "group {} has a negative cap",
+                    g.code
+                )));
             }
             for m in &g.members {
-                let rule = self.tax.allowances.iter().find(|a| &a.code == m).ok_or_else(|| {
-                    EngineError::BadRules(format!("group {} names unknown allowance {m}", g.code))
-                })?;
+                let rule = self
+                    .tax
+                    .allowances
+                    .iter()
+                    .find(|a| &a.code == m)
+                    .ok_or_else(|| {
+                        EngineError::BadRules(format!(
+                            "group {} names unknown allowance {m}",
+                            g.code
+                        ))
+                    })?;
                 if !matches!(rule.kind, AllowanceKind::Capped { .. }) {
                     return Err(EngineError::BadRules(format!(
                         "group {}: member {m} must be a capped allowance",
@@ -185,7 +211,11 @@ pub fn parse_date(s: &str) -> Result<(i32, u32, u32), String> {
     if b.len() != 10 || b[4] != b'-' || b[7] != b'-' {
         return Err(bad());
     }
-    if !b.iter().enumerate().all(|(i, c)| i == 4 || i == 7 || c.is_ascii_digit()) {
+    if !b
+        .iter()
+        .enumerate()
+        .all(|(i, c)| i == 4 || i == 7 || c.is_ascii_digit())
+    {
         return Err(bad());
     }
     let y: i32 = s[0..4].parse().map_err(|_| bad())?;
@@ -372,7 +402,9 @@ pub fn annual_tax(
     sso_paid_year: Satang,
 ) -> Result<AnnualTax, EngineError> {
     if gross_income < 0 || sso_paid_year < 0 {
-        return Err(EngineError::InvalidInput("amounts cannot be negative".into()));
+        return Err(EngineError::InvalidInput(
+            "amounts cannot be negative".into(),
+        ));
     }
     let t = &rules.tax;
 
@@ -404,7 +436,10 @@ pub fn annual_tax(
             }
         };
         if amount > 0 {
-            applied.push(AppliedAllowance { code: rule.code.clone(), amount });
+            applied.push(AppliedAllowance {
+                code: rule.code.clone(),
+                amount,
+            });
         }
     }
     for claim in claims {
@@ -416,8 +451,11 @@ pub fn annual_tax(
     // Joint ceilings, after the per-item caps.
     let mut group_adjustments = Vec::new();
     for g in &t.groups {
-        let requested: Satang =
-            applied.iter().filter(|a| g.members.contains(&a.code)).map(|a| a.amount).sum();
+        let requested: Satang = applied
+            .iter()
+            .filter(|a| g.members.contains(&a.code))
+            .map(|a| a.amount)
+            .sum();
         let cap_applied = match g.cap_percent_of_income_bp {
             Some(bp) => g.cap.min(apply_bp(gross_income, bp)),
             None => g.cap,
@@ -432,8 +470,10 @@ pub fn annual_tax(
                 let kept = a.amount.min(budget);
                 budget -= kept;
                 if kept < a.amount {
-                    members_trimmed
-                        .push(AppliedAllowance { code: code.clone(), amount: a.amount - kept });
+                    members_trimmed.push(AppliedAllowance {
+                        code: code.clone(),
+                        amount: a.amount - kept,
+                    });
                 }
                 a.amount = kept;
             }
@@ -451,7 +491,10 @@ pub fn annual_tax(
 
     let sso_deduction = sso_paid_year.min(rules.social_security.employee_deduction_cap_per_year);
     if sso_deduction > 0 {
-        applied.push(AppliedAllowance { code: "social_security".into(), amount: sso_deduction });
+        applied.push(AppliedAllowance {
+            code: "social_security".into(),
+            amount: sso_deduction,
+        });
     }
 
     let total_allowances: Satang = applied.iter().map(|a| a.amount).sum();
@@ -466,7 +509,12 @@ pub fn annual_tax(
         let upper = b.to.map_or(taxable_income, |to| to.min(taxable_income));
         let slab_tax = apply_bp(upper - b.from, b.rate_bp);
         tax += slab_tax;
-        slabs.push(SlabRow { from: b.from, to: upper, rate_bp: b.rate_bp, tax: slab_tax });
+        slabs.push(SlabRow {
+            from: b.from,
+            to: upper,
+            rate_bp: b.rate_bp,
+            tax: slab_tax,
+        });
     }
 
     Ok(AnnualTax {
@@ -499,7 +547,11 @@ pub fn social_security(rules: &Rules, wage: Satang) -> Result<Sso, EngineError> 
     let s = &rules.social_security;
     let base = wage.clamp(s.base_min, s.base_max);
     let amount = round_to(apply_bp(base, s.rate_bp), s.rounding_satang);
-    Ok(Sso { base, employee: amount, employer: amount })
+    Ok(Sso {
+        base,
+        employee: amount,
+        employer: amount,
+    })
 }
 
 // ------------------------------------------------- monthly withholding
@@ -544,11 +596,19 @@ pub fn monthly_withholding(
     if !(1..=12).contains(&input.month) {
         return Err(EngineError::InvalidInput("month must be 1..=12".into()));
     }
-    if [input.salary, input.other_income, input.ytd_income, input.ytd_withheld, input.ytd_sso]
-        .iter()
-        .any(|v| *v < 0)
+    if [
+        input.salary,
+        input.other_income,
+        input.ytd_income,
+        input.ytd_withheld,
+        input.ytd_sso,
+    ]
+    .iter()
+    .any(|v| *v < 0)
     {
-        return Err(EngineError::InvalidInput("amounts cannot be negative".into()));
+        return Err(EngineError::InvalidInput(
+            "amounts cannot be negative".into(),
+        ));
     }
 
     let months_left_after = (12 - input.month) as Satang;
@@ -570,7 +630,12 @@ pub fn monthly_withholding(
         round_to_satang_div(remaining, periods)
     };
 
-    Ok(Withholding { withhold_this_month, projected_annual_income, sso, annual })
+    Ok(Withholding {
+        withhold_this_month,
+        projected_annual_income,
+        sso,
+        annual,
+    })
 }
 
 /// `a / b` rounded half up, for non-negative `a` and positive `b`.
@@ -620,8 +685,16 @@ mod tests {
     #[test]
     fn per_unit_allowances_respect_max_units() {
         let claims = vec![
-            Claim { code: "spouse".into(), units: Some(3), amount: None },
-            Claim { code: "child".into(), units: Some(2), amount: None },
+            Claim {
+                code: "spouse".into(),
+                units: Some(3),
+                amount: None,
+            },
+            Claim {
+                code: "child".into(),
+                units: Some(2),
+                amount: None,
+            },
         ];
         let t = annual_tax(&rules(), 1_000_000 * BAHT, &claims, 0).unwrap();
         let get = |c: &str| t.allowances.iter().find(|a| a.code == c).map(|a| a.amount);
@@ -631,15 +704,27 @@ mod tests {
 
     #[test]
     fn capped_allowance_stops_at_cap() {
-        let claims = vec![Claim { code: "life_insurance".into(), units: None, amount: Some(250_000 * BAHT) }];
+        let claims = vec![Claim {
+            code: "life_insurance".into(),
+            units: None,
+            amount: Some(250_000 * BAHT),
+        }];
         let t = annual_tax(&rules(), 1_000_000 * BAHT, &claims, 0).unwrap();
-        let v = t.allowances.iter().find(|a| a.code == "life_insurance").unwrap();
+        let v = t
+            .allowances
+            .iter()
+            .find(|a| a.code == "life_insurance")
+            .unwrap();
         assert_eq!(v.amount, 100_000 * BAHT);
     }
 
     #[test]
     fn unknown_claim_code_is_rejected_not_ignored() {
-        let claims = vec![Claim { code: "yacht".into(), units: Some(1), amount: None }];
+        let claims = vec![Claim {
+            code: "yacht".into(),
+            units: Some(1),
+            amount: None,
+        }];
         assert_eq!(
             annual_tax(&rules(), 500_000 * BAHT, &claims, 0),
             Err(EngineError::UnknownAllowance("yacht".into()))
@@ -649,11 +734,26 @@ mod tests {
     #[test]
     fn sso_is_clamped_to_floor_and_ceiling() {
         let r = rules();
-        assert_eq!(social_security(&r, 30_000 * BAHT).unwrap().employee, 750 * BAHT);
-        assert_eq!(social_security(&r, 15_000 * BAHT).unwrap().employee, 750 * BAHT);
-        assert_eq!(social_security(&r, 10_000 * BAHT).unwrap().employee, 500 * BAHT);
-        assert_eq!(social_security(&r, 1_000 * BAHT).unwrap().base, 1_650 * BAHT);
-        assert_eq!(social_security(&r, 1_000 * BAHT).unwrap().employee, 83 * BAHT); // 82.50 -> 83
+        assert_eq!(
+            social_security(&r, 30_000 * BAHT).unwrap().employee,
+            750 * BAHT
+        );
+        assert_eq!(
+            social_security(&r, 15_000 * BAHT).unwrap().employee,
+            750 * BAHT
+        );
+        assert_eq!(
+            social_security(&r, 10_000 * BAHT).unwrap().employee,
+            500 * BAHT
+        );
+        assert_eq!(
+            social_security(&r, 1_000 * BAHT).unwrap().base,
+            1_650 * BAHT
+        );
+        assert_eq!(
+            social_security(&r, 1_000 * BAHT).unwrap().employee,
+            83 * BAHT
+        ); // 82.50 -> 83
     }
 
     #[test]
@@ -693,12 +793,22 @@ mod tests {
     fn a_bonus_is_caught_up_in_the_month_it_is_paid() {
         let r = rules();
         let base = WithholdingInput {
-            month: 3, salary: 50_000 * BAHT, other_income: 0,
-            ytd_income: 100_000 * BAHT, ytd_withheld: 0, ytd_sso: 1_500 * BAHT, claims: vec![],
+            month: 3,
+            salary: 50_000 * BAHT,
+            other_income: 0,
+            ytd_income: 100_000 * BAHT,
+            ytd_withheld: 0,
+            ytd_sso: 1_500 * BAHT,
+            claims: vec![],
         };
-        let with_bonus = WithholdingInput { other_income: 100_000 * BAHT, ..base.clone() };
+        let with_bonus = WithholdingInput {
+            other_income: 100_000 * BAHT,
+            ..base.clone()
+        };
         let a = monthly_withholding(&r, &base).unwrap().withhold_this_month;
-        let b = monthly_withholding(&r, &with_bonus).unwrap().withhold_this_month;
+        let b = monthly_withholding(&r, &with_bonus)
+            .unwrap()
+            .withhold_this_month;
         assert!(b > a);
     }
 
@@ -706,16 +816,28 @@ mod tests {
     fn invalid_month_is_rejected() {
         let r = rules();
         let input = WithholdingInput {
-            month: 13, salary: 1, other_income: 0, ytd_income: 0, ytd_withheld: 0, ytd_sso: 0, claims: vec![],
+            month: 13,
+            salary: 1,
+            other_income: 0,
+            ytd_income: 0,
+            ytd_withheld: 0,
+            ytd_sso: 0,
+            claims: vec![],
         };
-        assert!(matches!(monthly_withholding(&r, &input), Err(EngineError::InvalidInput(_))));
+        assert!(matches!(
+            monthly_withholding(&r, &input),
+            Err(EngineError::InvalidInput(_))
+        ));
     }
 
     #[test]
     fn broken_bracket_chain_is_rejected() {
         let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
         v["tax"]["brackets"][1]["from"] = serde_json::json!(999);
-        assert!(matches!(Rules::from_json(&v.to_string()), Err(EngineError::BadRules(_))));
+        assert!(matches!(
+            Rules::from_json(&v.to_string()),
+            Err(EngineError::BadRules(_))
+        ));
     }
 
     fn with_groups(groups: serde_json::Value) -> Rules {
@@ -725,7 +847,11 @@ mod tests {
     }
 
     fn claim(code: &str, baht: i64) -> Claim {
-        Claim { code: code.into(), units: None, amount: Some(baht * BAHT) }
+        Claim {
+            code: code.into(),
+            units: None,
+            amount: Some(baht * BAHT),
+        }
     }
 
     #[test]
@@ -734,14 +860,26 @@ mod tests {
             { "code": "g", "members": ["life_insurance", "health_insurance"], "cap": 10_000_000 }
         ]));
         // per-item: life 100k (of 150k), health 25k -> 125k requested, ceiling 100k.
-        let claims = vec![claim("life_insurance", 150_000), claim("health_insurance", 30_000)];
+        let claims = vec![
+            claim("life_insurance", 150_000),
+            claim("health_insurance", 30_000),
+        ];
         let t = annual_tax(&r, 2_000_000 * BAHT, &claims, 0).unwrap();
         let get = |c: &str| t.allowances.iter().find(|a| a.code == c).map(|a| a.amount);
         assert_eq!(get("life_insurance"), Some(100_000 * BAHT));
         assert_eq!(get("health_insurance"), None);
         let adj = &t.group_adjustments[0];
-        assert_eq!((adj.requested, adj.allowed, adj.trimmed), (125_000 * BAHT, 100_000 * BAHT, 25_000 * BAHT));
-        assert_eq!(adj.members_trimmed, vec![AppliedAllowance { code: "health_insurance".into(), amount: 25_000 * BAHT }]);
+        assert_eq!(
+            (adj.requested, adj.allowed, adj.trimmed),
+            (125_000 * BAHT, 100_000 * BAHT, 25_000 * BAHT)
+        );
+        assert_eq!(
+            adj.members_trimmed,
+            vec![AppliedAllowance {
+                code: "health_insurance".into(),
+                amount: 25_000 * BAHT
+            }]
+        );
     }
 
     #[test]
@@ -753,7 +891,12 @@ mod tests {
         let t = annual_tax(&r, 600_000 * BAHT, &claims, 0).unwrap(); // 10% = 60k
         assert_eq!(t.group_adjustments[0].cap_applied, 60_000 * BAHT);
         assert_eq!(t.group_adjustments[0].trimmed, 60_000 * BAHT);
-        let sum: Satang = t.allowances.iter().filter(|a| a.code == "provident_fund" || a.code == "rmf").map(|a| a.amount).sum();
+        let sum: Satang = t
+            .allowances
+            .iter()
+            .filter(|a| a.code == "provident_fund" || a.code == "rmf")
+            .map(|a| a.amount)
+            .sum();
         assert_eq!(sum, 60_000 * BAHT);
     }
 
@@ -762,7 +905,10 @@ mod tests {
         let r = with_groups(serde_json::json!([
             { "code": "g", "members": ["life_insurance", "health_insurance"], "cap": 10_000_000 }
         ]));
-        let claims = vec![claim("life_insurance", 50_000), claim("health_insurance", 20_000)];
+        let claims = vec![
+            claim("life_insurance", 50_000),
+            claim("health_insurance", 20_000),
+        ];
         let t = annual_tax(&r, 2_000_000 * BAHT, &claims, 0).unwrap();
         assert!(t.group_adjustments.is_empty());
     }
@@ -774,9 +920,18 @@ mod tests {
             v["tax"]["groups"] = g;
             Rules::from_json(&v.to_string())
         };
-        assert!(matches!(mk(serde_json::json!([{ "code": "g", "members": ["nope"], "cap": 1 }])), Err(EngineError::BadRules(_))));
-        assert!(matches!(mk(serde_json::json!([{ "code": "g", "members": ["spouse"], "cap": 1 }])), Err(EngineError::BadRules(_))));
-        assert!(matches!(mk(serde_json::json!([{ "code": "g", "members": [], "cap": 1 }])), Err(EngineError::BadRules(_))));
+        assert!(matches!(
+            mk(serde_json::json!([{ "code": "g", "members": ["nope"], "cap": 1 }])),
+            Err(EngineError::BadRules(_))
+        ));
+        assert!(matches!(
+            mk(serde_json::json!([{ "code": "g", "members": ["spouse"], "cap": 1 }])),
+            Err(EngineError::BadRules(_))
+        ));
+        assert!(matches!(
+            mk(serde_json::json!([{ "code": "g", "members": [], "cap": 1 }])),
+            Err(EngineError::BadRules(_))
+        ));
         assert!(matches!(
             mk(serde_json::json!([
                 { "code": "a", "members": ["rmf"], "cap": 1 },
@@ -790,7 +945,16 @@ mod tests {
     fn date_parsing_is_strict() {
         assert!(parse_date("2026-02-28").is_ok());
         assert!(parse_date("2024-02-29").is_ok());
-        for bad in ["2026-02-29", "2026-13-01", "2026-1-01", "26-01-01", "2026/01/01", "2026-01-0a", "", "2026-00-10"] {
+        for bad in [
+            "2026-02-29",
+            "2026-13-01",
+            "2026-1-01",
+            "26-01-01",
+            "2026/01/01",
+            "2026-01-0a",
+            "",
+            "2026-00-10",
+        ] {
             assert!(parse_date(bad).is_err(), "{bad}");
         }
         assert!(parse_date(&today_utc()).is_ok());
@@ -815,8 +979,14 @@ mod tests {
         assert_eq!(b.select(Some("2026-12-31")).unwrap().year, 2026);
         assert_eq!(b.select(Some("2027-01-01")).unwrap().year, 2027);
         assert_eq!(b.select(Some("2030-06-01")).unwrap().year, 2027);
-        assert!(matches!(b.select(Some("2025-12-31")), Err(EngineError::NoRuleSet(_))));
-        assert!(matches!(b.select(Some("garbage")), Err(EngineError::InvalidInput(_))));
+        assert!(matches!(
+            b.select(Some("2025-12-31")),
+            Err(EngineError::NoRuleSet(_))
+        ));
+        assert!(matches!(
+            b.select(Some("garbage")),
+            Err(EngineError::InvalidInput(_))
+        ));
         assert!(b.select(None).is_ok());
     }
 
@@ -832,6 +1002,9 @@ mod tests {
     fn bad_effective_from_is_rejected() {
         let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
         v["effective_from"] = serde_json::json!("1 Jan 2026");
-        assert!(matches!(Rules::from_json(&v.to_string()), Err(EngineError::BadRules(_))));
+        assert!(matches!(
+            Rules::from_json(&v.to_string()),
+            Err(EngineError::BadRules(_))
+        ));
     }
 }
