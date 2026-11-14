@@ -8,7 +8,7 @@ based on their contract details and income information.
 import datetime
 import logging
 
-from payroll.methods import orvahr_engine
+from payroll.methods import orvahr_engine, orvahr_ytd
 from payroll.methods.contract_periods import forced_contract
 from payroll.methods.methods import (
     compute_yearly_taxable_amount,
@@ -288,7 +288,7 @@ def calculate_taxable_amount(**kwargs):
     else:
         income = float(basic_pay)
 
-    return period_tax(
+    tax = period_tax(
         filing,
         income,
         start_date,
@@ -296,6 +296,13 @@ def calculate_taxable_amount(**kwargs):
         employee=employee,
         pay_frequency=contract.pay_frequency,
     )
+    # Shadow only, monthly pay only: log what cumulative withholding would take.
+    # Never changes ``tax`` and never raises (see orvahr_ytd).
+    if periods_in_year(contract.pay_frequency, start_date, end_date) == 12:
+        orvahr_ytd.shadow_cumulative(
+            employee, filing, income, start_date, end_date, tax
+        )
+    return tax
 
 
 # How many pay periods make a year, per contract pay frequency. Payroll

@@ -149,3 +149,13 @@ def sso_paid_year_for(employee, gross_yearly_income):
 
 def agrees(existing_tax, engine_tax):
     return abs(float(existing_tax) - float(engine_tax)) <= TOLERANCE_BAHT
+
+
+def monthly_withholding(payload):
+    """
+    The engine's cumulative-method withholding for one month.
+
+    ``payload`` is the engine's WithholdingInput (satang throughout). Returns
+    the engine's raw response; may raise EngineUnavailable.
+    """
+    return _post("/v1/withholding/monthly", payload)
