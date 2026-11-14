@@ -94,6 +94,7 @@ def shadow_cumulative(employee, filing, income, start_date, end_date, legacy_tax
                 "ytd_income": _satang(ytd_income),
                 "ytd_withheld": _satang(ytd_withheld),
                 "ytd_sso": _satang(monthly_sso * prior),
+                "sso_enrolled": orvahr_engine.sso_enrolled(employee),
                 "claims": claims,
                 "as_of": as_of,
             }

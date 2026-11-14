@@ -131,25 +131,32 @@ def claims_for(employee, year):
     return claims
 
 
-def sso_paid_year_for(employee, gross_yearly_income, as_of=None):
+def sso_enrolled(employee):
     """
-    Projected yearly employee social security in baht, or 0.0 if not applicable.
-
-    Applies only to an employee whose Thai profile carries a social security
-    number (taken as "enrolled"). The monthly wage is taken as the yearly
-    income / 12 (an approximation: the income given to payroll tax is not
-    always the SSO wage) and the engine's monthly employee contribution is
-    multiplied by 12. May raise EngineUnavailable.
+    Whether the employee pays social security: they have a Thai profile that
+    carries a social security number. Everything that talks to the engine uses
+    this one definition, so projections and withholding cannot disagree.
     """
     from employee.models import EmployeeThaiProfile
 
-    enrolled = (
+    return (
         EmployeeThaiProfile.objects.filter(employee_id=_employee_pk(employee))
         .exclude(social_security_no__isnull=True)
         .exclude(social_security_no="")
         .exists()
     )
-    if not enrolled:
+
+
+def sso_paid_year_for(employee, gross_yearly_income, as_of=None):
+    """
+    Projected yearly employee social security in baht, or 0.0 if not applicable.
+
+    Applies only to an enrolled employee (see ``sso_enrolled``). The monthly
+    wage is taken as the yearly income / 12 (an approximation: the income given
+    to payroll tax is not always the SSO wage) and the engine's monthly
+    employee contribution is multiplied by 12. May raise EngineUnavailable.
+    """
+    if not sso_enrolled(employee):
         return 0.0
     wage = round(float(gross_yearly_income) / 12 * 100)
     payload = {"wage": max(wage, 0)}

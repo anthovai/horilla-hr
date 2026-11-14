@@ -574,8 +574,16 @@ pub struct WithholdingInput {
     /// Employee social security already paid in the months before this one.
     #[serde(default)]
     pub ytd_sso: Satang,
+    /// Whether the employee pays social security. Defaults to true; when false
+    /// no contribution is taken or deducted from taxable income.
+    #[serde(default = "default_true")]
+    pub sso_enrolled: bool,
     #[serde(default)]
     pub claims: Vec<Claim>,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -614,7 +622,15 @@ pub fn monthly_withholding(
     let months_left_after = (12 - input.month) as Satang;
     let periods = months_left_after + 1;
 
-    let sso = social_security(rules, input.salary)?;
+    let sso = if input.sso_enrolled {
+        social_security(rules, input.salary)?
+    } else {
+        Sso {
+            base: 0,
+            employee: 0,
+            employer: 0,
+        }
+    };
     let projected_annual_income =
         input.ytd_income + input.salary + input.other_income + input.salary * months_left_after;
     let projected_sso = input.ytd_sso + sso.employee * periods;
@@ -777,6 +793,7 @@ mod tests {
                     ytd_income,
                     ytd_withheld,
                     ytd_sso,
+                    sso_enrolled: true,
                     claims: vec![],
                 },
             )
@@ -799,6 +816,7 @@ mod tests {
             ytd_income: 100_000 * BAHT,
             ytd_withheld: 0,
             ytd_sso: 1_500 * BAHT,
+            sso_enrolled: true,
             claims: vec![],
         };
         let with_bonus = WithholdingInput {
@@ -822,6 +840,7 @@ mod tests {
             ytd_income: 0,
             ytd_withheld: 0,
             ytd_sso: 0,
+            sso_enrolled: true,
             claims: vec![],
         };
         assert!(matches!(
@@ -1006,5 +1025,57 @@ mod tests {
             Rules::from_json(&v.to_string()),
             Err(EngineError::BadRules(_))
         ));
+    }
+}
+
+#[cfg(test)]
+mod sso_enrolment_tests {
+    use super::*;
+
+    fn input(enrolled: bool) -> WithholdingInput {
+        WithholdingInput {
+            month: 1,
+            salary: 50_000 * 100,
+            other_income: 0,
+            ytd_income: 0,
+            ytd_withheld: 0,
+            ytd_sso: 0,
+            sso_enrolled: enrolled,
+            claims: vec![],
+        }
+    }
+
+    #[test]
+    fn not_enrolled_means_no_contribution_and_no_deduction() {
+        let rules = Rules::th_2026();
+        let out = monthly_withholding(&rules, &input(false)).unwrap();
+        assert_eq!(
+            out.sso,
+            Sso {
+                base: 0,
+                employee: 0,
+                employer: 0
+            }
+        );
+        assert!(out
+            .annual
+            .allowances
+            .iter()
+            .all(|a| a.code != "social_security"));
+    }
+
+    #[test]
+    fn enrolled_is_the_default_and_pays_less_tax_than_not_enrolled() {
+        let rules = Rules::th_2026();
+        let enrolled = monthly_withholding(&rules, &input(true)).unwrap();
+        let not = monthly_withholding(&rules, &input(false)).unwrap();
+        assert!(enrolled.sso.employee > 0);
+        assert!(enrolled.withhold_this_month < not.withhold_this_month);
+        let json = r#"{"month":1,"salary":100}"#;
+        let parsed: WithholdingInput = serde_json::from_str(json).unwrap();
+        assert!(
+            parsed.sso_enrolled,
+            "omitting the field keeps the old behaviour"
+        );
     }
 }

@@ -16,8 +16,8 @@ Each month the engine is asked for the cumulative withholding with the actual
 year-to-date INCOME, the ENGINE'S OWN running withheld total, and the
 year-to-date social security, so the engine column shows what the cumulative
 method would have taken month by month. The year total compares what the
-payslips withheld with the engine's annual tax on the year's total income, so
-a partial year (a joiner, a leaver) is compared on the income it actually has.
+payslips withheld with the engine's annual tax for a full year of payslips, and
+with what the engine would have withheld over the same months for a part year.
 
 Money is in baht, 2 decimals. Positive differences mean payroll withheld MORE
 than the engine (over-withheld); negative, less (under-withheld).
@@ -171,6 +171,7 @@ class Command(BaseCommand):
                 raise Skip("non-monthly pay")
 
         claims = orvahr_engine.claims_for(employee_pk, year)
+        enrolled = orvahr_engine.sso_enrolled(employee_pk)
         months = []
         ytd_income = 0.0  # actual
         actual_withheld = 0.0
@@ -193,6 +194,7 @@ class Command(BaseCommand):
                     "ytd_income": _satang(ytd_income),
                     "ytd_withheld": _satang(engine_withheld),
                     "ytd_sso": _satang(monthly_sso_sum),
+                    "sso_enrolled": enrolled,
                     "claims": claims,
                     "as_of": as_of,
                 }
@@ -215,12 +217,24 @@ class Command(BaseCommand):
                 }
             )
 
-        as_of = f"{year}-12-31"
-        sso_year = orvahr_engine.sso_paid_year_for(employee_pk, ytd_income, as_of=as_of)
-        annual = orvahr_engine.annual_tax(
-            ytd_income, claims=claims, sso_paid_year=sso_year, as_of=as_of
-        )["tax_baht"]
-        difference = actual_withheld - annual
+        # A full year is judged against the annual tax. A part year (a joiner,
+        # a leaver, a year still running) cannot be: the annual tax on a few
+        # months' income is not what those months should have withheld, so it
+        # is judged against what the engine would have withheld over the SAME
+        # months.
+        if prior == 12:
+            basis = "annual"
+            as_of = f"{year}-12-31"
+            sso_year = orvahr_engine.sso_paid_year_for(
+                employee_pk, ytd_income, as_of=as_of
+            )
+            engine_total = orvahr_engine.annual_tax(
+                ytd_income, claims=claims, sso_paid_year=sso_year, as_of=as_of
+            )["tax_baht"]
+        else:
+            basis = "to_date"
+            engine_total = engine_withheld
+        difference = actual_withheld - engine_total
         if abs(difference) <= AGREE_BAHT:
             status = "agree"
         elif difference > 0:
@@ -244,7 +258,8 @@ class Command(BaseCommand):
             "total": {
                 "income": round(ytd_income, 2),
                 "actual_tax": round(actual_withheld, 2),
-                "engine_annual_tax": round(annual, 2),
+                "basis": basis,
+                "engine_total_tax": round(engine_total, 2),
                 "difference": round(difference, 2),
             },
         }
@@ -292,7 +307,7 @@ class Command(BaseCommand):
                 yield {**who, "row": "total", "period": report["year"],
                        "status": emp["status"], "income": _money(t["income"]),
                        "actual_tax": _money(t["actual_tax"]),
-                       "engine_tax": _money(t["engine_annual_tax"]),
+                       "engine_tax": _money(t["engine_total_tax"]),
                        "engine_cumulative": "",
                        "difference": _money(t["difference"]), "note": ""}
             else:

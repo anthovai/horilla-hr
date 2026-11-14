@@ -157,3 +157,29 @@ class AsOfShadowTests(TestCase):
             )
         withholding_call = [c for c in post.call_args_list if c.args[0].endswith("monthly")][0]
         self.assertEqual(withholding_call.args[1]["as_of"], "2026-02-28")
+
+
+@override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="shadow")
+class SsoEnrolmentPayloadTests(TestCase):
+    def test_enrolment_is_sent_so_the_engine_does_not_deduct_sso_for_everyone(self):
+        from employee.models import EmployeeThaiProfile
+
+        load_tax_packs(["th_2026"])
+        filing = FilingStatus.objects.get(filing_status=THAI)
+        emp = make_employee(company=make_company("Enrol Co"), email="enrol@test.horilla")
+
+        def sent_flag():
+            with mock.patch.object(
+                orvahr_engine,
+                "_post",
+                return_value={"withhold_this_month": 1, "employee": 0},
+            ) as post:
+                orvahr_ytd.shadow_cumulative(
+                    emp, filing, 50000, D(2026, 2, 1), D(2026, 2, 28), 1.0
+                )
+            call = [c for c in post.call_args_list if c.args[0].endswith("monthly")][0]
+            return call.args[1]["sso_enrolled"]
+
+        self.assertFalse(sent_flag())
+        EmployeeThaiProfile.objects.create(employee_id=emp, social_security_no="2345678901234")
+        self.assertTrue(sent_flag())

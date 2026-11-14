@@ -98,11 +98,19 @@ class ShadowReportTests(TestCase):
         row = self.by_badge(rep)["B-ok"]
         self.assertEqual(row["status"], "agree")
         self.assertEqual(row["total"]["actual_tax"], "3000.00")
-        self.assertEqual(row["total"]["engine_annual_tax"], "3000.00")
+        self.assertEqual(row["total"]["engine_total_tax"], "3000.00")
         self.assertEqual(row["total"]["difference"], "0.00")
         self.assertEqual(len(row["months"]), 3)
         self.assertEqual(row["months"][2]["engine_cumulative"], "3000.00")
         self.assertEqual(rep["summary"]["agree"], 1)
+
+    def test_a_part_year_is_judged_against_the_same_months_not_the_annual_tax(self):
+        # Three months of pay: the annual tax on 3 months' income would be a
+        # meaningless figure to compare with, so the basis is "to_date".
+        self.employee("part", [1000, 1000, 1000])
+        row = self.by_badge(self.report())["B-part"]
+        self.assertEqual(row["total"]["basis"], "to_date")
+        self.assertEqual(row["total"]["engine_total_tax"], row["months"][-1]["engine_cumulative"])
 
     def test_engine_runs_on_its_own_running_withheld(self):
         self.employee("run", [1000, 1000, 1000])
