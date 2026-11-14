@@ -369,7 +369,7 @@ WSGI_APPLICATION = "horilla.wsgi.application"
 # INTERNATIONALIZATION
 # ========================================
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = env("TIME_ZONE", default="Asia/Kolkata")
+TIME_ZONE = env("TIME_ZONE", default="Asia/Bangkok")
 # First day of the week for calendar-week ranges such as the Quick Date
 # "This Week" / "Last Week": 0 = Sunday, 1 = Monday ... 6 = Saturday.
 # Monday matches the attendance dashboard and the other week filters.
@@ -392,6 +392,7 @@ LANGUAGES = (
     ("uk", "Українська"),
     ("ro", "Română"),
     ("ru", "Русский"),
+    ("th", "ไทย"),
 )
 
 LOCALE_PATHS = [join(BASE_DIR, "horilla", "locale")]

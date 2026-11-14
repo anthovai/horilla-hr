@@ -3520,7 +3520,7 @@ def candidate_send_invitation(request, cand_id):
     company = (
         candidate.recruitment_id.company_id if candidate.recruitment_id_id else None
     )
-    company_name = company.company if company else "Horilla"
+    company_name = company.company if company else "OrvaHR"
     body = render_to_string(
         "candidate/invitation_mail.html",
         {

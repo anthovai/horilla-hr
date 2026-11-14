@@ -1,4 +1,6 @@
-# Horilla HRMS
+# OrvaHR
+
+> OrvaHR is a Thailand-focused HRMS distribution built on [Horilla HRMS](https://github.com/horilla/horilla-hr) (LGPL-2.1). Upstream copyright and license notices are retained. Internal package and module names (`horilla`, `horilla_*`) are intentionally unchanged so upstream updates can still be merged.
 
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
 [![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
