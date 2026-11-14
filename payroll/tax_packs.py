@@ -152,6 +152,33 @@ TAX_PACKS = [
         ],
     },
     {
+        "key": "th_2026",
+        "country": _("Thailand"),
+        "name": "Thailand — Personal Income Tax (2026)",
+        "based_on": "taxable_gross_pay",
+        "description": _(
+            "Progressive 0-35% bands. The standard deduction of 160,000 is the "
+            "50% expense deduction at its 100,000 cap plus the 60,000 personal "
+            "allowance; for incomes under 200,000 the real expense deduction is "
+            "smaller, but tax is nil there either way. Per-person allowances "
+            "(spouse, children, parents, insurance, funds) and social security "
+            "are NOT modelled by this pack: use the OrvaHR payroll engine "
+            "(ORVAHR_PAYROLL_ENGINE_URL) for those. Verify every figure "
+            "against the current Revenue Department announcement."
+        ),
+        "standard_deduction": 160000,
+        "slabs": [
+            (0, 150000, 0),
+            (150000, 300000, 5),
+            (300000, 500000, 10),
+            (500000, 750000, 15),
+            (750000, 1000000, 20),
+            (1000000, 2000000, 25),
+            (2000000, 5000000, 30),
+            (5000000, None, 35),
+        ],
+    },
+    {
         "key": "flat_10",
         "country": _("Generic"),
         "name": "Flat 10%",

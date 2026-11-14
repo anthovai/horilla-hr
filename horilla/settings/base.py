@@ -398,6 +398,26 @@ LANGUAGES = (
 LOCALE_PATHS = [join(BASE_DIR, "horilla", "locale")]
 
 # ========================================
+# ORVAHR PAYROLL ENGINE (Rust service)
+# ========================================
+# Empty URL = the engine is not used and payroll behaves exactly as before.
+# MODE "shadow" asks the engine for the same tax and only LOGS differences;
+# MODE "active" pays by the engine's figure and fails loudly if it cannot
+# answer. Only filing statuses named in ORVAHR_PAYROLL_ENGINE_FILING_STATUSES
+# (comma separated, exact names) are ever sent to it.
+ORVAHR_PAYROLL_ENGINE_URL = env("ORVAHR_PAYROLL_ENGINE_URL", default="")
+ORVAHR_PAYROLL_ENGINE_MODE = env("ORVAHR_PAYROLL_ENGINE_MODE", default="off")
+ORVAHR_PAYROLL_ENGINE_TIMEOUT = env.float("ORVAHR_PAYROLL_ENGINE_TIMEOUT", default=2.0)
+ORVAHR_PAYROLL_ENGINE_FILING_STATUSES = [
+    name.strip()
+    for name in env(
+        "ORVAHR_PAYROLL_ENGINE_FILING_STATUSES",
+        default="Thailand — Personal Income Tax (2026)",
+    ).split(",")
+    if name.strip()
+]
+
+# ========================================
 # LOGGING, MESSAGES, OTHER GLOBALS
 # ========================================
 # There are ~79 getLogger() call sites and, until now, no LOGGING config, so all

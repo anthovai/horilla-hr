@@ -8,6 +8,7 @@ based on their contract details and income information.
 import datetime
 import logging
 
+from payroll.methods import orvahr_engine
 from payroll.methods.contract_periods import forced_contract
 from payroll.methods.methods import (
     compute_yearly_taxable_amount,
@@ -161,6 +162,36 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
         cess_applied = federal_tax * cess_percent / 100
         federal_tax = federal_tax + cess_applied
 
+    # The OrvaHR engine (Rust). "off" is the default and changes nothing; see
+    # payroll/methods/orvahr_engine.py for what shadow and active mean.
+    engine_mode = orvahr_engine.mode(filing)
+    engine_tax = None
+    if engine_mode != "off":
+        try:
+            engine_tax = orvahr_engine.annual_tax(gross_yearly_income)["tax_baht"]
+        except orvahr_engine.EngineUnavailable as exc:
+            if engine_mode == "active":
+                whose = f" for {employee}" if employee is not None else ""
+                raise TaxComputationError(
+                    f"The payroll engine could not compute tax{whose} — {exc}. "
+                    f"Fix the engine, or set ORVAHR_PAYROLL_ENGINE_MODE to "
+                    f"shadow or off, then generate the payslip again."
+                ) from exc
+            logger.warning("Payroll engine unavailable in shadow mode: %s", exc)
+        else:
+            if engine_mode == "active":
+                federal_tax = engine_tax
+            elif not orvahr_engine.agrees(federal_tax, engine_tax):
+                logger.warning(
+                    "Payroll engine disagrees with filing status %r: existing "
+                    "yearly tax %.2f, engine %.2f on income %.2f (employee pk %s)",
+                    filing.filing_status,
+                    federal_tax,
+                    engine_tax,
+                    gross_yearly_income,
+                    getattr(employee, "pk", None),
+                )
+
     breakdown = {
         "gross_yearly_income": round(gross_yearly_income, 2),
         "standard_deduction": round(standard_deduction, 2),
@@ -177,6 +208,8 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
         # income itself in the top band), the rate and what that band came to.
         "slabs": slab_rows,
     }
+    if engine_mode != "off":
+        breakdown["engine"] = {"mode": engine_mode, "tax": engine_tax}
     return federal_tax, breakdown
 
 
