@@ -22,6 +22,8 @@ import urllib.request
 
 from django.conf import settings
 
+from employee.tax_claims import PER_UNIT_CODES
+
 logger = logging.getLogger(__name__)
 
 MODES = ("off", "shadow", "active")
@@ -91,6 +93,58 @@ def annual_tax(gross_yearly_income, claims=None, sso_paid_year=0.0):
         },
     )
     return {"tax_baht": raw["tax"] / 100, "raw": raw}
+
+
+def _employee_pk(employee):
+    """The primary key of an Employee, or an id passed in its place."""
+    return getattr(employee, "pk", employee)
+
+
+def claims_for(employee, year):
+    """
+    The engine's claim list for ``employee`` in tax year ``year``.
+
+    Reads the employee's EmployeeTaxClaim rows and converts baht to satang:
+    per-person codes go as ``units``, capped codes as ``amount`` in satang.
+    ``employee`` may be an Employee or its id. Nothing here validates a figure
+    against the rules; the engine does (it rejects unknown codes).
+    """
+    from employee.models import EmployeeTaxClaim
+
+    claims = []
+    for row in EmployeeTaxClaim.objects.filter(
+        employee_id=_employee_pk(employee), tax_year=year
+    ).order_by("code"):
+        if row.code in PER_UNIT_CODES:
+            claims.append({"code": row.code, "units": int(row.units)})
+        else:
+            claims.append({"code": row.code, "amount": round(float(row.amount) * 100)})
+    return claims
+
+
+def sso_paid_year_for(employee, gross_yearly_income):
+    """
+    Projected yearly employee social security in baht, or 0.0 if not applicable.
+
+    Applies only to an employee whose Thai profile carries a social security
+    number (taken as "enrolled"). The monthly wage is taken as the yearly
+    income / 12 (an approximation: the income given to payroll tax is not
+    always the SSO wage) and the engine's monthly employee contribution is
+    multiplied by 12. May raise EngineUnavailable.
+    """
+    from employee.models import EmployeeThaiProfile
+
+    enrolled = (
+        EmployeeThaiProfile.objects.filter(employee_id=_employee_pk(employee))
+        .exclude(social_security_no__isnull=True)
+        .exclude(social_security_no="")
+        .exists()
+    )
+    if not enrolled:
+        return 0.0
+    wage = round(float(gross_yearly_income) / 12 * 100)
+    raw = _post("/v1/sso", {"wage": max(wage, 0)})
+    return raw["employee"] * 12 / 100
 
 
 def agrees(existing_tax, engine_tax):

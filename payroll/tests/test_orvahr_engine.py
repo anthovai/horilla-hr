@@ -138,3 +138,149 @@ class ModeTests(SimpleTestCase):
     def test_tolerance(self):
         self.assertTrue(orvahr_engine.agrees(100.0, 100.4))
         self.assertFalse(orvahr_engine.agrees(100.0, 101.0))
+
+
+def _routing_post(tax_baht=1000, sso_employee_satang=75000):
+    """Fake of _post answering both /v1/tax/annual and /v1/sso."""
+
+    def fake(path, payload):
+        if path == "/v1/sso":
+            return {"base": payload["wage"], "employee": sso_employee_satang, "employer": sso_employee_satang}
+        return {"tax": round(tax_baht * 100)}
+
+    return mock.patch.object(orvahr_engine, "_post", side_effect=fake)
+
+
+def _annual_payload(post):
+    calls = [c for c in post.call_args_list if c.args[0] == "/v1/tax/annual"]
+    assert len(calls) == 1, post.call_args_list
+    return calls[0].args[1]
+
+
+class ClaimsForTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from horilla.testkit import make_company, make_employee
+
+        company = make_company("Engine Claim Co")
+        cls.e1 = make_employee(company=company, email="e1@engine.test", phone="9300000001")
+        cls.e2 = make_employee(company=company, email="e2@engine.test", phone="9300000002")
+        cls.add(cls.e1, 2026, "child", units=2)
+        cls.add(cls.e1, 2026, "life_insurance", amount=12345.67)
+        cls.add(cls.e1, 2025, "spouse", units=1)
+        cls.add(cls.e2, 2026, "rmf", amount=999)
+
+    @classmethod
+    def add(cls, emp, year, code, **kw):
+        from employee.models import EmployeeTaxClaim
+
+        EmployeeTaxClaim.objects.create(employee_id=emp, tax_year=year, code=code, **kw)
+
+    def test_units_and_amounts_in_engine_shape_baht_to_satang(self):
+        self.assertEqual(
+            orvahr_engine.claims_for(self.e1, 2026),
+            [
+                {"code": "child", "units": 2},
+                {"code": "life_insurance", "amount": 1234567},
+            ],
+        )
+
+    def test_year_filtering_and_employee_isolation(self):
+        self.assertEqual(orvahr_engine.claims_for(self.e1, 2025), [{"code": "spouse", "units": 1}])
+        self.assertEqual(orvahr_engine.claims_for(self.e2, 2026), [{"code": "rmf", "amount": 99900}])
+        self.assertEqual(orvahr_engine.claims_for(self.e2, 2025), [])
+
+    def test_accepts_an_employee_id(self):
+        self.assertEqual(len(orvahr_engine.claims_for(self.e1.pk, 2026)), 2)
+
+
+class HookClaimsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from employee.models import EmployeeTaxClaim
+        from horilla.testkit import make_company, make_employee
+
+        load_tax_packs(["th_2026"])
+        company = make_company("Hook Co")
+        cls.emp = make_employee(company=company, email="h1@engine.test", phone="9400000001")
+        EmployeeTaxClaim.objects.create(employee_id=cls.emp, tax_year=2026, code="child", units=1)
+
+    def setUp(self):
+        self.filing = FilingStatus.objects.get(filing_status=THAI)
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="shadow")
+    def test_shadow_sends_claims_and_does_not_warn(self):
+        with _routing_post(5000) as post, self.assertNoLogs(
+            "payroll.methods.tax_calc", level="WARNING"
+        ):
+            tax, breakdown = compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
+        self.assertEqual(_annual_payload(post)["claims"], [{"code": "child", "units": 1}])
+        self.assertAlmostEqual(tax, 21500.0, places=2)  # existing figure still paid
+        self.assertEqual(breakdown["engine"]["tax"], 5000.0)
+        self.assertEqual(breakdown["engine"]["claims"], [{"code": "child", "units": 1}])
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="shadow")
+    def test_shadow_with_claims_logs_info(self):
+        with _routing_post(5000), self.assertLogs("payroll.methods.tax_calc", level="INFO") as logs:
+            compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
+        self.assertTrue(all(r.levelname == "INFO" for r in logs.records))
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="shadow")
+    def test_shadow_without_claims_still_warns_on_disagreement(self):
+        with _routing_post(99999), self.assertLogs("payroll.methods.tax_calc", level="WARNING"):
+            compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2030)
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="active")
+    def test_active_pays_the_engines_figure_with_claims(self):
+        with _routing_post(4321) as post:
+            tax, _ = compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
+        self.assertAlmostEqual(tax, 4321.0, places=2)
+        self.assertEqual(_annual_payload(post)["claims"], [{"code": "child", "units": 1}])
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="active")
+    def test_no_employee_sends_no_claims_and_no_sso(self):
+        with _routing_post(100) as post:
+            compute_yearly_tax(self.filing, 600000)
+        payload = _annual_payload(post)
+        self.assertEqual(payload["claims"], [])
+        self.assertEqual(payload["sso_paid_year"], 0)
+        self.assertEqual(len(post.call_args_list), 1)
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="shadow")
+    def test_no_tax_year_sends_no_claims(self):
+        with _routing_post(100) as post:
+            compute_yearly_tax(self.filing, 600000, employee=self.emp)
+        self.assertEqual(_annual_payload(post)["claims"], [])
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="active")
+    def test_sso_projected_only_for_enrolled_employee(self):
+        from employee.models import EmployeeThaiProfile
+
+        with _routing_post(100) as post:
+            compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
+        self.assertEqual(_annual_payload(post)["sso_paid_year"], 0)
+        EmployeeThaiProfile.objects.create(employee_id=self.emp, social_security_no="1234567890123")
+        with _routing_post(100, sso_employee_satang=75000) as post:
+            compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
+        sso = [c for c in post.call_args_list if c.args[0] == "/v1/sso"]
+        self.assertEqual(sso[0].args[1], {"wage": 5000000})  # 600000/12 baht in satang
+        self.assertEqual(_annual_payload(post)["sso_paid_year"], 750 * 12 * 100)
+
+    @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="off")
+    def test_off_never_touches_claims_or_the_database_for_them(self):
+        base = self._base_queries()
+        with _routing_post() as post, mock.patch.object(
+            orvahr_engine, "claims_for"
+        ) as cf, self.assertNumQueries(base):
+            compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
+        post.assert_not_called()
+        cf.assert_not_called()
+
+    def _base_queries(self):
+        # What the existing computation queries on its own (no employee).
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        with CaptureQueriesContext(connection) as ctx:
+            compute_yearly_tax(self.filing, 600000)
+        return len(ctx)

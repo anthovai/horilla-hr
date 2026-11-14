@@ -43,7 +43,7 @@ class TaxComputationError(Exception):
     """
 
 
-def compute_yearly_tax(filing, yearly_income, employee=None):
+def compute_yearly_tax(filing, yearly_income, employee=None, tax_year=None):
     """
     Tax on a yearly income under ``filing``, plus a breakdown of how it got there.
 
@@ -67,8 +67,10 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
     Every adjustment is a no-op at its default, so a filing status that
     predates them computes exactly as it did.
 
-    ``employee`` is only used to name who a failure belongs to; the preview has
-    nobody and passes None.
+    ``employee`` (an Employee or an id) names who a failure belongs to and, when
+    the payroll engine is on, whose tax claims and social security it is sent
+    with ``tax_year``. The preview has nobody and passes None, and so sends no
+    claims; with no ``tax_year`` no claims are sent either.
     """
     gross_yearly_income = yearly_income
     standard_deduction = float(filing.standard_deduction or 0)
@@ -166,9 +168,19 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
     # payroll/methods/orvahr_engine.py for what shadow and active mean.
     engine_mode = orvahr_engine.mode(filing)
     engine_tax = None
+    engine_claims = []
+    engine_sso = 0.0
     if engine_mode != "off":
         try:
-            engine_tax = orvahr_engine.annual_tax(gross_yearly_income)["tax_baht"]
+            if employee is not None:
+                if tax_year is not None:
+                    engine_claims = orvahr_engine.claims_for(employee, tax_year)
+                engine_sso = orvahr_engine.sso_paid_year_for(
+                    employee, gross_yearly_income
+                )
+            engine_tax = orvahr_engine.annual_tax(
+                gross_yearly_income, claims=engine_claims, sso_paid_year=engine_sso
+            )["tax_baht"]
         except orvahr_engine.EngineUnavailable as exc:
             if engine_mode == "active":
                 whose = f" for {employee}" if employee is not None else ""
@@ -181,6 +193,19 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
         else:
             if engine_mode == "active":
                 federal_tax = engine_tax
+            elif engine_claims or engine_sso:
+                # The existing computation cannot model claims or social
+                # security, so a difference is expected, not a disagreement.
+                logger.info(
+                    "Payroll engine tax %.2f includes %d claim(s) and social "
+                    "security %.2f the existing computation cannot model "
+                    "(existing %.2f, employee pk %s)",
+                    engine_tax,
+                    len(engine_claims),
+                    engine_sso,
+                    federal_tax,
+                    getattr(employee, "pk", employee),
+                )
             elif not orvahr_engine.agrees(federal_tax, engine_tax):
                 logger.warning(
                     "Payroll engine disagrees with filing status %r: existing "
@@ -189,7 +214,7 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
                     federal_tax,
                     engine_tax,
                     gross_yearly_income,
-                    getattr(employee, "pk", None),
+                    getattr(employee, "pk", employee),
                 )
 
     breakdown = {
@@ -210,6 +235,9 @@ def compute_yearly_tax(filing, yearly_income, employee=None):
     }
     if engine_mode != "off":
         breakdown["engine"] = {"mode": engine_mode, "tax": engine_tax}
+        if engine_claims or engine_sso:
+            breakdown["engine"]["claims"] = engine_claims  # amounts in satang
+            breakdown["engine"]["sso_paid_year"] = engine_sso
     return federal_tax, breakdown
 
 
@@ -308,7 +336,15 @@ def periods_in_year(pay_frequency, start_date, end_date):
     return periods
 
 
-def period_tax(filing, income, start_date, end_date, employee=None, pay_frequency=None):
+def period_tax(
+    filing,
+    income,
+    start_date,
+    end_date,
+    employee=None,
+    pay_frequency=None,
+    tax_year=None,
+):
     """
     The tax for one period, given the figure the filing status taxes.
 
@@ -334,7 +370,10 @@ def period_tax(filing, income, start_date, end_date, employee=None, pay_frequenc
     yearly_income = round(yearly_income, 2)
 
     federal_tax, _breakdown = compute_yearly_tax(
-        filing, yearly_income, employee=employee
+        filing,
+        yearly_income,
+        employee=employee,
+        tax_year=tax_year if tax_year is not None else year,
     )
 
     federal_tax_for_period = 0
@@ -356,7 +395,13 @@ def period_tax(filing, income, start_date, end_date, employee=None, pay_frequenc
 
 
 def explain_period_tax(
-    filing, income, start_date, end_date, employee=None, pay_frequency=None
+    filing,
+    income,
+    start_date,
+    end_date,
+    employee=None,
+    pay_frequency=None,
+    tax_year=None,
 ):
     """
     Everything between a period's taxable pay and its tax, step by step.
@@ -376,7 +421,12 @@ def explain_period_tax(
         yearly_income = income / num_days * total_days
         method = "days"
     yearly_income = round(compute_yearly_taxable_amount(income, yearly_income), 2)
-    yearly_tax, breakdown = compute_yearly_tax(filing, yearly_income, employee=employee)
+    yearly_tax, breakdown = compute_yearly_tax(
+        filing,
+        yearly_income,
+        employee=employee,
+        tax_year=tax_year if tax_year is not None else end_date.year,
+    )
     if periods:
         tax = yearly_tax / periods
     else:

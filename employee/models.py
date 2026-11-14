@@ -36,6 +36,7 @@ from base.models import (
     validate_time_format,
 )
 from employee.methods.duration_methods import format_time, strtime_seconds
+from employee.tax_claims import CLAIM_CODE_CHOICES, PER_UNIT_CODES
 from employee.thai_validators import (
     mask_id,
     normalize_digits,
@@ -1318,6 +1319,68 @@ class EmployeeThaiProfile(HorillaModel):
 
     def save(self, *args, **kwargs):
         self._normalize()
+        super().save(*args, **kwargs)
+
+
+class EmployeeTaxClaim(HorillaModel):
+    """
+    One tax allowance an employee claims for a tax year, fed to the payroll engine.
+
+    Personal financial data (family, insurance, loans): not offered by any list
+    or search, and not in the audit config. Per-person codes carry ``units``;
+    capped codes carry ``amount`` in baht (the engine applies the caps). Codes
+    must match the engine's rules, see employee/tax_claims.py.
+    """
+
+    employee_id = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="tax_claims",
+        verbose_name=_("Employee"),
+    )
+    tax_year = models.PositiveSmallIntegerField(verbose_name=_("Tax year"))
+    code = models.CharField(
+        max_length=30, choices=CLAIM_CODE_CHOICES, verbose_name=_("Allowance")
+    )
+    units = models.PositiveSmallIntegerField(
+        null=True, blank=True, verbose_name=_("Number of people")
+    )
+    amount = models.FloatField(
+        null=True, blank=True, verbose_name=_("Amount claimed (baht)")
+    )
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = _("Employee Tax Claim")
+        verbose_name_plural = _("Employee Tax Claims")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["employee_id", "tax_year", "code"],
+                name="unique_employee_tax_claim",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.employee_id} {self.tax_year} {self.code}"
+
+    def clean(self):
+        super().clean()
+        # HorillaModel.clean_fields skips Django's choice check, so do it here.
+        if self.code not in {c for c, _label in CLAIM_CODE_CHOICES}:
+            raise ValidationError({"code": _("Unknown allowance code.")})
+        if self.code in PER_UNIT_CODES:
+            if not self.units or self.units < 1:
+                raise ValidationError({"units": _("Enter the number of people (1 or more).")})
+            if self.amount is not None:
+                raise ValidationError({"amount": _("This allowance is per person; leave the amount empty.")})
+        else:
+            if self.amount is None or self.amount <= 0:
+                raise ValidationError({"amount": _("Enter the amount claimed, more than zero.")})
+            if self.units is not None:
+                raise ValidationError({"units": _("This allowance is an amount; leave the number of people empty.")})
+
+    def save(self, *args, **kwargs):
+        self.full_clean(exclude=["created_by", "modified_by"], validate_unique=False)
         super().save(*args, **kwargs)
 
 

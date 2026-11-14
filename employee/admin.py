@@ -14,6 +14,7 @@ from employee.models import (
     Employee,
     EmployeeBankDetails,
     EmployeeNote,
+    EmployeeTaxClaim,
     EmployeeThaiProfile,
     EmployeeTag,
     EmployeeWorkInformation,
@@ -89,3 +90,17 @@ class EmployeeThaiProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(EmployeeThaiProfile, EmployeeThaiProfileAdmin)
+
+
+class EmployeeTaxClaimAdmin(admin.ModelAdmin):
+    # Personal financial data: list only who/year/code, never amounts; no search
+    # on the claimed figures.
+    list_display = ("employee_id", "tax_year", "code")
+    list_filter = ("tax_year", "code")
+    search_fields = (
+        "employee_id__employee_first_name",
+        "employee_id__employee_last_name",
+    )
+
+
+admin.site.register(EmployeeTaxClaim, EmployeeTaxClaimAdmin)
