@@ -551,6 +551,7 @@ def show_section(context):
             user.has_perm("horilla_ldap.update_ldapsettings"),
             user.has_perm("horilla_meet.view_googlecloudcredential"),
             user.has_perm("whatsapp.add_whatsappcredientials"),
+            user.has_perm("line_integration.add_linechannel"),
             user.has_perm("horilla_theme.view_horillacolortheme"),
         ]
     )

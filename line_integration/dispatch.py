@@ -11,7 +11,7 @@ import logging
 import threading
 
 from django.conf import settings
-from django.db import close_old_connections
+from django.db import close_old_connections, transaction
 from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext as _
 
@@ -50,6 +50,20 @@ def run_async(func, *args):
             close_old_connections()
 
     threading.Thread(target=target, daemon=True, name="line-dispatch").start()
+
+
+def queue(func, *args):
+    """
+    Run ``func(*args)`` after the current transaction commits, off the
+    request thread, and only when LINE is active. For call sites outside this
+    app (e.g. leave/views.py). Never raises.
+    """
+    try:
+        if not line_active():
+            return
+        transaction.on_commit(lambda: run_async(func, *args))
+    except Exception:
+        logger.exception("LINE queue failed")
 
 
 def _safe_call(func, *args):
@@ -131,47 +145,116 @@ def _path(name, leave):
         return ""
 
 
-def notify_leave_created(leave_request_id):
+def _load_leave(leave_request_id):
     from leave.models import LeaveRequest
 
-    leave = (
+    return (
         LeaveRequest._base_manager.select_related("employee_id", "leave_type_id")
         .filter(pk=leave_request_id)
         .first()
     )
-    if leave is None or leave.status != "requested":
-        return
-    for approver in leave_approvers(leave):
+
+
+def _notify_approvers(leave, approvers, message, event):
+    for approver in approvers:
         if approver is None or approver.pk == leave.employee_id_id:
             continue
         link = getattr(approver, "line_link", None)
         url = _leave_link(getattr(link, "channel", None), _path("request-view", leave))
-        text = _("New leave request from %(employee)s: %(summary)s. Please review it in OrvaHR.") % {
+        text = message % {
             "employee": leave.employee_id.get_full_name(),
             "summary": _leave_summary(leave),
         }
         if url:
             text += "\n" + url
-        notify_employee(approver, text, event="leave.created")
+        notify_employee(approver, text, event=event)
+
+
+def _notify_owner(leave, text, event):
+    link = getattr(leave.employee_id, "line_link", None)
+    url = _leave_link(getattr(link, "channel", None), _path("user-request-view", leave))
+    if url:
+        text += "\n" + url
+    notify_employee(leave.employee_id, text, event=event)
+
+
+def notify_leave_created(leave_request_id):
+    leave = _load_leave(leave_request_id)
+    if leave is None or leave.status != "requested":
+        return
+    _notify_approvers(
+        leave,
+        leave_approvers(leave),
+        _("New leave request from %(employee)s: %(summary)s. Please review it in OrvaHR."),
+        "leave.created",
+    )
+
+
+def notify_next_approver(leave_request_id):
+    """
+    Multi-stage approval: an earlier approver has signed off, tell the next
+    pending condition approver. Nothing when no stage is left pending.
+    """
+    from leave.models import LeaveRequestConditionApproval
+
+    leave = _load_leave(leave_request_id)
+    if leave is None or leave.status != "requested":
+        return
+    pending = (
+        LeaveRequestConditionApproval.objects.filter(leave_request_id=leave, is_approved=False)
+        .select_related("manager_id")
+        .order_by("sequence")
+        .first()
+    )
+    if pending is None:
+        return
+    _notify_approvers(
+        leave,
+        [pending.manager_id],
+        _("A leave request from %(employee)s is waiting for your approval: %(summary)s."),
+        "leave.next_approver",
+    )
 
 
 def notify_leave_status(leave_request_id, status):
-    from leave.models import LeaveRequest
-
-    leave = (
-        LeaveRequest._base_manager.select_related("employee_id", "leave_type_id")
-        .filter(pk=leave_request_id)
-        .first()
-    )
+    leave = _load_leave(leave_request_id)
     if leave is None or status not in ("approved", "rejected"):
         return
     if status == "approved":
         text = _("Your leave request was approved: %(summary)s.")
     else:
         text = _("Your leave request was rejected: %(summary)s.")
-    text = text % {"summary": _leave_summary(leave)}
-    link = getattr(leave.employee_id, "line_link", None)
-    url = _leave_link(getattr(link, "channel", None), _path("user-request-view", leave))
-    if url:
-        text += "\n" + url
-    notify_employee(leave.employee_id, text, event=f"leave.{status}")
+    _notify_owner(leave, text % {"summary": _leave_summary(leave)}, f"leave.{status}")
+
+
+CANCELLATION_STAGES = ("requested", "approved", "rejected", "cancelled")
+
+
+def notify_leave_cancellation(leave_request_id, stage):
+    """
+    ``stage``: "requested" (employee asked to cancel an approved leave ->
+    reporting manager), "approved" / "rejected" (manager decided on that ->
+    employee), "cancelled" (leave cancelled outside the request flow ->
+    employee).
+    """
+    leave = _load_leave(leave_request_id)
+    if leave is None or stage not in CANCELLATION_STAGES:
+        return
+    if stage == "requested":
+        work_info = getattr(leave.employee_id, "employee_work_info", None)
+        manager = getattr(work_info, "reporting_manager_id", None) if work_info else None
+        _notify_approvers(
+            leave,
+            [manager],
+            _("%(employee)s asked to cancel an approved leave: %(summary)s. Please review it in OrvaHR."),
+            "leave.cancel_requested",
+        )
+        return
+    texts = {
+        "approved": _("Your leave cancellation was approved: %(summary)s."),
+        "rejected": _("Your leave cancellation was rejected; the leave stays approved: %(summary)s."),
+        "cancelled": _("Your leave request was cancelled: %(summary)s."),
+    }
+    _notify_owner(
+        leave, texts[stage] % {"summary": _leave_summary(leave)}, f"leave.cancel_{stage}"
+    )

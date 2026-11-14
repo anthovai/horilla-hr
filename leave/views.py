@@ -1138,6 +1138,16 @@ def leave_request_delete(request, id):
     return redirect(reverse("request-filter"))
 
 
+def _line_notify_next_approver(leave_request_id):
+    """LINE push to the next multi-stage approver; a no-op without LINE."""
+    if not apps.is_installed("line_integration"):
+        return
+    with contextlib.suppress(Exception):
+        from line_integration.dispatch import notify_next_approver, queue
+
+        queue(notify_next_approver, leave_request_id)
+
+
 @login_required
 @manager_can_enter("leave.change_leaverequest")
 def leave_request_approve(request, id, emp_id=None):
@@ -1281,6 +1291,8 @@ def leave_request_approve(request, id, emp_id=None):
                             leave_request.save()
                             available_leave.save()
                             send_notification = True
+                        else:
+                            _line_notify_next_approver(leave_request.id)
             if approved:
                 messages.success(request, _("Leave request approved successfully.."))
                 if send_notification:

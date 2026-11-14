@@ -82,6 +82,14 @@
                     >{% trans "Change Password" %}</a>
                 </button>
             </li>
+            {% url 'line-my-link' as line_my_link_url %}
+            {% if line_my_link_url %}
+                <li>
+                    <button class="py-1.5 hover:text-primary-600 transition duration-300 text-sm gap-4 items-center flex w-full">
+                        <a class="text-[13px]" href="{{ line_my_link_url }}">{% trans "Connect LINE" %}</a>
+                    </button>
+                </li>
+            {% endif %}
         {% endif %}
 
         <hr class="text-[#1c1c1c] my-2">

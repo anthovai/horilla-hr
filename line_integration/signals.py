@@ -1,5 +1,7 @@
 """
-Leave lifecycle -> LINE, without touching leave/.
+Leave lifecycle -> LINE, without touching leave/ (except the one call site
+for the next multi-stage approver, whose approval does not change the
+leave's status; see dispatch.notify_next_approver).
 
 pre_save remembers the stored status; post_save compares. Dispatch is
 deferred to transaction.on_commit because LeaveRequest.save() creates the
@@ -55,6 +57,17 @@ def _on_saved(sender, instance, created, raw=False, **kwargs):
     if created and status == "requested":
         key = ("created",)
         job = partial(dispatch.notify_leave_created, instance.pk)
+    elif previous == "cancel_requested" and status == "approved":
+        # Cancellation turned down: the leave is back to approved, not newly approved.
+        key = ("cancel", "rejected")
+        job = partial(dispatch.notify_leave_cancellation, instance.pk, "rejected")
+    elif status == "cancel_requested" and previous != status:
+        key = ("cancel", "requested")
+        job = partial(dispatch.notify_leave_cancellation, instance.pk, "requested")
+    elif status == "cancelled" and previous != status:
+        stage = "approved" if previous == "cancel_requested" else "cancelled"
+        key = ("cancel", stage)
+        job = partial(dispatch.notify_leave_cancellation, instance.pk, stage)
     elif status in ("approved", "rejected") and (created or previous != status):
         key = ("status", status)
         job = partial(dispatch.notify_leave_status, instance.pk, status)

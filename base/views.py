@@ -8797,12 +8797,24 @@ def delete_penalties(request, penalty_id):
     )
 
 
+# Integration toggles EnableIntegrationsView may flip: app_label ->
+# (Django app that must be installed, permission needed to flip it).
+# "linkedin" is not an app of its own; its account lives in recruitment.
+INTEGRATION_TOGGLES = {
+    "horilla_meet": ("horilla_meet", "horilla_meet.change_googlecloudcredential"),
+    "whatsapp": ("whatsapp", "whatsapp.change_whatsappcredientials"),
+    "line_integration": ("line_integration", "line_integration.change_linechannel"),
+    "linkedin": ("recruitment", "recruitment.change_linkedinaccount"),
+}
+
+
 @method_decorator(login_required, name="dispatch")
-@method_decorator(
-    permission_required("horilla_meet.view_googlecloudcredential"), name="dispatch"
-)
 class EnableIntegrationsView(View):
-    """Handles enabling/disabling Google Meet integration dynamically."""
+    """
+    Enables/disables an integration (IntegrationApps row) for the selected
+    company. Only the integrations in INTEGRATION_TOGGLES, and only for users
+    holding that integration's change permission.
+    """
 
     def post(self, request, *args, **kwargs):
         """Handles POST request to enable/disable an integration app."""
@@ -8811,6 +8823,12 @@ class EnableIntegrationsView(View):
         if not app_label:
             messages.error(request, _("Missing app_label"))
             return HttpResponse("<script>window.location.reload()</script>")
+
+        toggle = INTEGRATION_TOGGLES.get(app_label)
+        if toggle is None or not apps.is_installed(toggle[0]):
+            return HttpResponse(_("Unknown integration"), status=403)
+        if not request.user.has_perm(toggle[1]):
+            return HttpResponse(_("You don't have permission."), status=403)
 
         selected_company = request.session.get("selected_company")
         if selected_company and selected_company != "all":
