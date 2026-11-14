@@ -3591,3 +3591,795 @@ msgstr "ขอบเขต"
 msgid "Redeem"
 msgstr "แลกเปลี่ยน"
 
+
+#, python-format
+msgid "%(type)s, %(start)s to %(end)s (%(days)s day(s))"
+msgstr "%(type)s ตั้งแต่ %(start)s ถึง %(end)s (%(days)s วัน)"
+
+msgid "---Choose Action---"
+msgstr "---เลือกการดำเนินการ---"
+
+msgid "---Choose {label}---"
+msgstr "---เลือก{label}---"
+
+msgid "A default channel (no company) already exists."
+msgstr "มีช่องทางเริ่มต้น (ไม่ระบุบริษัท) อยู่แล้ว"
+
+msgid "A paid payslip cannot be deleted."
+msgstr "ไม่สามารถลบสลิปเงินเดือนที่จ่ายแล้วได้"
+
+msgid "Access token"
+msgstr "โทเค็นการเข้าถึง"
+
+msgid "Account number:"
+msgstr "เลขที่บัญชี:"
+
+msgid "Add LINE channel"
+msgstr "เพิ่มช่องทาง LINE"
+
+msgid "Add channel"
+msgstr "เพิ่มช่องทาง"
+
+msgid "Add claim"
+msgstr "เพิ่มรายการลดหย่อน"
+
+msgid "Add our LINE account as a friend"
+msgstr "เพิ่มบัญชี LINE ของเราเป็นเพื่อน"
+
+msgid "Add tax allowance claim"
+msgstr "เพิ่มรายการค่าลดหย่อนภาษี"
+
+msgid "All (default)"
+msgstr "ทั้งหมด (ค่าเริ่มต้น)"
+
+msgid "Allocations"
+msgstr "การจัดสรร"
+
+msgid "Allowance limits (caps and per-person rates) are applied by the payroll engine when payslips are calculated; amounts here are what the employee claims."
+msgstr "ระบบเงินเดือนจะใช้เพดานค่าลดหย่อน (วงเงินสูงสุดและอัตราต่อคน) เมื่อคำนวณสลิปเงินเดือน จำนวนเงินในหน้านี้คือยอดที่พนักงานขอใช้สิทธิ"
+
+msgid "Amount claimed (baht)"
+msgstr "จำนวนเงินที่ขอลดหย่อน (บาท)"
+
+msgid "An Employee with this Email already exists"
+msgstr "มีพนักงานที่ใช้อีเมลนี้อยู่แล้ว"
+
+msgid "An {} contract already exists for {}"
+msgstr "มีสัญญาจ้าง {} สำหรับ {} อยู่แล้ว"
+
+msgid "Auto payslip generate activated successfully."
+msgstr "เปิดใช้งานการสร้างสลิปเงินเดือนอัตโนมัติเรียบร้อยแล้ว"
+
+msgid "Auto payslip generate deactivated successfully."
+msgstr "ปิดใช้งานการสร้างสลิปเงินเดือนอัตโนมัติเรียบร้อยแล้ว"
+
+msgid "Back to login"
+msgstr "กลับไปหน้าเข้าสู่ระบบ"
+
+msgid "Badge ID must be unique."
+msgstr "รหัสพนักงานต้องไม่ซ้ำกัน"
+
+msgid "Badge ID must contain at least one digit."
+msgstr "รหัสพนักงานต้องมีตัวเลขอย่างน้อยหนึ่งหลัก"
+
+msgid "Badge ID:"
+msgstr "รหัสพนักงาน:"
+
+msgid "Bank"
+msgstr "ธนาคาร"
+
+msgid "Bank City"
+msgstr "เมืองของธนาคาร"
+
+msgid "Bank Code #1"
+msgstr "รหัสธนาคาร #1"
+
+msgid "Bank Code #2"
+msgstr "รหัสธนาคาร #2"
+
+msgid "Bank Country"
+msgstr "ประเทศของธนาคาร"
+
+msgid "Bank State"
+msgstr "รัฐ/จังหวัดของธนาคาร"
+
+msgid "Bank account:"
+msgstr "บัญชีธนาคาร:"
+
+msgid "Bank name:"
+msgstr "ชื่อธนาคาร:"
+
+msgid "Block Account"
+msgstr "ระงับบัญชี"
+
+msgid "Capped at gross pay"
+msgstr "จำกัดไม่เกินรายได้รวม"
+
+msgid "Channel access token"
+msgstr "โทเค็นการเข้าถึงช่องทาง"
+
+msgid "Channel access token (long-lived)"
+msgstr "โทเค็นการเข้าถึงช่องทาง (แบบระยะยาว)"
+
+msgid "Channel secret"
+msgstr "รหัสลับช่องทาง (Channel secret)"
+
+msgid "Close menu"
+msgstr "ปิดเมนู"
+
+msgid "Collapse sidebar"
+msgstr "ย่อแถบเมนู"
+
+msgid "Color Theme"
+msgstr "ธีมสี"
+
+msgid "Color Themes"
+msgstr "ธีมสี"
+
+msgid "Comment added successfully!"
+msgstr "เพิ่มความคิดเห็นเรียบร้อยแล้ว"
+
+msgid "Comment deleted successfully!"
+msgstr "ลบความคิดเห็นเรียบร้อยแล้ว"
+
+msgid "Comment not found."
+msgstr "ไม่พบความคิดเห็น"
+
+msgid "Company Logo"
+msgstr "โลโก้บริษัท"
+
+msgid "Company Theme"
+msgstr "ธีมของบริษัท"
+
+msgid "Company Themes"
+msgstr "ธีมของบริษัท"
+
+msgid "Connect a different LINE account"
+msgstr "เชื่อมต่อบัญชี LINE อื่น"
+
+msgid "Connected"
+msgstr "เชื่อมต่อแล้ว"
+
+msgid "Contract Created"
+msgstr "สร้างสัญญาจ้างแล้ว"
+
+msgid "Contract deleted"
+msgstr "ลบสัญญาจ้างแล้ว"
+
+msgid "Contract not found."
+msgstr "ไม่พบสัญญาจ้าง"
+
+msgid "Contract status updated"
+msgstr "อัปเดตสถานะสัญญาจ้างแล้ว"
+
+msgid "Contract updated"
+msgstr "อัปเดตสัญญาจ้างแล้ว"
+
+msgid "Contract wage:"
+msgstr "ค่าจ้างตามสัญญา:"
+
+msgid "Create New {}"
+msgstr "สร้าง{}ใหม่"
+
+msgid "Create link code"
+msgstr "สร้างรหัสเชื่อมต่อ"
+
+msgid "Create new action type"
+msgstr "สร้างประเภทการดำเนินการใหม่"
+
+msgid "Date Joining"
+msgstr "วันที่เริ่มงาน"
+
+msgid "Deductions owed"
+msgstr "ยอดหักค้างชำระ"
+
+msgid "Delete this LINE channel? All LINE links for it are removed."
+msgstr "ลบช่องทาง LINE นี้หรือไม่? การเชื่อมต่อ LINE ทั้งหมดของช่องทางนี้จะถูกลบ"
+
+msgid "Delete this tax allowance claim?"
+msgstr "ลบรายการค่าลดหย่อนภาษีนี้หรือไม่?"
+
+msgid "Department:"
+msgstr "แผนก:"
+
+msgid "Disconnect"
+msgstr "ยกเลิกการเชื่อมต่อ"
+
+msgid "Disconnect LINE?"
+msgstr "ยกเลิกการเชื่อมต่อ LINE หรือไม่?"
+
+msgid "Dismiss setup checklist"
+msgstr "ปิดรายการตรวจสอบการตั้งค่า"
+
+msgid "Do you want to archive this employee?"
+msgstr "ต้องการเก็บถาวรพนักงานคนนี้หรือไม่?"
+
+msgid "Do you want to un-archive this employee?"
+msgstr "ต้องการยกเลิกการเก็บถาวรพนักงานคนนี้หรือไม่?"
+
+msgid "Done. Your OrvaHR account is now connected to LINE."
+msgstr "เรียบร้อย บัญชี OrvaHR ของคุณเชื่อมต่อกับ LINE แล้ว"
+
+msgid "Edit LINE channel"
+msgstr "แก้ไขช่องทาง LINE"
+
+msgid "Edit Thai Info"
+msgstr "แก้ไขข้อมูลไทย"
+
+msgid "Edit tax allowance claim"
+msgstr "แก้ไขรายการค่าลดหย่อนภาษี"
+
+msgid "Employee ID"
+msgstr "รหัสพนักงาน"
+
+msgid "Employee assigned to group"
+msgstr "กำหนดพนักงานเข้ากลุ่มแล้ว"
+
+msgid "Employee name:"
+msgstr "ชื่อพนักงาน:"
+
+msgid "Employment Type"
+msgstr "ประเภทการจ้างงาน"
+
+msgid "Enable LINE"
+msgstr "เปิดใช้งาน LINE"
+
+msgid "Enter Password"
+msgstr "กรอกรหัสผ่าน"
+
+msgid "Enter a tax year from 2000 onwards."
+msgstr "กรุณาระบุปีภาษีตั้งแต่ปี 2000 เป็นต้นไป"
+
+msgid "Enter the number of people for spouse, children and parents, and the amount paid for the other allowances. Allowance limits are enforced by the payroll engine, not by this form."
+msgstr "กรอกจำนวนคนสำหรับคู่สมรส บุตร และบิดามารดา และกรอกจำนวนเงินที่จ่ายจริงสำหรับค่าลดหย่อนอื่น ๆ ระบบเงินเดือนจะเป็นผู้ควบคุมเพดานค่าลดหย่อน ไม่ใช่แบบฟอร์มนี้"
+
+msgid "Entitlements"
+msgstr "สิทธิ์ที่ได้รับ"
+
+msgid "Event"
+msgstr "เหตุการณ์"
+
+msgid "Expand sidebar"
+msgstr "ขยายแถบเมนู"
+
+msgid "Export Individual Data"
+msgstr "ส่งออกข้อมูลรายบุคคล"
+
+msgid "File deleted successfully"
+msgstr "ลบไฟล์เรียบร้อยแล้ว"
+
+msgid "Finish setup to unlock your full HR system"
+msgstr "ตั้งค่าให้เสร็จเพื่อใช้งานระบบ HR ได้เต็มรูปแบบ"
+
+msgid "For the other allowances: the amount actually paid in the year."
+msgstr "สำหรับค่าลดหย่อนอื่น ๆ: จำนวนเงินที่จ่ายจริงในปีนั้น"
+
+msgid "Get started with OrvaHR"
+msgstr "เริ่มต้นใช้งาน OrvaHR"
+
+msgid "Groups & Permissions"
+msgstr "กลุ่มและสิทธิ์การใช้งาน"
+
+msgid "HR"
+msgstr "ฝ่ายบุคคล"
+
+msgid "HR built for Thai businesses: Social Security, withholding tax and leave rules handled the way your team already works."
+msgstr "ระบบ HR สำหรับธุรกิจไทย จัดการประกันสังคม ภาษีหัก ณ ที่จ่าย และกฎการลา ตามวิธีที่ทีมของคุณทำงานอยู่แล้ว"
+
+msgid "HR setup checklist"
+msgstr "รายการตรวจสอบการตั้งค่า HR"
+
+msgid "Headquarters"
+msgstr "สำนักงานใหญ่"
+
+msgid "Hourly rate:"
+msgstr "อัตราค่าจ้างรายชั่วโมง:"
+
+msgid "ID numbers are masked. Contact HR to view or change them."
+msgstr "เลขประจำตัวถูกปิดบังไว้ กรุณาติดต่อฝ่ายบุคคลเพื่อดูหรือแก้ไข"
+
+msgid "In words:"
+msgstr "ตัวอักษร:"
+
+msgid "Invalid check digit."
+msgstr "เลขตรวจสอบไม่ถูกต้อง"
+
+msgid "Invalid request. Missing required parameters."
+msgstr "คำขอไม่ถูกต้อง ไม่มีพารามิเตอร์ที่จำเป็น"
+
+msgid "Is Default"
+msgstr "เป็นค่าเริ่มต้น"
+
+#, python-format
+msgid "It can be used once and expires in %(ttl_minutes)s minutes."
+msgstr "ใช้ได้ครั้งเดียวและจะหมดอายุใน %(ttl_minutes)s นาที"
+
+msgid "LINE"
+msgstr ""
+
+msgid "LINE Basic ID"
+msgstr "LINE Basic ID"
+
+msgid "LINE Channel"
+msgstr "ช่องทาง LINE"
+
+msgid "LINE Channels"
+msgstr "ช่องทาง LINE"
+
+msgid "LINE Messaging API credentials and webhook URL"
+msgstr "ข้อมูลรับรอง LINE Messaging API และ Webhook URL"
+
+msgid "LINE Notifications"
+msgstr "การแจ้งเตือนทาง LINE"
+
+msgid "LINE Official Account"
+msgstr "LINE Official Account"
+
+msgid "LINE channel deleted."
+msgstr "ลบช่องทาง LINE แล้ว"
+
+msgid "LINE channel saved."
+msgstr "บันทึกช่องทาง LINE แล้ว"
+
+msgid "LINE disconnected."
+msgstr "ยกเลิกการเชื่อมต่อ LINE แล้ว"
+
+msgid "LINE is not set up for your company yet."
+msgstr "บริษัทของคุณยังไม่ได้ตั้งค่า LINE"
+
+msgid "LINE notifications are not set up for your company yet."
+msgstr "บริษัทของคุณยังไม่ได้ตั้งค่าการแจ้งเตือนทาง LINE"
+
+msgid "Leave blank to keep the current value."
+msgstr "เว้นว่างไว้เพื่อใช้ค่าปัจจุบัน"
+
+msgid "Leave empty to use the National ID."
+msgstr "เว้นว่างไว้เพื่อใช้เลขประจำตัวประชาชน"
+
+msgid "Leave empty to use this channel for companies without their own."
+msgstr "เว้นว่างไว้เพื่อใช้ช่องทางนี้กับบริษัทที่ไม่มีช่องทางของตนเอง"
+
+msgid "Link your own LINE account first"
+msgstr "เชื่อมต่อบัญชี LINE ของคุณเองก่อน"
+
+msgid "Linked employees"
+msgstr "พนักงานที่เชื่อมต่อแล้ว"
+
+msgid "Location"
+msgstr "สถานที่"
+
+msgid "Loss of pay days:"
+msgstr "จำนวนวันที่ไม่ได้รับค่าจ้าง:"
+
+msgid "Mail Log"
+msgstr "บันทึกอีเมล"
+
+msgid "Main navigation"
+msgstr "เมนูหลัก"
+
+msgid "Missing required parameter"
+msgstr "ไม่มีพารามิเตอร์ที่จำเป็น"
+
+msgid "Missing required parameters."
+msgstr "ไม่มีพารามิเตอร์ที่จำเป็น"
+
+msgid "Must be a 10-digit phone, 13-digit ID or 15-digit e-wallet ID."
+msgstr "ต้องเป็นเบอร์โทรศัพท์ 10 หลัก เลขประจำตัว 13 หลัก หรือรหัส e-Wallet 15 หลัก"
+
+msgid "Must be exactly 13 digits."
+msgstr "ต้องเป็นตัวเลข 13 หลักพอดี"
+
+msgid "Must be exactly 5 digits."
+msgstr "ต้องเป็นตัวเลข 5 หลักพอดี"
+
+msgid "Name (Thai)"
+msgstr "ชื่อ (ภาษาไทย)"
+
+msgid "National ID"
+msgstr "เลขประจำตัวประชาชน"
+
+#, python-format
+msgid "New leave request from %(employee)s: %(summary)s. Please review it in OrvaHR."
+msgstr "คำขอลาใหม่จาก %(employee)s: %(summary)s กรุณาตรวจสอบใน OrvaHR"
+
+msgid "Next setup step"
+msgstr "ขั้นตอนการตั้งค่าถัดไป"
+
+#, python-format
+msgid "Next: %(title)s"
+msgstr "ถัดไป: %(title)s"
+
+msgid "No Employee found matching the query."
+msgstr "ไม่พบพนักงานที่ตรงกับคำค้นหา"
+
+msgid "No IDs provided for deletion."
+msgstr "ไม่ได้ระบุ ID ที่จะลบ"
+
+msgid "No LINE channel yet."
+msgstr "ยังไม่มีช่องทาง LINE"
+
+msgid "No Thai information recorded yet."
+msgstr "ยังไม่มีการบันทึกข้อมูลไทย"
+
+msgid "No contracts ending this month"
+msgstr "ไม่มีสัญญาจ้างที่สิ้นสุดในเดือนนี้"
+
+msgid "No contracts selected."
+msgstr "ไม่ได้เลือกสัญญาจ้าง"
+
+msgid "No employee found matching the query."
+msgstr "ไม่พบพนักงานที่ตรงกับคำค้นหา"
+
+msgid "No file IDs provided for deletion."
+msgstr "ไม่ได้ระบุ ID ไฟล์ที่จะลบ"
+
+msgid "No payslips generated for this month."
+msgstr "ยังไม่มีการสร้างสลิปเงินเดือนสำหรับเดือนนี้"
+
+#, python-format
+msgid "No tax allowance claims for %(year)s."
+msgstr "ไม่มีรายการค่าลดหย่อนภาษีสำหรับปี %(year)s"
+
+msgid "Not connected"
+msgstr "ไม่ได้เชื่อมต่อ"
+
+msgid "Number of people"
+msgstr "จำนวนคน"
+
+msgid "Only a draft contract can be deleted."
+msgstr "ลบได้เฉพาะสัญญาจ้างที่เป็นฉบับร่างเท่านั้น"
+
+msgid "Only for spouse, children and parents: number of people."
+msgstr "เฉพาะคู่สมรส บุตร และบิดามารดา: จำนวนคน"
+
+msgid "Open menu"
+msgstr "เปิดเมนู"
+
+msgid "OrvaHR test message: LINE notifications are working."
+msgstr "ข้อความทดสอบจาก OrvaHR: การแจ้งเตือนทาง LINE ใช้งานได้ปกติ"
+
+msgid "OrvaHR version"
+msgstr "เวอร์ชัน OrvaHR"
+
+msgid "Overtime:"
+msgstr "ค่าล่วงเวลา:"
+
+msgid "Paid days:"
+msgstr "จำนวนวันที่ได้รับค่าจ้าง:"
+
+msgid "Partially paid leave"
+msgstr "การลาที่ได้รับค่าจ้างบางส่วน"
+
+msgid "Paused"
+msgstr "หยุดชั่วคราว"
+
+msgid "Payroll settings updated."
+msgstr "อัปเดตการตั้งค่าเงินเดือนแล้ว"
+
+msgid "Payslip auto generate not found."
+msgstr "ไม่พบการสร้างสลิปเงินเดือนอัตโนมัติ"
+
+msgid "Payslip auto generate setting not found."
+msgstr "ไม่พบการตั้งค่าการสร้างสลิปเงินเดือนอัตโนมัติ"
+
+msgid "Payslip deleted"
+msgstr "ลบสลิปเงินเดือนแล้ว"
+
+msgid "Payslip not found"
+msgstr "ไม่พบสลิปเงินเดือน"
+
+msgid "Payslip not found."
+msgstr "ไม่พบสลิปเงินเดือน"
+
+msgid "Payslip status updated"
+msgstr "อัปเดตสถานะสลิปเงินเดือนแล้ว"
+
+msgid "People, payroll and time, <span>in one place.</span>"
+msgstr "บุคลากร เงินเดือน และเวลาทำงาน <span>ครบในที่เดียว</span>"
+
+msgid "PromptPay ID"
+msgstr "PromptPay ID"
+
+msgid "Public OrvaHR URL"
+msgstr "URL สาธารณะของ OrvaHR"
+
+msgid "Recent deliveries"
+msgstr "การส่งล่าสุด"
+
+msgid "Regular hours:"
+msgstr "ชั่วโมงทำงานปกติ:"
+
+msgid "Reset link will be sent to your registered email"
+msgstr "ลิงก์รีเซ็ตจะถูกส่งไปยังอีเมลที่ลงทะเบียนไว้"
+
+msgid "SSO registered hospital"
+msgstr "โรงพยาบาลตามสิทธิประกันสังคม"
+
+msgid "Salary Hour"
+msgstr "ชั่วโมงเงินเดือน"
+
+msgid "Select Fields to Update"
+msgstr "เลือกฟิลด์ที่จะอัปเดต"
+
+msgid "Send HR notifications through a LINE Official Account"
+msgstr "ส่งการแจ้งเตือน HR ผ่าน LINE Official Account"
+
+msgid "Send Invitation"
+msgstr "ส่งคำเชิญ"
+
+msgid "Send a test message to my LINE"
+msgstr "ส่งข้อความทดสอบไปยัง LINE ของฉัน"
+
+msgid "Send an invitation email to this employee?"
+msgstr "ส่งอีเมลคำเชิญไปยังพนักงานคนนี้หรือไม่?"
+
+msgid "Send leave notifications to employees and approvers through your LINE Official Account (Messaging API)."
+msgstr "ส่งการแจ้งเตือนการลาไปยังพนักงานและผู้อนุมัติผ่าน LINE Official Account ของคุณ (Messaging API)"
+
+msgid "Send password reset link"
+msgstr "ส่งลิงก์รีเซ็ตรหัสผ่าน"
+
+msgid "Send reset link"
+msgstr "ส่งลิงก์รีเซ็ต"
+
+msgid "Send this code to the LINE account"
+msgstr "ส่งรหัสนี้ไปยังบัญชี LINE"
+
+msgid "Sent"
+msgstr "ส่งแล้ว"
+
+msgid "Set as default theme for login page. Only one theme can be default across all companies."
+msgstr "ตั้งเป็นธีมเริ่มต้นสำหรับหน้าเข้าสู่ระบบ สามารถมีธีมเริ่มต้นได้เพียงธีมเดียวในทุกบริษัท"
+
+msgid "Set up now"
+msgstr "ตั้งค่าเลย"
+
+#, python-format
+msgid "Set up %(title)s"
+msgstr "ตั้งค่า%(title)s"
+
+msgid "Setup steps"
+msgstr "ขั้นตอนการตั้งค่า"
+
+msgid "Social security number"
+msgstr "เลขประกันสังคม"
+
+msgid "Something went wrong"
+msgstr "เกิดข้อผิดพลาดบางอย่าง"
+
+msgid "Stored access token"
+msgstr "โทเค็นการเข้าถึงที่บันทึกไว้"
+
+msgid "Stored channel secret"
+msgstr "รหัสลับช่องทางที่บันทึกไว้"
+
+msgid "Take a tour"
+msgstr "ชมการแนะนำการใช้งาน"
+
+msgid "Tax ID"
+msgstr "เลขประจำตัวผู้เสียภาษี"
+
+msgid "Tax allowance claim added."
+msgstr "เพิ่มรายการค่าลดหย่อนภาษีแล้ว"
+
+msgid "Tax allowance claim deleted."
+msgstr "ลบรายการค่าลดหย่อนภาษีแล้ว"
+
+msgid "Tax allowance claim updated."
+msgstr "อัปเดตรายการค่าลดหย่อนภาษีแล้ว"
+
+msgid "Tax allowance claims"
+msgstr "รายการค่าลดหย่อนภาษี"
+
+msgid "Tax year"
+msgstr "ปีภาษี"
+
+msgid "Test message"
+msgstr "ข้อความทดสอบ"
+
+msgid "Test message failed. See the delivery log below."
+msgstr "ส่งข้อความทดสอบไม่สำเร็จ ดูบันทึกการส่งด้านล่าง"
+
+msgid "Test message sent."
+msgstr "ส่งข้อความทดสอบแล้ว"
+
+msgid "Thai Info"
+msgstr "ข้อมูลไทย"
+
+msgid "Thai information saved."
+msgstr "บันทึกข้อมูลไทยแล้ว"
+
+msgid "That link code has expired. Please create a new one in OrvaHR."
+msgstr "รหัสเชื่อมต่อนี้หมดอายุแล้ว กรุณาสร้างรหัสใหม่ใน OrvaHR"
+
+msgid "That link code is not valid. Please create a new one in OrvaHR."
+msgstr "รหัสเชื่อมต่อนี้ไม่ถูกต้อง กรุณาสร้างรหัสใหม่ใน OrvaHR"
+
+msgid "That link code was already used. Please create a new one in OrvaHR."
+msgstr "รหัสเชื่อมต่อนี้ถูกใช้ไปแล้ว กรุณาสร้างรหัสใหม่ใน OrvaHR"
+
+msgid "The contract could not be found."
+msgstr "ไม่พบสัญญาจ้าง"
+
+msgid "The contract status has been updated successfully."
+msgstr "อัปเดตสถานะสัญญาจ้างเรียบร้อยแล้ว"
+
+msgid "The employee filing status has been updated successfully."
+msgstr "อัปเดตสถานะการยื่นภาษีของพนักงานเรียบร้อยแล้ว"
+
+msgid "The initial notice period has been successfully updated."
+msgstr "อัปเดตระยะเวลาแจ้งล่วงหน้าเริ่มต้นเรียบร้อยแล้ว"
+
+msgid "The official account ID, e.g. @123abcde. Shown to employees so they can add it as a friend."
+msgstr "ID ของบัญชีทางการ เช่น @123abcde ซึ่งจะแสดงให้พนักงานเห็นเพื่อเพิ่มเป็นเพื่อน"
+
+msgid "Theme"
+msgstr "ธีม"
+
+msgid "There was an error updating the currency."
+msgstr "เกิดข้อผิดพลาดในการอัปเดตสกุลเงิน"
+
+msgid "This LINE account is already connected to another OrvaHR employee."
+msgstr "บัญชี LINE นี้เชื่อมต่อกับพนักงาน OrvaHR คนอื่นอยู่แล้ว"
+
+msgid "This National ID is already recorded for another employee."
+msgstr "เลขประจำตัวประชาชนนี้ถูกบันทึกไว้สำหรับพนักงานคนอื่นแล้ว"
+
+msgid "This account only sends OrvaHR notifications. Please use OrvaHR for requests."
+msgstr "บัญชีนี้ใช้ส่งการแจ้งเตือนจาก OrvaHR เท่านั้น กรุณาใช้ OrvaHR เพื่อส่งคำขอ"
+
+msgid "This allowance is already claimed for that tax year."
+msgstr "ค่าลดหย่อนนี้ถูกใช้สิทธิในปีภาษีนั้นแล้ว"
+
+msgid "This does not look like a channel access token."
+msgstr "ค่านี้ดูไม่เหมือนโทเค็นการเข้าถึงช่องทาง"
+
+msgid "This does not look like a channel secret."
+msgstr "ค่านี้ดูไม่เหมือนรหัสลับช่องทาง"
+
+msgid "This password reset link is invalid or has already been used. Please request a new one."
+msgstr "ลิงก์รีเซ็ตรหัสผ่านนี้ไม่ถูกต้องหรือถูกใช้ไปแล้ว กรุณาขอลิงก์ใหม่"
+
+msgid "This will immediately invalidate the current password. Continue?"
+msgstr "การดำเนินการนี้จะทำให้รหัสผ่านปัจจุบันใช้ไม่ได้ทันที ต้องการดำเนินการต่อหรือไม่?"
+
+msgid "Toggle theme"
+msgstr "สลับธีม"
+
+msgid "Too many attempts. Please wait 15 minutes and try again."
+msgstr "พยายามหลายครั้งเกินไป กรุณารอ 15 นาทีแล้วลองใหม่"
+
+msgid "Too many codes requested. Please try again later."
+msgstr "ขอรหัสหลายครั้งเกินไป กรุณาลองใหม่ภายหลัง"
+
+msgid "Total (Deductions Taken)"
+msgstr "รวม (รายการหักที่หักจริง)"
+
+msgid "Total (Deductions)"
+msgstr "รวม (รายการหัก)"
+
+msgid "Total (Gross Pay)"
+msgstr "รวม (รายได้รวม)"
+
+msgid "Total net pay:"
+msgstr "เงินได้สุทธิรวม:"
+
+msgid "Type in your username or email to reset the password."
+msgstr "กรอกชื่อผู้ใช้หรืออีเมลเพื่อรีเซ็ตรหัสผ่าน"
+
+msgid "Un-Block Account"
+msgstr "ยกเลิกการระงับบัญชี"
+
+msgid "Version"
+msgstr "เวอร์ชัน"
+
+msgid "Webhook URL"
+msgstr "Webhook URL"
+
+msgid "Welcome to"
+msgstr "ยินดีต้อนรับสู่"
+
+msgid "What was owed came to more than the pay, so deductions were capped at gross and this much is still outstanding."
+msgstr "ยอดที่ต้องหักสูงกว่าค่าจ้าง จึงหักได้ไม่เกินรายได้รวม และยังมียอดคงค้างตามจำนวนนี้"
+
+msgid "Work Phone"
+msgstr "โทรศัพท์ที่ทำงาน"
+
+msgid "Work Type & Shift"
+msgstr "ประเภทงานและกะ"
+
+msgid "You blocked or removed the OrvaHR LINE account. Add it as a friend again to resume."
+msgstr "คุณได้บล็อกหรือลบบัญชี LINE ของ OrvaHR เพิ่มเป็นเพื่อนอีกครั้งเพื่อใช้งานต่อ"
+
+msgid "You cannot delete this contract."
+msgstr "คุณไม่สามารถลบสัญญาจ้างนี้ได้"
+
+msgid "You cannot delete {contract}"
+msgstr "คุณไม่สามารถลบ {contract} ได้"
+
+msgid "You cannot delete {payslip}"
+msgstr "คุณไม่สามารถลบ {payslip} ได้"
+
+msgid "You don't have permission to delete this comment."
+msgstr "คุณไม่มีสิทธิ์ลบความคิดเห็นนี้"
+
+msgid "You selected the wrong option for contract status."
+msgstr "คุณเลือกสถานะสัญญาจ้างไม่ถูกต้อง"
+
+msgid "You selected the wrong option for filing status."
+msgstr "คุณเลือกสถานะการยื่นภาษีไม่ถูกต้อง"
+
+msgid "You will receive leave request updates in LINE."
+msgstr "คุณจะได้รับการแจ้งเตือนเกี่ยวกับคำขอลาทาง LINE"
+
+msgid "Your OrvaHR account is connected."
+msgstr "บัญชี OrvaHR ของคุณเชื่อมต่อแล้ว"
+
+msgid "Your account is not linked to LINE yet."
+msgstr "บัญชีของคุณยังไม่ได้เชื่อมต่อกับ LINE"
+
+#, python-format
+msgid "Your leave request was approved: %(summary)s."
+msgstr "คำขอลาของคุณได้รับการอนุมัติแล้ว: %(summary)s"
+
+#, python-format
+msgid "Your leave request was rejected: %(summary)s."
+msgstr "คำขอลาของคุณถูกปฏิเสธ: %(summary)s"
+
+msgid "before tax"
+msgstr "ก่อนหักภาษี"
+
+msgid "cannot deduct more than was earned"
+msgstr "หักได้ไม่เกินรายได้ที่ได้รับ"
+
+msgid "could not be deducted."
+msgstr "ไม่สามารถหักได้"
+
+msgid "created"
+msgstr "สร้างแล้ว"
+
+msgid "e.g. adam.luis@example.com"
+msgstr "เช่น adam.luis@example.com"
+
+msgid "e.g. https://hr.example.co.th - used for the webhook URL and links in messages."
+msgstr "เช่น https://hr.example.co.th - ใช้สำหรับ Webhook URL และลิงก์ในข้อความ"
+
+msgid "e.g. jane.doe@acme.com"
+msgstr "เช่น jane.doe@acme.com"
+
+msgid "off basic pay"
+msgstr "หักจากเงินเดือนพื้นฐาน"
+
+msgid "off gross pay"
+msgstr "หักจากรายได้รวม"
+
+msgid "off net pay"
+msgstr "หักจากเงินได้สุทธิ"
+
+msgid "partly paid"
+msgstr "จ่ายบางส่วน"
+
+msgid "per day"
+msgstr "ต่อวัน"
+
+msgid "required parameter is missing"
+msgstr "ไม่มีพารามิเตอร์ที่จำเป็น"
+
+msgid "updated"
+msgstr "อัปเดตแล้ว"
+
+msgid "{contract} is not a draft and cannot be deleted."
+msgstr "{contract} ไม่ใช่ฉบับร่างจึงไม่สามารถลบได้"
+
+msgid "{employee} {period} payslip deleted."
+msgstr "ลบสลิปเงินเดือน {employee} งวด {period} แล้ว"
+
+msgid "{name} deleted."
+msgstr "ลบ {name} แล้ว"
+
+msgid "{payslip} is paid and cannot be deleted."
+msgstr "{payslip} จ่ายแล้วจึงไม่สามารถลบได้"
+
+#, python-format
+msgid "%(partial_pay_days)s day(s) on a partially paid leave type"
+msgstr "%(partial_pay_days)s วัน ในประเภทการลาที่ได้รับค่าจ้างบางส่วน"
