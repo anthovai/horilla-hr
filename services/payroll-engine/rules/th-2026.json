@@ -27,6 +27,12 @@
       { "code": "provident_fund",  "kind": "capped",   "cap": 50000000 },
       { "code": "rmf",             "kind": "capped",   "cap": 50000000 },
       { "code": "home_loan_interest","kind": "capped", "cap": 10000000 }
+    ],
+    "groups": [
+      { "code": "insurance_combined", "members": ["life_insurance", "health_insurance"], "cap": 10000000,
+        "note": "UNVERIFIED. Understood as life + health premiums sharing one ceiling; confirm the figure and members with the Revenue Department / an accountant." },
+      { "code": "retirement_funds_combined", "members": ["provident_fund", "rmf"], "cap": 50000000, "cap_percent_of_income_bp": 3000,
+        "note": "UNVERIFIED. Understood as retirement-type funds sharing one ceiling that also cannot exceed a share of income. The 3000 bp (30%) and the member list are NOT confirmed; real rules may apply separate per-fund percentage limits (not modelled) and include further fund types (not listed)." }
     ]
   },
   "social_security": {

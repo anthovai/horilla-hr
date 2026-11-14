@@ -21,6 +21,8 @@ pub enum EngineError {
     UnknownAllowance(String),
     InvalidInput(String),
     BadRules(String),
+    /// No loaded rule set has `effective_from <= as_of`.
+    NoRuleSet(String),
 }
 
 impl std::fmt::Display for EngineError {
@@ -29,6 +31,7 @@ impl std::fmt::Display for EngineError {
             EngineError::UnknownAllowance(c) => write!(f, "unknown allowance code: {c}"),
             EngineError::InvalidInput(m) => write!(f, "invalid input: {m}"),
             EngineError::BadRules(m) => write!(f, "bad rules file: {m}"),
+            EngineError::NoRuleSet(d) => write!(f, "no rule set is effective on {d}"),
         }
     }
 }
@@ -51,6 +54,22 @@ pub struct TaxRules {
     pub expense_cap: Satang,
     pub brackets: Vec<Bracket>,
     pub allowances: Vec<AllowanceRule>,
+    /// Joint ceilings over several allowances, applied after the per-item caps.
+    #[serde(default)]
+    pub groups: Vec<GroupRule>,
+}
+
+/// A ceiling shared by several `capped` allowances (e.g. insurance premiums
+/// combined, retirement funds combined). Members are trimmed in the order they
+/// are listed: earlier members keep their amount first.
+#[derive(Debug, Clone, Deserialize)]
+pub struct GroupRule {
+    pub code: String,
+    pub members: Vec<String>,
+    pub cap: Satang,
+    /// Optional second ceiling: this many basis points of gross income. The
+    /// lower of `cap` and this applies.
+    pub cap_percent_of_income_bp: Option<i64>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -122,7 +141,162 @@ impl Rules {
         if self.social_security.rounding_satang <= 0 {
             return Err(EngineError::BadRules("sso rounding_satang must be positive".into()));
         }
+        parse_date(&self.effective_from)
+            .map_err(|e| EngineError::BadRules(format!("effective_from: {e}")))?;
+        let mut seen_members: Vec<&str> = Vec::new();
+        for (i, g) in self.tax.groups.iter().enumerate() {
+            if self.tax.groups[..i].iter().any(|o| o.code == g.code) {
+                return Err(EngineError::BadRules(format!("duplicate group code {}", g.code)));
+            }
+            if g.members.is_empty() {
+                return Err(EngineError::BadRules(format!("group {} has no members", g.code)));
+            }
+            if g.cap < 0 || g.cap_percent_of_income_bp.is_some_and(|b| b < 0) {
+                return Err(EngineError::BadRules(format!("group {} has a negative cap", g.code)));
+            }
+            for m in &g.members {
+                let rule = self.tax.allowances.iter().find(|a| &a.code == m).ok_or_else(|| {
+                    EngineError::BadRules(format!("group {} names unknown allowance {m}", g.code))
+                })?;
+                if !matches!(rule.kind, AllowanceKind::Capped { .. }) {
+                    return Err(EngineError::BadRules(format!(
+                        "group {}: member {m} must be a capped allowance",
+                        g.code
+                    )));
+                }
+                if seen_members.contains(&m.as_str()) {
+                    return Err(EngineError::BadRules(format!(
+                        "allowance {m} is in more than one group"
+                    )));
+                }
+                seen_members.push(m);
+            }
+        }
         Ok(())
+    }
+}
+
+// ------------------------------------------------------------------ dates
+
+/// Parse a strict `YYYY-MM-DD` calendar date (leap years honoured).
+pub fn parse_date(s: &str) -> Result<(i32, u32, u32), String> {
+    let b = s.as_bytes();
+    let bad = || format!("{s:?} is not a YYYY-MM-DD date");
+    if b.len() != 10 || b[4] != b'-' || b[7] != b'-' {
+        return Err(bad());
+    }
+    if !b.iter().enumerate().all(|(i, c)| i == 4 || i == 7 || c.is_ascii_digit()) {
+        return Err(bad());
+    }
+    let y: i32 = s[0..4].parse().map_err(|_| bad())?;
+    let m: u32 = s[5..7].parse().map_err(|_| bad())?;
+    let d: u32 = s[8..10].parse().map_err(|_| bad())?;
+    let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    let dim = match m {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 if leap => 29,
+        2 => 28,
+        _ => return Err(bad()),
+    };
+    if y < 1 || d < 1 || d > dim {
+        return Err(bad());
+    }
+    Ok((y, m, d))
+}
+
+/// Today's date in UTC as `YYYY-MM-DD`.
+pub fn today_utc() -> String {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let z = (secs / 86_400) as i64 + 719_468;
+    let era = z.div_euclid(146_097);
+    let doe = z.rem_euclid(146_097);
+    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = yoe + era * 400 + i64::from(m <= 2);
+    format!("{y:04}-{m:02}-{d:02}")
+}
+
+// -------------------------------------------------------------- rule book
+
+/// Every loaded rule set, ordered by `effective_from`.
+#[derive(Debug, Clone)]
+pub struct RuleBook {
+    sets: Vec<Rules>,
+}
+
+impl RuleBook {
+    pub fn from_rules(mut sets: Vec<Rules>) -> Result<RuleBook, EngineError> {
+        if sets.is_empty() {
+            return Err(EngineError::BadRules("no rule sets loaded".into()));
+        }
+        sets.sort_by(|a, b| a.effective_from.cmp(&b.effective_from));
+        for pair in sets.windows(2) {
+            if pair[0].effective_from == pair[1].effective_from {
+                return Err(EngineError::BadRules(format!(
+                    "two rule sets share effective_from {}",
+                    pair[0].effective_from
+                )));
+            }
+        }
+        if sets.iter().any(|r| r.country != sets[0].country) {
+            return Err(EngineError::BadRules("rule sets mix countries".into()));
+        }
+        Ok(RuleBook { sets })
+    }
+
+    /// Load every `*.json` file in `dir` (non-recursive).
+    pub fn from_dir(dir: &std::path::Path) -> Result<RuleBook, EngineError> {
+        let bad = |m: String| EngineError::BadRules(m);
+        let mut paths: Vec<_> = std::fs::read_dir(dir)
+            .map_err(|e| bad(format!("cannot read {}: {e}", dir.display())))?
+            .filter_map(|e| e.ok().map(|e| e.path()))
+            .filter(|p| p.extension().is_some_and(|x| x == "json"))
+            .collect();
+        paths.sort();
+        let mut sets = Vec::new();
+        for p in paths {
+            let text = std::fs::read_to_string(&p)
+                .map_err(|e| bad(format!("cannot read {}: {e}", p.display())))?;
+            sets.push(Rules::from_json(&text).map_err(|e| bad(format!("{}: {e}", p.display())))?);
+        }
+        RuleBook::from_rules(sets)
+    }
+
+    pub fn single(rules: Rules) -> RuleBook {
+        RuleBook { sets: vec![rules] }
+    }
+
+    pub fn bundled() -> RuleBook {
+        RuleBook::single(Rules::th_2026())
+    }
+
+    pub fn sets(&self) -> &[Rules] {
+        &self.sets
+    }
+
+    /// The latest rule set with `effective_from <= as_of` (default: today, UTC).
+    pub fn select(&self, as_of: Option<&str>) -> Result<&Rules, EngineError> {
+        let today;
+        let date = match as_of {
+            Some(d) => d,
+            None => {
+                today = today_utc();
+                &today
+            }
+        };
+        parse_date(date).map_err(EngineError::InvalidInput)?;
+        self.sets
+            .iter()
+            .rev()
+            .find(|r| r.effective_from.as_str() <= date)
+            .ok_or_else(|| EngineError::NoRuleSet(date.to_string()))
     }
 }
 
@@ -155,6 +329,20 @@ pub struct AppliedAllowance {
     pub amount: Satang,
 }
 
+/// What a group ceiling removed. Only reported when something was trimmed.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct GroupAdjustment {
+    pub group: String,
+    /// Sum of the members' per-item-capped amounts, before the group ceiling.
+    pub requested: Satang,
+    /// The ceiling that applied: min(`cap`, percent-of-income cap if any).
+    pub cap_applied: Satang,
+    pub allowed: Satang,
+    pub trimmed: Satang,
+    /// Per member that lost something.
+    pub members_trimmed: Vec<AppliedAllowance>,
+}
+
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct SlabRow {
     pub from: Satang,
@@ -168,6 +356,7 @@ pub struct AnnualTax {
     pub gross_income: Satang,
     pub expense_deduction: Satang,
     pub allowances: Vec<AppliedAllowance>,
+    pub group_adjustments: Vec<GroupAdjustment>,
     pub total_allowances: Satang,
     pub taxable_income: Satang,
     pub tax: Satang,
@@ -224,6 +413,42 @@ pub fn annual_tax(
         }
     }
 
+    // Joint ceilings, after the per-item caps.
+    let mut group_adjustments = Vec::new();
+    for g in &t.groups {
+        let requested: Satang =
+            applied.iter().filter(|a| g.members.contains(&a.code)).map(|a| a.amount).sum();
+        let cap_applied = match g.cap_percent_of_income_bp {
+            Some(bp) => g.cap.min(apply_bp(gross_income, bp)),
+            None => g.cap,
+        };
+        if requested <= cap_applied {
+            continue;
+        }
+        let mut budget = cap_applied;
+        let mut members_trimmed = Vec::new();
+        for code in &g.members {
+            if let Some(a) = applied.iter_mut().find(|a| &a.code == code) {
+                let kept = a.amount.min(budget);
+                budget -= kept;
+                if kept < a.amount {
+                    members_trimmed
+                        .push(AppliedAllowance { code: code.clone(), amount: a.amount - kept });
+                }
+                a.amount = kept;
+            }
+        }
+        applied.retain(|a| a.amount > 0);
+        group_adjustments.push(GroupAdjustment {
+            group: g.code.clone(),
+            requested,
+            cap_applied,
+            allowed: cap_applied,
+            trimmed: requested - cap_applied,
+            members_trimmed,
+        });
+    }
+
     let sso_deduction = sso_paid_year.min(rules.social_security.employee_deduction_cap_per_year);
     if sso_deduction > 0 {
         applied.push(AppliedAllowance { code: "social_security".into(), amount: sso_deduction });
@@ -248,6 +473,7 @@ pub fn annual_tax(
         gross_income,
         expense_deduction,
         allowances: applied,
+        group_adjustments,
         total_allowances,
         taxable_income,
         tax,
@@ -489,6 +715,123 @@ mod tests {
     fn broken_bracket_chain_is_rejected() {
         let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
         v["tax"]["brackets"][1]["from"] = serde_json::json!(999);
+        assert!(matches!(Rules::from_json(&v.to_string()), Err(EngineError::BadRules(_))));
+    }
+
+    fn with_groups(groups: serde_json::Value) -> Rules {
+        let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
+        v["tax"]["groups"] = groups;
+        Rules::from_json(&v.to_string()).unwrap()
+    }
+
+    fn claim(code: &str, baht: i64) -> Claim {
+        Claim { code: code.into(), units: None, amount: Some(baht * BAHT) }
+    }
+
+    #[test]
+    fn group_trims_in_member_order_and_reports_it() {
+        let r = with_groups(serde_json::json!([
+            { "code": "g", "members": ["life_insurance", "health_insurance"], "cap": 10_000_000 }
+        ]));
+        // per-item: life 100k (of 150k), health 25k -> 125k requested, ceiling 100k.
+        let claims = vec![claim("life_insurance", 150_000), claim("health_insurance", 30_000)];
+        let t = annual_tax(&r, 2_000_000 * BAHT, &claims, 0).unwrap();
+        let get = |c: &str| t.allowances.iter().find(|a| a.code == c).map(|a| a.amount);
+        assert_eq!(get("life_insurance"), Some(100_000 * BAHT));
+        assert_eq!(get("health_insurance"), None);
+        let adj = &t.group_adjustments[0];
+        assert_eq!((adj.requested, adj.allowed, adj.trimmed), (125_000 * BAHT, 100_000 * BAHT, 25_000 * BAHT));
+        assert_eq!(adj.members_trimmed, vec![AppliedAllowance { code: "health_insurance".into(), amount: 25_000 * BAHT }]);
+    }
+
+    #[test]
+    fn group_percent_of_income_cap_applies_when_lower() {
+        let r = with_groups(serde_json::json!([
+            { "code": "g", "members": ["provident_fund", "rmf"], "cap": 50_000_000, "cap_percent_of_income_bp": 1000 }
+        ]));
+        let claims = vec![claim("provident_fund", 60_000), claim("rmf", 60_000)];
+        let t = annual_tax(&r, 600_000 * BAHT, &claims, 0).unwrap(); // 10% = 60k
+        assert_eq!(t.group_adjustments[0].cap_applied, 60_000 * BAHT);
+        assert_eq!(t.group_adjustments[0].trimmed, 60_000 * BAHT);
+        let sum: Satang = t.allowances.iter().filter(|a| a.code == "provident_fund" || a.code == "rmf").map(|a| a.amount).sum();
+        assert_eq!(sum, 60_000 * BAHT);
+    }
+
+    #[test]
+    fn group_under_ceiling_reports_nothing() {
+        let r = with_groups(serde_json::json!([
+            { "code": "g", "members": ["life_insurance", "health_insurance"], "cap": 10_000_000 }
+        ]));
+        let claims = vec![claim("life_insurance", 50_000), claim("health_insurance", 20_000)];
+        let t = annual_tax(&r, 2_000_000 * BAHT, &claims, 0).unwrap();
+        assert!(t.group_adjustments.is_empty());
+    }
+
+    #[test]
+    fn group_validation_rejects_bad_members() {
+        let mk = |g: serde_json::Value| {
+            let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
+            v["tax"]["groups"] = g;
+            Rules::from_json(&v.to_string())
+        };
+        assert!(matches!(mk(serde_json::json!([{ "code": "g", "members": ["nope"], "cap": 1 }])), Err(EngineError::BadRules(_))));
+        assert!(matches!(mk(serde_json::json!([{ "code": "g", "members": ["spouse"], "cap": 1 }])), Err(EngineError::BadRules(_))));
+        assert!(matches!(mk(serde_json::json!([{ "code": "g", "members": [], "cap": 1 }])), Err(EngineError::BadRules(_))));
+        assert!(matches!(
+            mk(serde_json::json!([
+                { "code": "a", "members": ["rmf"], "cap": 1 },
+                { "code": "b", "members": ["rmf"], "cap": 1 }
+            ])),
+            Err(EngineError::BadRules(_))
+        ));
+    }
+
+    #[test]
+    fn date_parsing_is_strict() {
+        assert!(parse_date("2026-02-28").is_ok());
+        assert!(parse_date("2024-02-29").is_ok());
+        for bad in ["2026-02-29", "2026-13-01", "2026-1-01", "26-01-01", "2026/01/01", "2026-01-0a", "", "2026-00-10"] {
+            assert!(parse_date(bad).is_err(), "{bad}");
+        }
+        assert!(parse_date(&today_utc()).is_ok());
+    }
+
+    fn book_with(dates: &[&str]) -> RuleBook {
+        let sets = dates
+            .iter()
+            .map(|d| {
+                let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
+                v["effective_from"] = serde_json::json!(d);
+                v["year"] = serde_json::json!(d[0..4].parse::<i32>().unwrap());
+                Rules::from_json(&v.to_string()).unwrap()
+            })
+            .collect();
+        RuleBook::from_rules(sets).unwrap()
+    }
+
+    #[test]
+    fn as_of_picks_latest_effective_set() {
+        let b = book_with(&["2027-01-01", "2026-01-01"]);
+        assert_eq!(b.select(Some("2026-12-31")).unwrap().year, 2026);
+        assert_eq!(b.select(Some("2027-01-01")).unwrap().year, 2027);
+        assert_eq!(b.select(Some("2030-06-01")).unwrap().year, 2027);
+        assert!(matches!(b.select(Some("2025-12-31")), Err(EngineError::NoRuleSet(_))));
+        assert!(matches!(b.select(Some("garbage")), Err(EngineError::InvalidInput(_))));
+        assert!(b.select(None).is_ok());
+    }
+
+    #[test]
+    fn duplicate_effective_dates_are_rejected() {
+        let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
+        v["effective_from"] = serde_json::json!("2026-01-01");
+        let r = Rules::from_json(&v.to_string()).unwrap();
+        assert!(RuleBook::from_rules(vec![r.clone(), r]).is_err());
+    }
+
+    #[test]
+    fn bad_effective_from_is_rejected() {
+        let mut v: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
+        v["effective_from"] = serde_json::json!("1 Jan 2026");
         assert!(matches!(Rules::from_json(&v.to_string()), Err(EngineError::BadRules(_))));
     }
 }
