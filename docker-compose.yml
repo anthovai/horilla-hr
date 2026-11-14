@@ -25,6 +25,8 @@ services:
       - DATABASE_URL=postgres://horilla_user:horilla_pass@db:5432/horilla_db
       - DB_INIT_PASSWORD=dev-init-password-change-in-production
       - REDIS_URL=redis://:horilla_pass@redis:6379/0
+      # Payroll engine (Rust). Unused unless the payroll code opts in.
+      - ORVAHR_PAYROLL_ENGINE_URL=http://payroll-engine:8090
     depends_on:
       db:
         condition: service_healthy
@@ -59,6 +61,8 @@ services:
       - DATABASE_URL=postgres://horilla_user:horilla_pass@db:5432/horilla_db
       - DB_INIT_PASSWORD=dev-init-password-change-in-production
       - REDIS_URL=redis://:horilla_pass@redis:6379/0
+      # Payroll engine (Rust). Unused unless the payroll code opts in.
+      - ORVAHR_PAYROLL_ENGINE_URL=http://payroll-engine:8090
       # web owns migrate/collectstatic; racing them from here can deadlock on
       # DDL and would wipe STATIC_ROOT while web is serving from it.
       - HORILLA_SKIP_RELEASE_TASKS=1
@@ -75,6 +79,27 @@ services:
     healthcheck:
       disable: true
     restart: unless-stopped
+
+  # Thai payroll rules engine (Rust). Internal only: no host port is published;
+  # web-app and the Django services reach it as http://payroll-engine:8090.
+  payroll-engine:
+    build: ./services/payroll-engine
+    restart: unless-stopped
+
+  # Svelte front end. Named web-app because `web` is the Django service.
+  # Serves the SPA and proxies /engine/ to payroll-engine. Localhost only.
+  web-app:
+    build: ./web
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      payroll-engine:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # TODO(exports): services/exports (Go, EXPORTS_BIND 127.0.0.1:8091,
+  # GET /healthz) is not in the repo yet. Once its go.mod lands, add a service
+  # here like payroll-engine (internal only, no published port).
 
   db:
     image: postgres:16-alpine
