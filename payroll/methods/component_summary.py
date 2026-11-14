@@ -70,7 +70,11 @@ def _slab_summary(component, unit):
         start = f"{slab.from_hours:g}"
         span = f"{start}h+" if slab.to_hours is None else f"{start}–{slab.to_hours:g}h"
         parts.append(f"{span} ×{slab.multiplier:g}")
-    return f"{', '.join(parts)} {_('of the hourly wage')}, {unit}"
+    if getattr(component, "overtime_rate_basis", "") == "wage_derived":
+        basis = _("of the hourly rate worked out from the wage")
+    else:
+        basis = _("of the hourly wage")
+    return f"{', '.join(parts)} {basis}, {unit}"
 
 
 def calculation_summary(component):
@@ -99,7 +103,15 @@ def calculation_summary(component):
         return str(_("Balance of CTC"))
 
     if based_on in AGGREGATE_NAMES:
-        return f"{_rate(rate)} {_('of')} {AGGREGATE_NAMES[based_on]}"
+        summary = f"{_rate(rate)} {_('of')} {AGGREGATE_NAMES[based_on]}"
+        low = getattr(component, "contribution_base_min", None)
+        high = getattr(component, "contribution_base_max", None)
+        if low is not None or high is not None:
+            band = f"{_number(low) if low is not None else '0'}–" + (
+                _number(high) if high is not None else "∞"
+            )
+            summary += f" ({_('base held within')} {band})"
+        return summary
 
     per_unit = {
         "children": ("per_children_fixed_amount", _("per child")),

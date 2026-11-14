@@ -299,6 +299,175 @@ COMPONENT_LIBRARY = [
             "is_pretax": True,
         },
     },
+    # ------------------------------------------------------------- Thailand
+    # Social security and Labour Protection Act overtime. Every figure below is
+    # a statutory one as understood at the time of writing (cross-checked with
+    # services/payroll-engine/rules/th-2026.json) -- verify against current
+    # law before anyone is paid by it. None of it is authoritative.
+    #
+    # No Thai "Basic Salary" entry: in a Gross Up structure, the usual Thai
+    # arrangement, basic salary IS the contract wage and needs no component;
+    # a basic-pay component only matters for CTC Down (see "in_basic"), and a
+    # second library entry claiming basic pay would make loading everything
+    # create two.
+    {
+        "key": "th_sso",
+        "group": _("Thailand"),
+        "kind": DEDUCTION,
+        "name": "Social Security Fund (SSO)",
+        "summary": _(
+            "5% of gross pay, on a wage base held between 1,650 and 15,000 "
+            "(so 82.50 to 750 a month). The employer pays the same 5%."
+        ),
+        "note": _(
+            "Verify the rate and the wage base against current law. Assign it "
+            "only to employees registered with the Social Security Office. "
+            "Taken after tax: Thai income tax allows the contribution as a "
+            "deduction itself, so making it pre-tax would count it twice. The "
+            "base assumes monthly pay periods, and gross pay is used as the "
+            "wage; exclude anything that is not wages under the Social "
+            "Security Act."
+        ),
+        "fields": {
+            "sequence": 100,
+            "is_fixed": False,
+            "based_on": "gross_pay",
+            "rate": 5.0,
+            "employer_rate": 5.0,
+            "is_pretax": False,
+            "contribution_base_min": 1650.0,
+            "contribution_base_max": 15000.0,
+        },
+    },
+    {
+        "key": "th_ot_workday",
+        "group": _("Thailand"),
+        "kind": EARNING,
+        "name": "Overtime on a working day (1.5x)",
+        "summary": _(
+            "1.5 times the hourly rate for each approved overtime hour on a "
+            "working day."
+        ),
+        "note": _(
+            "Labour Protection Act. The hourly rate is worked out from the "
+            "contract wage: a monthly wage over 30 days over 8 normal hours, a "
+            "daily wage over 8. Change the hours if the normal working day is "
+            "shorter. Verify against current law."
+        ),
+        "fields": {
+            "sequence": 200,
+            "is_fixed": False,
+            "based_on": "overtime",
+            "overtime_calc": "slab",
+            "overtime_rate_basis": "wage_derived",
+            "overtime_days_per_month": 30.0,
+            "overtime_hours_per_day": 8.0,
+            "is_taxable": True,
+        },
+        "slabs": [(0.0, None, 1.5)],
+    },
+    {
+        "key": "th_holiday_monthly",
+        "group": _("Thailand"),
+        "kind": EARNING,
+        "name": "Work on a holiday, monthly-paid (1x, then 3x)",
+        "summary": _(
+            "For monthly-paid staff: one extra hourly rate for each of the "
+            "first 8 hours worked on a public holiday, 3 times it after that."
+        ),
+        "note": _(
+            "Monthly-paid employees are already paid for the holiday, so the "
+            "normal hours earn one more hourly rate on top; hours beyond them "
+            "are holiday overtime at 3 times. Assign to monthly-paid staff "
+            "only. Verify against current law."
+        ),
+        "fields": {
+            "sequence": 210,
+            "is_fixed": False,
+            "based_on": "holiday_overtime",
+            "overtime_calc": "slab",
+            "overtime_rate_basis": "wage_derived",
+            "overtime_days_per_month": 30.0,
+            "overtime_hours_per_day": 8.0,
+            "is_taxable": True,
+        },
+        "slabs": [(0.0, 8.0, 1.0), (8.0, None, 3.0)],
+    },
+    {
+        "key": "th_holiday_daily",
+        "group": _("Thailand"),
+        "kind": EARNING,
+        "name": "Work on a holiday, daily-paid (2x, then 3x)",
+        "summary": _(
+            "For daily-paid staff: twice the hourly rate for each of the first "
+            "8 hours worked on a public holiday, 3 times it after that."
+        ),
+        "note": _(
+            "Daily-paid employees are not otherwise paid for the day, so the "
+            "normal hours earn twice the hourly rate. Assign to daily-paid "
+            "staff only. Verify against current law."
+        ),
+        "fields": {
+            "sequence": 211,
+            "is_fixed": False,
+            "based_on": "holiday_overtime",
+            "overtime_calc": "slab",
+            "overtime_rate_basis": "wage_derived",
+            "overtime_days_per_month": 30.0,
+            "overtime_hours_per_day": 8.0,
+            "is_taxable": True,
+        },
+        "slabs": [(0.0, 8.0, 2.0), (8.0, None, 3.0)],
+    },
+    {
+        "key": "th_weekly_holiday_monthly",
+        "group": _("Thailand"),
+        "kind": EARNING,
+        "name": "Work on a weekly holiday, monthly-paid (1x, then 3x)",
+        "summary": _(
+            "The same rates as a public holiday, for approved work on the "
+            "weekly day off, for monthly-paid staff."
+        ),
+        "note": _(
+            "The Act treats the weekly holiday like any other holiday. Assign "
+            "to monthly-paid staff only. Verify against current law."
+        ),
+        "fields": {
+            "sequence": 220,
+            "is_fixed": False,
+            "based_on": "week_off_overtime",
+            "overtime_calc": "slab",
+            "overtime_rate_basis": "wage_derived",
+            "overtime_days_per_month": 30.0,
+            "overtime_hours_per_day": 8.0,
+            "is_taxable": True,
+        },
+        "slabs": [(0.0, 8.0, 1.0), (8.0, None, 3.0)],
+    },
+    {
+        "key": "th_weekly_holiday_daily",
+        "group": _("Thailand"),
+        "kind": EARNING,
+        "name": "Work on a weekly holiday, daily-paid (2x, then 3x)",
+        "summary": _(
+            "The same rates as a public holiday, for approved work on the "
+            "weekly day off, for daily-paid staff."
+        ),
+        "note": _(
+            "Assign to daily-paid staff only. Verify against current law."
+        ),
+        "fields": {
+            "sequence": 221,
+            "is_fixed": False,
+            "based_on": "week_off_overtime",
+            "overtime_calc": "slab",
+            "overtime_rate_basis": "wage_derived",
+            "overtime_days_per_month": 30.0,
+            "overtime_hours_per_day": 8.0,
+            "is_taxable": True,
+        },
+        "slabs": [(0.0, 8.0, 2.0), (8.0, None, 3.0)],
+    },
 ]
 
 
@@ -334,7 +503,7 @@ def load_components(keys=None):
     produce a second Provident Fund — and so a half-finished selection can be
     retried without cleaning up first.
     """
-    from payroll.models.models import Allowance, Deduction
+    from payroll.models.models import Allowance, AllowanceSlab, Deduction
 
     wanted = set(keys) if keys else {entry["key"] for entry in COMPONENT_LIBRARY}
     created = []
@@ -349,6 +518,14 @@ def load_components(keys=None):
 
         component = model(title=entry["name"], **entry["fields"])
         component.save()
+        # Overtime bands: (from hour, to hour or None, multiplier) of a day.
+        for start, end, multiplier in entry.get("slabs", ()):
+            AllowanceSlab.objects.create(
+                allowance_id=component,
+                from_hours=start,
+                to_hours=end,
+                multiplier=multiplier,
+            )
         created.append(component)
 
     return created

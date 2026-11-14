@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.html import escape
 
 from horilla.testkit import make_company, make_employee, make_user
 from payroll.component_library import COMPONENT_LIBRARY, library_rows, load_components
@@ -78,10 +79,22 @@ class LibraryDataTests(TestCase):
                 None,
                 "balance",
                 "formula",
+                # Paid per hour by slab: the slabs are the rate (below).
+                "overtime",
+                "week_off_overtime",
+                "holiday_overtime",
             ):
                 continue
             with self.subTest(key=entry["key"]):
                 self.assertTrue(fields.get("rate"), entry["key"])
+
+    def test_a_slab_overtime_entry_always_carries_its_slabs(self):
+        """A slab component with no bands pays nothing at all."""
+        for entry in COMPONENT_LIBRARY:
+            if entry["fields"].get("overtime_calc") != "slab":
+                continue
+            with self.subTest(key=entry["key"]):
+                self.assertTrue(entry.get("slabs"))
 
     def test_a_fixed_entry_always_carries_an_amount(self):
         for entry in COMPONENT_LIBRARY:
@@ -233,7 +246,8 @@ class LibraryViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         body = response.content.decode()
         for entry in COMPONENT_LIBRARY:
-            self.assertIn(entry["name"], body)
+            self.assertIn(escape(entry["name"]), body)
+        self.assertIn("Thailand", body)
 
     def test_loading_through_the_view_creates_them(self):
         response = self.client.post(

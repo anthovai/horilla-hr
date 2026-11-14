@@ -32,3 +32,25 @@ def compute_limit(component, amount, day_dict):
         day_dict, getattr(component, "maximum_unit", None)
     )
     return min(amount, ceiling)
+
+
+def clamp_base(component, figure):
+    """
+    The figure a percentage is taken of, held within the component's minimum
+    and maximum base (Deduction.contribution_base_min / _max).
+
+    Components without those fields -- every Allowance -- and ones that leave
+    them empty get the figure unchanged. A figure of zero or less stays as it
+    is: the floor is "contribute as if you earned at least this", which says
+    nothing about a period in which nothing was paid at all.
+    """
+    figure = float(figure or 0)
+    if figure <= 0:
+        return figure
+    floor = getattr(component, "contribution_base_min", None)
+    ceiling = getattr(component, "contribution_base_max", None)
+    if floor is not None:
+        figure = max(figure, float(floor))
+    if ceiling is not None:
+        figure = min(figure, float(ceiling))
+    return figure

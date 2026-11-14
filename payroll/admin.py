@@ -26,6 +26,7 @@ from payroll.models.models import (
     Reimbursement,
     ReimbursementrequestComment,
 )
+from payroll.models.minimum_wage import MinimumWageRate
 from payroll.models.tax_models import PayrollSettings, TaxBracket
 
 
@@ -76,3 +77,18 @@ admin.site.register(Reimbursement)
 admin.site.register(ReimbursementrequestComment)
 admin.site.register(MultipleCondition)
 admin.site.register(PayslipAutoGenerate)
+
+
+@admin.register(MinimumWageRate)
+class MinimumWageRateAdmin(admin.ModelAdmin):
+    """Statutory data; load it with load_th_minimum_wage, correct it here."""
+
+    list_display = (
+        "province_code",
+        "province_name",
+        "daily_amount",
+        "effective_from",
+        "note",
+    )
+    list_filter = ("effective_from",)
+    search_fields = ("province_code", "province_name")

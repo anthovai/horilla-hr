@@ -48,6 +48,11 @@ def employer_amount(component, figures, context):
     if not (component.employer_rate or 0) > 0:
         return None
     figure = figures.get(component.based_on) or 0
+    # The same minimum and maximum base as the employee side, so a clamped
+    # contribution (Thai social security) is clamped for the employer too.
+    from payroll.methods.limits import clamp_base
+
+    figure = clamp_base(component, figure)
     return (figure * component.employer_rate) / 100, None
 
 
@@ -117,6 +122,9 @@ def balance_after_employer_cost(deductions, context):
 
     fixed = 0.0
     gross_rate = 0.0
+    # Gross-based shares on a base held within limits (Thai social security):
+    # not linear in the balance, so solved numerically below.
+    clamped = []
     for component in deductions or ():
         if component.employer_basis == "formula":
             try:
@@ -126,8 +134,37 @@ def balance_after_employer_cost(deductions, context):
             fixed += result[0] if result else 0.0
         elif (component.employer_rate or 0) > 0:
             if component.based_on == "gross_pay":
-                gross_rate += component.employer_rate / 100
+                if (
+                    getattr(component, "contribution_base_min", None) is not None
+                    or getattr(component, "contribution_base_max", None) is not None
+                ):
+                    clamped.append(component)
+                else:
+                    gross_rate += component.employer_rate / 100
             else:
                 fixed += employer_amount(component, figures, context)[0]
 
-    return max((ctc - earned * (1 + gross_rate) - fixed) / (1 + gross_rate), 0.0)
+    if not clamped:
+        return max((ctc - earned * (1 + gross_rate) - fixed) / (1 + gross_rate), 0.0)
+
+    from payroll.methods.limits import clamp_base
+
+    def left_over(balance):
+        gross = earned + balance
+        cost = fixed + gross_rate * gross
+        cost += sum(
+            clamp_base(c, gross) * c.employer_rate / 100 for c in clamped
+        )
+        return ctc - gross - cost
+
+    # left_over falls as the balance rises, so bisect for where it reaches 0.
+    low, high = 0.0, max(ctc, 0.0)
+    if left_over(low) <= 0:
+        return 0.0
+    for _ in range(100):
+        mid = (low + high) / 2
+        if left_over(mid) > 0:
+            low = mid
+        else:
+            high = mid
+    return low

@@ -76,6 +76,23 @@ def _amount_fields():
             f"{CALCULATED} based_on={OVERTIME_TYPES} overtime_calc=flat",
         ),
         (
+            "overtime_rate_basis",
+            6,
+            f"{CALCULATED} based_on={OVERTIME_TYPES} overtime_calc=slab",
+        ),
+        (
+            "overtime_days_per_month",
+            6,
+            f"{CALCULATED} based_on={OVERTIME_TYPES} overtime_calc=slab "
+            "overtime_rate_basis=wage_derived",
+        ),
+        (
+            "overtime_hours_per_day",
+            6,
+            f"{CALCULATED} based_on={OVERTIME_TYPES} overtime_calc=slab "
+            "overtime_rate_basis=wage_derived",
+        ),
+        (
             "overtime_slabs",
             12,
             f"{CALCULATED} based_on={OVERTIME_TYPES} overtime_calc=slab",
@@ -130,6 +147,10 @@ LAYOUT = [
         [
             ("has_max_limit", 12, CALCULATED),
             ("maximum_amount", 6, f"{CALCULATED} has_max_limit=on"),
+            # Deduction only: the figure the percentage is taken of, held
+            # between a floor and a ceiling (Thai social security).
+            ("contribution_base_min", 6, f"{CALCULATED} based_on={PERCENTAGE_OF}"),
+            ("contribution_base_max", 6, f"{CALCULATED} based_on={PERCENTAGE_OF}"),
         ],
     ),
     (

@@ -27,7 +27,7 @@ from payroll.methods.component_engine import (
 )
 from payroll.methods.contract_periods import forced_contract
 from payroll.methods.deductions import update_compensation_deduction
-from payroll.methods.limits import compute_limit
+from payroll.methods.limits import clamp_base, compute_limit
 from payroll.methods.proration import flat_amount
 from payroll.models import models
 from payroll.models.models import (
@@ -1069,7 +1069,7 @@ def calculate_based_on_basic_pay(*_args, **kwargs):
     # Under CTC Down basic_pay is 0; the basic is the structure's flagged component.
     if not basic_pay:
         basic_pay = float((kwargs.get("component_context") or {}).get("BASIC") or 0)
-    amount = basic_pay * rate / 100
+    amount = clamp_base(component, basic_pay) * rate / 100
     amount = compute_limit(component, amount, day_dict)
 
     return amount
@@ -1096,7 +1096,7 @@ def calculate_based_on_gross_pay(*_args, **kwargs):
     day_dict = kwargs["day_dict"]
     gross_pay = calculate_gross_pay(**kwargs)
     rate = component.rate
-    amount = gross_pay["gross_pay"] * rate / 100
+    amount = clamp_base(component, gross_pay["gross_pay"]) * rate / 100
     amount = compute_limit(component, amount, day_dict)
     return amount
 
@@ -1122,7 +1122,7 @@ def calculate_based_on_taxable_gross_pay(*_args, **kwargs):
     taxable_gross_pay = calculate_taxable_gross_pay(**kwargs)
     taxable_gross_pay = taxable_gross_pay["taxable_gross_pay"]
     rate = component.rate
-    amount = taxable_gross_pay * rate / 100
+    amount = clamp_base(component, taxable_gross_pay) * rate / 100
     amount = compute_limit(component, amount, day_dict)
     return amount
 
@@ -1140,7 +1140,7 @@ def calculate_based_on_net_pay(component, net_pay, day_dict):
         float: The calculated amount of the component based on the net pay.
     """
     rate = float(component.rate)
-    amount = net_pay * rate / 100
+    amount = clamp_base(component, net_pay) * rate / 100
     amount = compute_limit(component, amount, day_dict)
     return amount
 
@@ -1316,13 +1316,58 @@ def _classify_approved_overtime_seconds(employee, start_date, end_date):
 
 def _contract_hourly_rate(employee):
     """The contract's pay for one regular hour, or 0 when it states none."""
-    contract = (
+    return float(getattr(_employee_contract(employee), "hourly_wage", 0) or 0)
+
+
+def _employee_contract(employee):
+    return (
         forced_contract(employee)
         or Contract.objects.filter(
             employee_id=employee, contract_status="active"
         ).first()
     )
-    return float(getattr(contract, "hourly_wage", 0) or 0)
+
+
+def wage_derived_hourly_rate(contract, days_per_month, hours_per_day):
+    """
+    One hour's pay worked out from the contract wage, the way labour law
+    usually defines the base of an overtime rate.
+
+    Thailand's Labour Protection Act is the case this was written for: a
+    monthly wage over 30 days over the normal hours of a day, a daily wage over
+    the normal hours. The divisors come from the component (they are the
+    statutory part) rather than being fixed here. An hourly contract already
+    states an hourly rate and uses it. 0 when anything needed is missing.
+
+    The wage is the contract's Basic Salary in its own unit (Contract.pay_rate).
+    Under a CTC Down structure that figure is the package, not the wage, so the
+    rate would be overstated there -- this basis is for Gross Up contracts.
+    """
+    if contract is None:
+        return 0.0
+    wage = float(contract.pay_rate or 0)
+    if contract.wage_type == "hourly":
+        return wage
+    hours = float(hours_per_day or 0)
+    if not wage or not hours:
+        return 0.0
+    if contract.wage_type == "daily":
+        return wage / hours
+    days = float(days_per_month or 0)
+    if not days:
+        return 0.0
+    return wage / days / hours
+
+
+def _overtime_hourly_rate(component, employee):
+    """The hourly rate a slab overtime allowance multiplies, per its basis."""
+    if getattr(component, "overtime_rate_basis", "") == "wage_derived":
+        return wage_derived_hourly_rate(
+            _employee_contract(employee),
+            component.overtime_days_per_month,
+            component.overtime_hours_per_day,
+        )
+    return _contract_hourly_rate(employee)
 
 
 def slab_hours_breakdown(hours, slabs, rate):
@@ -1386,14 +1431,22 @@ def _overtime_amount(kwargs, days):
             ],
         )
         return _amount_from_seconds(sum(days.values()), component, day_dict)
-    rate = _contract_hourly_rate(kwargs["employee"])
+    rate = _overtime_hourly_rate(component, kwargs["employee"])
     if not rate:
-        _note(
-            kwargs,
-            component,
-            "Overtime slabs pay a multiple of the regular hourly wage, and this "
-            "employee's contract has no hourly wage stated, so nothing is paid.",
-        )
+        if getattr(component, "overtime_rate_basis", "") == "wage_derived":
+            text = (
+                "Overtime slabs pay a multiple of the hourly rate worked out "
+                "from the contract wage, and no rate could be worked out "
+                "(no active contract, no wage, or no days/hours set on the "
+                "component), so nothing is paid."
+            )
+        else:
+            text = (
+                "Overtime slabs pay a multiple of the regular hourly wage, and "
+                "this employee's contract has no hourly wage stated, so nothing "
+                "is paid."
+            )
+        _note(kwargs, component, text)
         return 0
     slabs = list(component.slabs.all())
     rows = []

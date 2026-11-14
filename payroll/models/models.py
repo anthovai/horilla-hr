@@ -1871,6 +1871,45 @@ class Allowance(HorillaModel):
         choices=OVERTIME_CALC_CHOICES,
         verbose_name=_("Overtime Pay"),
     )
+    # Which hourly rate the slab multipliers are applied to. The contract's own
+    # hourly wage is the original behaviour, and it is empty on every monthly or
+    # daily contract -- so a slab overtime allowance paid those employees
+    # nothing. Labour law usually defines the overtime rate as a multiple of a
+    # rate DERIVED from the wage (Thailand: a monthly wage over 30 days over the
+    # normal hours of a day; a daily wage over the normal hours), which is what
+    # "wage_derived" does. The divisors are data on the component, not
+    # constants here, because they are the statutory part.
+    OVERTIME_RATE_BASIS_CHOICES = [
+        ("contract_hourly", _("The contract's hourly wage")),
+        ("wage_derived", _("Worked out from the contract wage")),
+    ]
+    overtime_rate_basis = models.CharField(
+        max_length=20,
+        default="contract_hourly",
+        choices=OVERTIME_RATE_BASIS_CHOICES,
+        blank=True,
+        verbose_name=_("Hourly rate"),
+        help_text=_(
+            "What the multipliers are applied to. Worked out from the wage: a "
+            "monthly wage is divided by the days per month and then the hours "
+            "per day; a daily wage by the hours per day; an hourly contract "
+            "uses its hourly wage."
+        ),
+    )
+    overtime_days_per_month = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[min_zero],
+        verbose_name=_("Days per month"),
+        help_text=_("What a monthly wage is divided by to give a day's pay."),
+    )
+    overtime_hours_per_day = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[min_zero],
+        verbose_name=_("Normal hours per day"),
+        help_text=_("What a day's pay is divided by to give an hour's pay."),
+    )
     prorate_partial_days = models.BooleanField(
         default=False,
         verbose_name=_("Prorate Half Days"),
@@ -2322,6 +2361,20 @@ class Allowance(HorillaModel):
         if not self.has_max_limit:
             self.maximum_amount = None
 
+        if not self.overtime_rate_basis:
+            self.overtime_rate_basis = "contract_hourly"
+        if (
+            self.overtime_calc == "slab"
+            and self.overtime_rate_basis == "wage_derived"
+        ):
+            missing = {
+                name: _("This field is required")
+                for name in ("overtime_days_per_month", "overtime_hours_per_day")
+                if not getattr(self, name)
+            }
+            if missing:
+                raise ValidationError(missing)
+
     def clean_fixed_attributes(self):
         """Clean the amount field and trigger the reset_based_on function based on the condition"""
         if not self.is_fixed:
@@ -2623,6 +2676,41 @@ class Deduction(HorillaModel):
         blank=True,
         validators=[min_zero],
         verbose_name=_("Maximum Amount"),
+    )
+
+    # The figure a percentage is taken of, held between a floor and a ceiling.
+    #
+    # A maximum on the amount covers a ceiling, but a contribution such as Thai
+    # social security is a rate on a wage base clamped at BOTH ends: someone
+    # earning less than the floor still contributes as if they earned the
+    # floor. That cannot be said with a maximum amount, and a ceiling on the
+    # amount also leaves the employer's share uncapped, because the employer
+    # side is worked out from the same figure again (employer_cost.py). Holding
+    # the BASE within limits caps both sides at once.
+    #
+    # Applies only to a percentage of basic, gross, taxable gross or net pay.
+    # Quoted per pay period as it stands (not prorated): the scheme it was
+    # added for clamps the wage actually paid in a month. A zero base stays
+    # zero -- nobody contributes on a month in which nothing was paid.
+    contribution_base_min = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[min_zero],
+        verbose_name=_("Minimum base"),
+        help_text=_(
+            "The percentage is never taken of less than this. Leave empty for "
+            "no floor. A period with nothing paid still contributes nothing."
+        ),
+    )
+    contribution_base_max = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[min_zero],
+        verbose_name=_("Maximum base"),
+        help_text=_(
+            "The percentage is never taken of more than this, for the employee "
+            "and the employer share alike. Leave empty for no ceiling."
+        ),
     )
 
     # Governs the flat amount AND the ceiling, which is why it no longer lives
@@ -3018,6 +3106,18 @@ class Deduction(HorillaModel):
         if self.has_max_limit:
             if self.maximum_amount is None:
                 raise ValidationError({"maximum_amount": _("This fields required")})
+        if (
+            self.contribution_base_min is not None
+            and self.contribution_base_max is not None
+            and self.contribution_base_min > self.contribution_base_max
+        ):
+            raise ValidationError(
+                {
+                    "contribution_base_max": _(
+                        "The maximum base cannot be less than the minimum base."
+                    )
+                }
+            )
 
         if self.is_condition_based:
             if not self.field or not self.value or not self.condition:
@@ -4917,3 +5017,7 @@ from payroll.models.payroll_batch import (  # noqa: E402,F401
     PayrollBatch,
     PayrollBatchLine,
 )
+
+# Provincial minimum wage: statutory data, not a component. See
+# payroll/models/minimum_wage.py.
+from payroll.models.minimum_wage import MinimumWageRate  # noqa: E402,F401
