@@ -1,0 +1,111 @@
+{% load static %}
+{% comment %}
+    Shared <head> assets for the logged-out auth pages (login, forgot and
+    reset password). Expects `theme_obj` (the default colour theme, from
+    {% get_def_theme %}) in context. Fonts are self-hosted on purpose: no
+    request may leave for fonts.googleapis.com (offline installs, PDPA).
+{% endcomment %}
+<link href="{% static 'horilla_theme/assets/css/tailwind.css' %}" rel="stylesheet">
+<link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="{% if white_label_company.icon %}{{white_label_company.icon.url}} {% else %}{% static 'favicons/apple-touch-icon.png' %}{% endif %}"
+>
+<link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="{% if white_label_company.icon %}{{white_label_company.icon.url}} {% else %}{% static 'favicons/favicon-32x32.png' %}{% endif %}"
+>
+<link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="{% if white_label_company.icon %}{{white_label_company.icon.url}} {% else %}{% static 'favicons/favicon-16x16.png' %}{% endif %}"
+>
+<link rel="stylesheet" href="{% static 'horilla_theme/assets/css/global.css' %}">
+<link rel="stylesheet" href="{% static 'horilla_theme/assets/css/v1_styles.css' %}">
+<link rel="stylesheet" href="{% static 'cdn/googleapi/css/inter-font-style.css' %}">
+<link rel="stylesheet" href="{% static 'horilla_theme/assets/css/orvahr-brand.css' %}?v=1">
+<link rel="preload" href="{% static 'horilla_theme/assets/img/brand/orvahr-logo-light.png' %}" as="image">
+<style>
+    .orva-auth {
+        --orva-mark-url: url("{% static 'horilla_theme/assets/img/brand/orvahr-mark.png' %}");
+        {% if theme_obj and theme_obj.name != "OrvaHR Gold Theme" %}
+            /* A non-OrvaHR default theme: buttons/links follow its primary
+               shade (white text, as on every other themed button). */
+            --auth-btn-bg: {{ theme_obj.primary_600 }};
+            --auth-btn-fg: #ffffff;
+            --auth-btn-icon-filter: none;
+            --auth-accent: {{ theme_obj.primary_600 }};
+            --auth-ring: color-mix(in srgb, {{ theme_obj.primary_600 }} 25%, transparent);
+            --auth-link: {{ theme_obj.primary_600 }};
+        {% endif %}
+    }
+</style>
+<script src='{% static "horilla_theme/assets/js/tailwindcdn.js" %}'></script>
+<script>
+    window.tailwind.config = {
+        theme: {
+            colors: {
+                white: '#FFFFFF',
+                primary: {
+                    50:  '{{ theme_obj.primary_50  | default:"#F8F6F2" }}',
+                    100: '{{ theme_obj.primary_100 | default:"#FBF5EA" }}',
+                    200: '{{ theme_obj.primary_200 | default:"#F6ECD8" }}',
+                    300: '{{ theme_obj.primary_300 | default:"#F4E9D2" }}',
+                    400: '{{ theme_obj.primary_400 | default:"#E6CE9F" }}',
+                    500: '{{ theme_obj.primary_500 | default:"#C9A063" }}',
+                    600: '{{ theme_obj.primary_600 | default:"#82612C" }}',
+                    700: '{{ theme_obj.primary_700 | default:"#6E5226" }}',
+                    800: '{{ theme_obj.primary_800 | default:"#5A421F" }}',
+                    900: '{{ theme_obj.primary_900 | default:"#3B2B15" }}',
+                },
+                brand: {
+                    50:  '{{ theme_obj.primary_50  | default:"#F8F6F2" }}',
+                    100: '{{ theme_obj.primary_100 | default:"#FBF5EA" }}',
+                    200: '{{ theme_obj.primary_200 | default:"#F6ECD8" }}',
+                    300: '{{ theme_obj.primary_300 | default:"#F4E9D2" }}',
+                    400: '{{ theme_obj.primary_400 | default:"#E6CE9F" }}',
+                    500: '{{ theme_obj.primary_500 | default:"#C9A063" }}',
+                    600: '{{ theme_obj.primary_600 | default:"#82612C" }}',
+                    700: '{{ theme_obj.primary_700 | default:"#6E5226" }}',
+                    800: '{{ theme_obj.primary_800 | default:"#5A421F" }}',
+                    900: '{{ theme_obj.primary_900 | default:"#3B2B15" }}',
+                },
+                dark: {
+                    50:  '{{ theme_obj.dark_50  | default:"#E7E5E1" }}',
+                    100: '{{ theme_obj.dark_100 | default:"#A9A7A2" }}',
+                    200: '{{ theme_obj.dark_200 | default:"#4D4C52" }}',
+                    300: '{{ theme_obj.dark_300 | default:"#2A2A30" }}',
+                    400: '{{ theme_obj.dark_400 | default:"#6B6A72" }}',
+                    500: '{{ theme_obj.dark_500 | default:"#16161A" }}',
+                    600: '{{ theme_obj.dark_600 | default:"#0B0B0D" }}',
+                },
+                secondary: {
+                    50:  '{{ theme_obj.secondary_50  | default:"#F2F8F8" }}',
+                    100: '{{ theme_obj.secondary_100 | default:"#E3F0EF" }}',
+                    200: '{{ theme_obj.secondary_200 | default:"#C4E0DE" }}',
+                    300: '{{ theme_obj.secondary_300 | default:"#96C6C3" }}',
+                    400: '{{ theme_obj.secondary_400 | default:"#5FA4A1" }}',
+                    500: '{{ theme_obj.secondary_500 | default:"#3D8684" }}',
+                    600: '{{ theme_obj.secondary_600 | default:"#2A6A6B" }}',
+                    700: '{{ theme_obj.secondary_700 | default:"#215556" }}',
+                    800: '{{ theme_obj.secondary_800 | default:"#1A4344" }}',
+                    900: '{{ theme_obj.secondary_900 | default:"#123031" }}',
+                },
+                color: { 600: '#374151' },
+                success: { light: "#86efac", DEFAULT: "#22c55e", dark: "#15803d" },
+                warning: { light: "#fde68a", DEFAULT: "#f59e0b", dark: "#b45309" },
+                danger:  { light: "#fca5a5", DEFAULT: "#ef4444", dark: "#b91c1c" },
+            },
+            extend: {
+                boxShadow: { card: "0px 0px 10px rgba(0, 0, 0, 0.05)" },
+                spacing: { 18: "4.5rem", 72: "18rem", 84: "21rem", 96: "24rem" },
+                borderRadius: { "4xl": "2rem", "5xl": "2.5rem" },
+                fontSize: { xxs: "0.625rem" },
+                height: { "screen-50": "50vh", "screen-75": "75vh" },
+            },
+        },
+    };
+</script>

@@ -13,11 +13,53 @@ from django.utils.translation import gettext_lazy as _
 from base.models import Company
 from horilla.models import HorillaModel
 
+ORVAHR_THEME_NAME = "OrvaHR Gold Theme"
+# Upstream Horilla's stock default; still shipped, no longer the default.
+CORAL_THEME_NAME = "Coral Red Theme (Default)"
+
 THEMES_DATA = [
+    {
+        # OrvaHR brand theme: gold (#C9A063) on charcoal, with a deep-teal
+        # secondary. primary_600 is the shade buttons/badges put WHITE text
+        # on, so it is a deep gold chosen for WCAG AA: white on #82612C is
+        # 5.68:1 and #82612C text on primary_100/200/300 tints is >= 4.7:1.
+        # The bright brand gold sits at primary_500 (charcoal text on it is
+        # 7.47:1). Created on existing installs by migration 0003.
+        "name": ORVAHR_THEME_NAME,
+        "description": "OrvaHR brand theme: warm gold on charcoal",
+        "is_default": True,
+        "primary_50": "#F8F6F2",
+        "primary_100": "#FBF5EA",
+        "primary_200": "#F6ECD8",
+        "primary_300": "#F4E9D2",
+        "primary_400": "#E6CE9F",
+        "primary_500": "#C9A063",
+        "primary_600": "#82612C",
+        "primary_700": "#6E5226",
+        "primary_800": "#5A421F",
+        "primary_900": "#3B2B15",
+        "dark_50": "#E7E5E1",
+        "dark_100": "#A9A7A2",
+        "dark_200": "#4D4C52",
+        "dark_300": "#2A2A30",
+        "dark_400": "#6B6A72",
+        "dark_500": "#16161A",
+        "dark_600": "#0B0B0D",
+        "secondary_50": "#F2F8F8",
+        "secondary_100": "#E3F0EF",
+        "secondary_200": "#C4E0DE",
+        "secondary_300": "#96C6C3",
+        "secondary_400": "#5FA4A1",
+        "secondary_500": "#3D8684",
+        "secondary_600": "#2A6A6B",
+        "secondary_700": "#215556",
+        "secondary_800": "#1A4344",
+        "secondary_900": "#123031",
+    },
     {
         "name": "Coral Red Theme (Default)",
         "description": "Warm coral-red based theme",
-        "is_default": True,
+        "is_default": False,
         "primary_50": "#f6f6f6",
         "primary_100": "#FFF5F1",  # f0f0f0
         "primary_200": "#FEF6F5",
@@ -577,7 +619,10 @@ class HorillaColorTheme(HorillaModel):
         default_theme = cls.objects.filter(is_default=True).first()
         if default_theme:
             return default_theme
-        return cls.objects.filter(name="Coral Red Theme (Default)").first()
+        return (
+            cls.objects.filter(name=ORVAHR_THEME_NAME).first()
+            or cls.objects.filter(name=CORAL_THEME_NAME).first()
+        )
 
 
 class CompanyTheme(HorillaModel):

@@ -25,10 +25,26 @@
 </style>
 
 <div id="mainHeader" class="oh-main-header flex justify-between items-center bg-white py-3 px-5 border-b border-b-dark-50 fixed z-40">
-    <div id="breadcrumbs-container">
-        {% if breadcrumbs %}
-            {% include "base/navbar_components/breadcrumbs_view.html" %}
-        {% endif %}
+    <div class="flex items-center min-w-0">
+        {# Opens the off-canvas sidebar drawer; only displayed below 1024px (see sidebar.html). #}
+        <button
+            type="button"
+            id="sidebarMobileBtn"
+            class="oh-sb-mobile-trigger"
+            aria-controls="sidebar"
+            aria-expanded="false"
+            aria-label="{% trans 'Open menu' %}"
+            title="{% trans 'Open menu' %}"
+        >
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+            </svg>
+        </button>
+        <div id="breadcrumbs-container">
+            {% if breadcrumbs %}
+                {% include "base/navbar_components/breadcrumbs_view.html" %}
+            {% endif %}
+        </div>
     </div>
 
     <div class="flex items-center gap-8">

@@ -3,10 +3,23 @@
 {% load horillafilters %}
 {% get_company as theme_obj %}
 <!DOCTYPE html>
-<html class="{% if request.session.theme == 'dark' %}dark{% endif %}">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" class="oh-sb-preload{% if request.session.theme == 'dark' %} dark{% endif %}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            /* Sidebar state before first paint (no layout shift). Expanded is
+               the server default; a stored "1" means the user collapsed it to
+               the icon rail. Migrates the old pin flag (sidebarPinned=false
+               meant collapsed). sidebar.html owns the toggle itself. */
+            (function () {
+                try {
+                    var v = localStorage.getItem("ohSidebarCollapsed");
+                    if (v === null && localStorage.getItem("sidebarPinned") === "false") v = "1";
+                    if (v === "1") document.documentElement.classList.add("oh-sb-collapsed");
+                } catch (_) {}
+            })();
+        </script>
         <title class="time-runner stop-runner">{{ white_label_company_name }}</title>
         <link rel="stylesheet" href="{% static 'build/css/sweetalert2.min.css' %}">
         <link rel="stylesheet" href="{% static 'build/css/summernote-lite.min.css' %}">
@@ -72,6 +85,10 @@
         <link
             rel="stylesheet"
             href="{% static 'horilla_theme/assets/css/v1_styles.css' %}?v=25"
+        >
+        <link
+            rel="stylesheet"
+            href="{% static 'horilla_theme/assets/css/orvahr-brand.css' %}?v=1"
         >
         <link rel="stylesheet" href="{% static 'build/css/pivottable.min.css' %}">
         {% with theme=theme_obj %}
@@ -288,7 +305,7 @@
         {% endblock %}
     </head>
 
-    <body class="bg-[{{theme_obj.primary_50}}] font-[Inter,_sans-serif] overflow-hidden {% if request.session.theme == 'dark' %}dark{% endif %}">
+    <body class="bg-[{{theme_obj.primary_50}}] font-orva overflow-hidden {% if request.session.theme == 'dark' %}dark{% endif %}">
         {% get_current_language_bidi as LANGUAGE_BIDI %}
         {% get_current_language as LANGUAGE_CODE %}
         <div hidden id="statiUrl" data-url='{% static "" %}'></div>
@@ -315,20 +332,6 @@
 
         <!-- Main Content -->
         <div class="oh-main-content h-screen overflow-auto">
-            <script>
-                (function () {
-                    try {
-                        var stored = localStorage.getItem('sidebarPinned');
-                        var pinned = stored === null ? true : stored === 'true';
-                        if (pinned) {
-                            var sidebarEl = document.getElementById('sidebar');
-                            var contentEl = document.currentScript.parentNode;
-                            if (sidebarEl) sidebarEl.classList.add('sidebar-pinned');
-                            if (contentEl) contentEl.style.marginLeft = '13rem';
-                        }
-                    } catch (_) {}
-                })();
-            </script>
             <div>
                 <!-- Include Header -->
                 <div id="header">

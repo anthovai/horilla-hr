@@ -1,0 +1,21 @@
+{% load static i18n %}
+{% comment %}
+    Left-hand charcoal brand panel of the auth pages (hidden below 960px,
+    where the card shows the logo instead). Decorative: the form never
+    depends on it.
+{% endcomment %}
+<aside class="orva-auth__brand" aria-hidden="true">
+    <img
+        class="orva-auth__brand-logo"
+        src="{% static 'horilla_theme/assets/img/brand/orvahr-logo-dark.png' %}"
+        alt=""
+        width="200"
+        height="42"
+    >
+    <div class="orva-auth__headline">
+        <span class="orva-auth__rule"></span>
+        <h2>{% blocktrans %}People, payroll and time, <span>in one place.</span>{% endblocktrans %}</h2>
+        <p>{% trans "HR built for Thai businesses: Social Security, withholding tax and leave rules handled the way your team already works." %}</p>
+    </div>
+    <div class="orva-auth__brand-foot">&copy; {% now "Y" %} OrvaHR</div>
+</aside>
