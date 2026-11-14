@@ -263,7 +263,8 @@ class HookClaimsTests(TestCase):
         with _routing_post(100, sso_employee_satang=75000) as post:
             compute_yearly_tax(self.filing, 600000, employee=self.emp, tax_year=2026)
         sso = [c for c in post.call_args_list if c.args[0] == "/v1/sso"]
-        self.assertEqual(sso[0].args[1], {"wage": 5000000})  # 600000/12 baht in satang
+        # 600000/12 baht in satang, with the rules chosen by the tax year.
+        self.assertEqual(sso[0].args[1], {"wage": 5000000, "as_of": "2026-12-31"})
         self.assertEqual(_annual_payload(post)["sso_paid_year"], 750 * 12 * 100)
 
     @override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="off")
@@ -284,3 +285,36 @@ class HookClaimsTests(TestCase):
         with CaptureQueriesContext(connection) as ctx:
             compute_yearly_tax(self.filing, 600000)
         return len(ctx)
+
+
+class AsOfTests(SimpleTestCase):
+    """The rule set must follow the tax year, not today's date."""
+
+    def test_as_of_is_the_last_day_of_the_tax_year(self):
+        self.assertEqual(orvahr_engine.as_of_for_year(2025), "2025-12-31")
+        self.assertIsNone(orvahr_engine.as_of_for_year(None))
+
+    @override_settings(**ON)
+    def test_annual_tax_sends_as_of_only_when_given(self):
+        with mock.patch.object(orvahr_engine, "_post", return_value={"tax": 0}) as post:
+            orvahr_engine.annual_tax(100000)
+            self.assertNotIn("as_of", post.call_args.args[1])
+            orvahr_engine.annual_tax(100000, as_of="2025-12-31")
+            self.assertEqual(post.call_args.args[1]["as_of"], "2025-12-31")
+
+
+@override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="active")
+class AsOfHookTests(TestCase):
+    def setUp(self):
+        load_tax_packs(["th_2026"])
+        self.filing = FilingStatus.objects.get(filing_status=THAI)
+
+    def test_the_hook_selects_rules_by_the_tax_year(self):
+        with engine_says(1000) as post:
+            compute_yearly_tax(self.filing, 600000, tax_year=2025)
+        self.assertEqual(post.call_args.args[1]["as_of"], "2025-12-31")
+
+    def test_without_a_tax_year_the_engine_default_applies(self):
+        with engine_says(1000) as post:
+            compute_yearly_tax(self.filing, 600000)
+        self.assertNotIn("as_of", post.call_args.args[1])

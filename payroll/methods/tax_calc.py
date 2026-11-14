@@ -176,10 +176,15 @@ def compute_yearly_tax(filing, yearly_income, employee=None, tax_year=None):
                 if tax_year is not None:
                     engine_claims = orvahr_engine.claims_for(employee, tax_year)
                 engine_sso = orvahr_engine.sso_paid_year_for(
-                    employee, gross_yearly_income
+                    employee,
+                    gross_yearly_income,
+                    as_of=orvahr_engine.as_of_for_year(tax_year),
                 )
             engine_tax = orvahr_engine.annual_tax(
-                gross_yearly_income, claims=engine_claims, sso_paid_year=engine_sso
+                gross_yearly_income,
+                claims=engine_claims,
+                sso_paid_year=engine_sso,
+                as_of=orvahr_engine.as_of_for_year(tax_year),
             )["tax_baht"]
         except orvahr_engine.EngineUnavailable as exc:
             if engine_mode == "active":

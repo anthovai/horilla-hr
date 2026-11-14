@@ -77,21 +77,30 @@ def _post(path, payload):
         raise EngineUnavailable(f"engine not reachable: {exc}") from exc
 
 
-def annual_tax(gross_yearly_income, claims=None, sso_paid_year=0.0):
+def as_of_for_year(tax_year):
+    """
+    The date that selects the engine's rule set for a tax year (its last day),
+    or None to let the engine use today. Without it a recalculation of an
+    earlier year would quietly use whichever rules are in force now.
+    """
+    return None if tax_year is None else f"{int(tax_year)}-12-31"
+
+
+def annual_tax(gross_yearly_income, claims=None, sso_paid_year=0.0, as_of=None):
     """
     The engine's yearly tax breakdown for an income in baht.
 
     Returns the engine's response with amounts converted back to baht under the
     key ``tax_baht`` (the raw satang response is kept as ``raw``).
     """
-    raw = _post(
-        "/v1/tax/annual",
-        {
-            "gross_income": round(float(gross_yearly_income) * 100),
-            "claims": claims or [],
-            "sso_paid_year": round(float(sso_paid_year) * 100),
-        },
-    )
+    payload = {
+        "gross_income": round(float(gross_yearly_income) * 100),
+        "claims": claims or [],
+        "sso_paid_year": round(float(sso_paid_year) * 100),
+    }
+    if as_of:
+        payload["as_of"] = as_of
+    raw = _post("/v1/tax/annual", payload)
     return {"tax_baht": raw["tax"] / 100, "raw": raw}
 
 
@@ -122,7 +131,7 @@ def claims_for(employee, year):
     return claims
 
 
-def sso_paid_year_for(employee, gross_yearly_income):
+def sso_paid_year_for(employee, gross_yearly_income, as_of=None):
     """
     Projected yearly employee social security in baht, or 0.0 if not applicable.
 
@@ -143,7 +152,10 @@ def sso_paid_year_for(employee, gross_yearly_income):
     if not enrolled:
         return 0.0
     wage = round(float(gross_yearly_income) / 12 * 100)
-    raw = _post("/v1/sso", {"wage": max(wage, 0)})
+    payload = {"wage": max(wage, 0)}
+    if as_of:
+        payload["as_of"] = as_of
+    raw = _post("/v1/sso", payload)
     return raw["employee"] * 12 / 100
 
 

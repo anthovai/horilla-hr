@@ -141,3 +141,19 @@ class ShadowCumulativeTests(TestCase):
             )
         self.assertIsNone(out)
         post.assert_not_called()
+
+
+@override_settings(**ON, ORVAHR_PAYROLL_ENGINE_MODE="shadow")
+class AsOfShadowTests(TestCase):
+    def test_the_pay_period_date_selects_the_rules(self):
+        load_tax_packs(["th_2026"])
+        filing = FilingStatus.objects.get(filing_status=THAI)
+        emp = make_employee(company=make_company("AsOf Co"), email="asof@test.horilla")
+        with mock.patch.object(
+            orvahr_engine, "_post", return_value={"withhold_this_month": 1}
+        ) as post:
+            orvahr_ytd.shadow_cumulative(
+                emp, filing, 50000, D(2026, 2, 1), D(2026, 2, 28), 1.0
+            )
+        withholding_call = [c for c in post.call_args_list if c.args[0].endswith("monthly")][0]
+        self.assertEqual(withholding_call.args[1]["as_of"], "2026-02-28")

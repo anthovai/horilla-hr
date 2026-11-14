@@ -82,7 +82,10 @@ def shadow_cumulative(employee, filing, income, start_date, end_date, legacy_tax
         )
         claims = orvahr_engine.claims_for(employee, end_date.year)
         # Enrolled employees only (0.0 otherwise); a month's worth, per prior payslip.
-        monthly_sso = orvahr_engine.sso_paid_year_for(employee, float(income) * 12) / 12
+        as_of = end_date.isoformat()
+        monthly_sso = (
+            orvahr_engine.sso_paid_year_for(employee, float(income) * 12, as_of=as_of) / 12
+        )
         result = orvahr_engine.monthly_withholding(
             {
                 "month": end_date.month,
@@ -92,6 +95,7 @@ def shadow_cumulative(employee, filing, income, start_date, end_date, legacy_tax
                 "ytd_withheld": _satang(ytd_withheld),
                 "ytd_sso": _satang(monthly_sso * prior),
                 "claims": claims,
+                "as_of": as_of,
             }
         )
     except Exception as exc:  # shadow must never break a payroll run
