@@ -27,6 +27,7 @@ from django.core.exceptions import ImproperlyConfigured
 SAAS_SHARED_APPS = [
     "django_tenants",
     "orvahr_saas",
+    "orvahr_billing",
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "django.contrib.sessions",
@@ -37,7 +38,12 @@ SAAS_SHARED_APPS = [
 ]
 
 # Installed apps that must NOT get tables in tenant schemas.
-SAAS_PUBLIC_ONLY_APPS = {"django_tenants", "orvahr_saas", "django_apscheduler"}
+SAAS_PUBLIC_ONLY_APPS = {
+    "django_tenants",
+    "orvahr_saas",
+    "orvahr_billing",
+    "django_apscheduler",
+}
 
 _POSTGRES_ENGINES = {
     "django.db.backends.postgresql",
@@ -71,12 +77,12 @@ def apply_multi_tenant(ns):
     installed = [
         app
         for app in ns["INSTALLED_APPS"]
-        if app not in ("django_tenants", "orvahr_saas")
+        if app not in ("django_tenants", "orvahr_saas", "orvahr_billing")
     ]
     # orvahr_saas BEFORE django_tenants: Django lets the earlier app win when
     # two apps ship a management command of the same name, and both ship
     # create_tenant -- ours also provisions the company and admin user.
-    ns["INSTALLED_APPS"] = ["orvahr_saas", "django_tenants", *installed]
+    ns["INSTALLED_APPS"] = ["orvahr_saas", "django_tenants", "orvahr_billing", *installed]
     ns["SHARED_APPS"] = list(SAAS_SHARED_APPS)
     ns["TENANT_APPS"] = [app for app in installed if app not in SAAS_PUBLIC_ONLY_APPS]
     ns["TENANT_MODEL"] = "orvahr_saas.Tenant"
