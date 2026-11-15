@@ -924,7 +924,21 @@ def login_user(request):
         if field_errors:
             return _login_failed(request, username, field_errors)
 
-        user = authenticate(request, username=username, password=password)
+        # HR hands out employee badge IDs, so accept one in place of the
+        # account username (which defaults to the work email). A value that
+        # matches no badge falls through unchanged, so email logins and
+        # custom usernames keep working.
+        login_name = username
+        if "@" not in username:
+            badge_user = (
+                HorillaUser.objects.filter(employee_get__badge_id=username)
+                .values_list("username", flat=True)
+                .first()
+            )
+            if badge_user:
+                login_name = badge_user
+
+        user = authenticate(request, username=login_name, password=password)
 
         if not user:
             # One message for every failure mode. Distinguishing "blocked" from

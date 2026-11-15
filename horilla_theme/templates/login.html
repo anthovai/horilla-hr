@@ -60,7 +60,7 @@
                                 value="{{ form_username }}"
                                 autocomplete="username"
                                 {% if field_errors.username %}autofocus aria-invalid="true" aria-describedby="username-error"{% elif not form_username %}autofocus{% endif %}
-                                placeholder="{% trans 'e.g. adam.luis@example.com' %}"
+                                placeholder="{% trans 'Employee ID or email, e.g. PEP0001' %}"
                                 class="w-full mt-1"
                             >
                             {% if field_errors.username %}
