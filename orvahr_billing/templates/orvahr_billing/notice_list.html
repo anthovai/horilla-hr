@@ -1,0 +1,52 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Payment notices" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Payment notices" %}</h1>
+<p class="muted">{% translate "Transfers reported by customers on their subscription pages. Check the slip against the bank statement, then confirm (records the payment and issues the receipt) or reject with a reason the customer will see." %}</p>
+{% with accounts=confirm_form.fields.bank_account.queryset %}
+{% if not accounts %}<div class="msg error">{% translate "No active bank account: add one under Seller settings before confirming payments." %}</div>{% endif %}
+{% for row in rows %}{% with n=row.notice %}
+<div class="card" id="notice-{{ n.token }}">
+  <div class="wrap"><table>
+    <tr><th>{% translate "Customer" %}</th><th>{% translate "Invoice" %}</th><th class="num">{% translate "Amount" %}</th><th class="num">{% translate "WHT" %}</th><th>{% translate "Transfer date" %}</th><th>{% translate "Reference" %}</th><th>{% translate "Submitted" %}</th><th>{% translate "Slip" %}</th></tr>
+    <tr>
+      <td><a href="{% url 'orvahr_billing:tenant-billing' n.tenant.pk %}">{{ n.tenant.name }}</a> <span class="muted">{{ n.tenant.schema_name }}</span></td>
+      <td>{% if row.invoice %}<a href="{% url 'orvahr_billing:document-detail' row.invoice.pk %}">{{ n.invoice_number }}</a> <span class="muted">{% translate "outstanding" %} {{ row.invoice.outstanding|floatformat:"2g" }}</span>{% else %}{{ n.invoice_number }} <span class="badge b-overdue">{% translate "Invoice not found" %}</span>{% endif %}</td>
+      <td class="num">{{ n.amount|floatformat:"2g" }}</td>
+      <td class="num">{{ n.wht_amount|floatformat:"2g" }}{% if n.wht_certificate_no %}<br><span class="muted">{{ n.wht_certificate_no }}</span>{% endif %}</td>
+      <td>{{ n.transfer_date|date:"Y-m-d" }}</td>
+      <td>{{ n.reference|default:"—" }}</td>
+      <td>{{ n.submitted_at|date:"Y-m-d H:i" }}<br><span class="muted">{{ n.submitted_by }}</span></td>
+      <td><a href="{% url 'orvahr_billing:notice-slip' n.tenant.pk n.token %}" target="_blank" rel="noopener">{% translate "View slip" %}</a></td>
+    </tr>
+  </table></div>
+  {% if n.note %}<p><strong>{% translate "Customer note" %}:</strong> {{ n.note }}</p>{% endif %}
+  <div class="row">
+    <form method="post" action="{% url 'orvahr_billing:notice-confirm' n.tenant.pk n.token %}" class="card">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      <h2>{% translate "Confirm" %}</h2>
+      <label for="bank-{{ n.token }}">{% translate "Received into" %}</label>
+      <select name="bank_account" id="bank-{{ n.token }}" required>
+        {% if accounts|length != 1 %}<option value="">—</option>{% endif %}
+        {% for account in accounts %}<option value="{{ account.pk }}">{{ account }}</option>{% endfor %}
+      </select>
+      <label for="date-{{ n.token }}">{% translate "Payment date" %}</label>
+      <input type="date" name="payment_date" id="date-{{ n.token }}" value="{{ n.transfer_date|date:'Y-m-d' }}">
+      <label for="note-{{ n.token }}">{% translate "Note" %}</label>
+      <input type="text" name="note" id="note-{{ n.token }}" maxlength="500">
+      <p><button class="btn" type="submit">{% translate "Confirm payment and issue receipt" %}</button></p>
+    </form>
+    <form method="post" action="{% url 'orvahr_billing:notice-reject' n.tenant.pk n.token %}" class="card">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      <h2>{% translate "Reject" %}</h2>
+      <label for="reason-{{ n.token }}">{% translate "Reason" %}</label>
+      <input type="text" name="reason" id="reason-{{ n.token }}" maxlength="500" required>
+      <p><button class="btn danger" type="submit">{% translate "Reject notice" %}</button></p>
+    </form>
+  </div>
+</div>
+{% endwith %}{% empty %}
+<p class="muted">{% translate "No pending payment notices." %}</p>
+{% endfor %}
+{% endwith %}
+{% endblock %}

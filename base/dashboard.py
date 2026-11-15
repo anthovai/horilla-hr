@@ -17,6 +17,52 @@ from django.views.decorators.http import require_http_methods
 
 from horilla.decorators import login_required
 
+# ---------------------------------------------------------------------------
+# SaaS plan gating of dashboard widgets. With ORVAHR_MULTI_TENANT off (or for
+# a tenant without a plan) every module counts as enabled and nothing is
+# queried.
+# ---------------------------------------------------------------------------
+
+
+class _AllModules:
+    def __getitem__(self, label):
+        return True
+
+    def __contains__(self, label):
+        return True
+
+
+_ALL_MODULES = _AllModules()
+
+
+def plan_modules():
+    """``plan_modules.leave`` etc. for the dashboard templates."""
+    from horilla.tenancy import is_multi_tenant
+
+    if not is_multi_tenant():
+        return _ALL_MODULES
+    from orvahr_saas.plans import ModuleFlags
+
+    return ModuleFlags()
+
+
+def plan_module_required(label):
+    """A dashboard JSON endpoint of ``label``: 403 when the plan lacks it."""
+    import functools
+
+    def decorator(view):
+        @functools.wraps(view)
+        def wrapper(request, *args, **kwargs):
+            if not plan_modules()[label]:
+                return JsonResponse(
+                    {"code": "module_not_in_plan", "module": label}, status=403
+                )
+            return view(request, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
 
 def _safe_url(url_name, query=""):
     """Reverse a URL name with an optional query string; return '#' if the URL is not registered."""
@@ -461,6 +507,7 @@ def main_dashboard_view(request):
         "employee_chart_prefs": employee_chart_prefs,
         "home_role": home_role,
         "role_default_prefs": json.dumps(role_default_prefs(home_role)),
+        "plan_modules": plan_modules(),
     }
     context.update(_company_scope_context(request))
     context.update(_get_setup_checklist_context(request))
@@ -664,6 +711,7 @@ def dashboard_kpi_data(request):
 
 
 @login_required
+@plan_module_required("leave")
 def dashboard_leave_breakdown(request):
     """Leave type breakdown (approved vs pending) for the dashboard date range.
 
@@ -991,6 +1039,14 @@ def dashboard_birthdays_anniversaries(request):
     )
 
 
+_PENDING_MODULES = (
+    ("leave_requests", "leave"),
+    ("attendance_requests", "attendance"),
+    ("asset_requests", "asset"),
+    ("reimbursements", "payroll"),
+)
+
+
 @login_required
 def dashboard_pending_approvals(request):
     """Pending items awaiting the logged-in user's approval.
@@ -1201,6 +1257,12 @@ def dashboard_pending_approvals(request):
     except Exception:
         pending["reimbursements"] = 0
 
+    # SaaS: modules outside the tenant's plan get no card (and no count).
+    flags = plan_modules()
+    for key, label in _PENDING_MODULES:
+        if not flags[label]:
+            pending.pop(key, None)
+
     pending["total"] = sum(pending.values())
 
     return JsonResponse({"pending": pending, "is_restricted": is_restricted})
@@ -1410,6 +1472,7 @@ def _open_tickets_in_range(request):
 
 
 @login_required
+@plan_module_required("helpdesk")
 def dashboard_ticket_priority(request):
     """Open tickets by priority (high first), split by status, with overdue counts."""
     user = request.user
@@ -1462,6 +1525,7 @@ def dashboard_ticket_priority(request):
 
 
 @login_required
+@plan_module_required("helpdesk")
 def dashboard_overdue_tickets(request):
     """Open tickets past their deadline, most overdue first (top 10 plus the full count)."""
     user = request.user
@@ -1516,6 +1580,7 @@ def dashboard_overdue_tickets(request):
 
 
 @login_required
+@plan_module_required("attendance")
 def dashboard_attendance_overview(request):
     from attendance.views.dashboard import dashboard_attendance
 
@@ -1532,6 +1597,7 @@ def dashboard_attendance_overview(request):
 
 
 @login_required
+@plan_module_required("leave")
 def dashboard_leave_trends(request):
     from leave.views import leave_over_period
 
@@ -1543,6 +1609,7 @@ def dashboard_leave_trends(request):
 
 
 @login_required
+@plan_module_required("recruitment")
 def dashboard_hiring_timeline(request):
     from recruitment.views.dashboard import dashboard_hiring
 
@@ -1552,6 +1619,7 @@ def dashboard_hiring_timeline(request):
 
 
 @login_required
+@plan_module_required("recruitment")
 def dashboard_recruitment_by_stage(request):
     """Stacked-by-recruitment pipeline chart (legacy recruitment-pipeline JSON)."""
     from recruitment.views.dashboard import dashboard_pipeline

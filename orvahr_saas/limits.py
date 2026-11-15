@@ -10,11 +10,23 @@ public schema and for a tenant without a limit, nothing is queried.
 A ``Employee.save()`` that hits the limit outside a form raises
 ``EmployeeLimitReached``; ``orvahr_saas.middleware.PlanGateMiddleware`` turns
 it into a friendly page / JSON answer.
+
+Concurrency: counting and inserting are two statements, so two requests could
+both count ``limit - 1`` and both insert. ``employee_limit_guard()`` closes
+that gap: when a limit applies it opens a transaction and takes a
+transaction-scoped PostgreSQL advisory lock keyed by the tenant's schema, so
+"count, then insert" runs one tenant-wide creation at a time; the second
+waits until the first commits and then counts its row. ``Employee.save()``
+and the bulk employee import run inside it. Without a limit (and with the
+flag off) it is a no-op that issues no query.
 """
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+
 from django.core.exceptions import ValidationError
+from django.db import connection, transaction
 from django.utils.translation import gettext as _
 
 from horilla.tenancy import current_tenant, in_public_schema, is_multi_tenant
@@ -49,6 +61,40 @@ def employee_limit():
         return tenant.employee_limit
     except AttributeError:  # FakeTenant from schema_context(): no row
         return None
+
+
+# Advisory lock namespace (first key of the two-int form): "OE" for "OrvaHR
+# employees". The second key is hashtext(<schema name>).
+_LOCK_CLASS = 0x4F45
+
+
+def _lock_employee_count():
+    """Take the tenant's employee-limit lock until the transaction ends."""
+    if connection.vendor != "postgresql":  # pragma: no cover - SaaS is PG only
+        return
+    schema = getattr(connection, "schema_name", None) or ""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT pg_advisory_xact_lock(%s, hashtext(%s))", [_LOCK_CLASS, schema]
+        )
+
+
+@contextmanager
+def employee_limit_guard():
+    """
+    Serialise "check the ceiling, then add employees" per tenant.
+
+    No-op (no transaction, no query) unless a limit applies to the active
+    tenant. Otherwise runs the block in ``transaction.atomic()`` holding the
+    tenant's advisory lock, which is released when the outermost transaction
+    commits or rolls back -- i.e. once the new rows are visible to others.
+    """
+    if employee_limit() is None:
+        yield
+        return
+    with transaction.atomic():
+        _lock_employee_count()
+        yield
 
 
 def active_employee_count():

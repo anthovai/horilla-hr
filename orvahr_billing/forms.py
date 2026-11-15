@@ -292,3 +292,28 @@ class DocumentFilterForm(forms.Form):
     q = forms.CharField(label=_("Number or customer"), required=False)
     date_from = forms.DateField(label=_("From"), widget=DATE, required=False)
     date_to = forms.DateField(label=_("To"), widget=DATE, required=False)
+
+
+class NoticeConfirmForm(forms.Form):
+    """Operator confirms a tenant's payment notice (orvahr_account)."""
+
+    bank_account = forms.ModelChoiceField(
+        label=_("Received into"), queryset=BankAccount.objects.none()
+    )
+    payment_date = forms.DateField(
+        label=_("Payment date"),
+        widget=DATE,
+        required=False,
+        help_text=_("Leave empty to use the transfer date of the notice."),
+    )
+    note = forms.CharField(label=_("Note"), max_length=500, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["bank_account"].queryset = BankAccount.objects.filter(
+            is_active=True
+        )
+
+
+class NoticeRejectForm(forms.Form):
+    reason = forms.CharField(label=_("Reason"), max_length=500)

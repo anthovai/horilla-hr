@@ -30,6 +30,7 @@
   .row{display:flex;gap:16px;flex-wrap:wrap} .row>.card{flex:1;min-width:280px}
   .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end} .filters label{font-weight:400;margin:0}
   .inline{display:inline}
+  .nav-count{background:#fff;color:var(--brand);font-weight:600}
 </style>
 </head>
 <body>
@@ -37,6 +38,7 @@
   <strong>OrvaHR {% translate "Billing" %}</strong>
   <a href="{% url 'orvahr_billing:document-list' %}">{% translate "Documents" %}</a>
   <a href="{% url 'orvahr_billing:invoice-create' %}">{% translate "New invoice" %}</a>
+  <a href="{% url 'orvahr_billing:notice-list' %}">{% translate "Payment notices" %}{% if pending_notice_count %} <span class="badge nav-count" title="{% translate 'Waiting for confirmation' %}">{{ pending_notice_count }}</span>{% endif %}</a>
   <a href="{% url 'orvahr_billing:tenant-list' %}">{% translate "Customers" %}</a>
   <a href="{% url 'orvahr_billing:price-list' %}">{% translate "Prices" %}</a>
   <a href="{% url 'orvahr_billing:seller-settings' %}">{% translate "Seller settings" %}</a>

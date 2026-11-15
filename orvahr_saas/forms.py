@@ -171,3 +171,10 @@ class ExtendTrialForm(forms.Form):
         label=_("Trial ends on"),
         widget=forms.DateInput(attrs={"type": "date"}),
     )
+
+
+class PlanRequestDecisionForm(forms.Form):
+    """Operator decision on a tenant's plan change request (orvahr_account)."""
+
+    note = forms.CharField(label=_("Note"), max_length=500, required=False)
+    apply = forms.BooleanField(label=_("Apply the new plan now"), required=False)

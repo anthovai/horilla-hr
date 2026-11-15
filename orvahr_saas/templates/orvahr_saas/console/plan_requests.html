@@ -1,0 +1,41 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Plan change requests" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Plan change requests" %}</h1>
+<p class="muted">{% translate "Requests sent by tenant administrators from their subscription page. Approving with “apply now” moves the tenant to the requested plan (and clears any employee limit override). The billing subscription price is not changed: update it on the tenant's billing page." %}</p>
+{% for row in rows %}{% with r=row.req %}
+<div class="card" id="plan-request-{{ r.token }}">
+  <div class="wrap"><table>
+    <tr><th>{% translate "Tenant" %}</th><th>{% translate "Current plan" %}</th><th>{% translate "Requested plan" %}</th><th>{% translate "Requested" %}</th><th>{% translate "Billing" %}</th></tr>
+    <tr>
+      <td><a href="{% url 'saas-console-tenant' r.tenant.pk %}">{{ r.tenant.name }}</a> <span class="muted">{{ r.tenant.schema_name }}</span></td>
+      <td>{% if row.current_plan %}{{ row.current_plan.display_name }}{% else %}{{ r.current_plan_code|default:"—" }}{% endif %}</td>
+      <td><strong>{% if row.requested_plan %}{{ row.requested_plan.display_name }}{% else %}{{ r.requested_plan_code }} <span class="badge s-failed">{% translate "Plan not found" %}</span>{% endif %}</strong></td>
+      <td>{{ r.requested_at|date:"Y-m-d H:i" }}<br><span class="muted">{{ r.requested_by }}</span></td>
+      <td>{% if billing_installed %}<a href="{% url 'orvahr_billing:tenant-billing' r.tenant.pk %}">{% translate "Billing subscription" %}</a>{% else %}—{% endif %}</td>
+    </tr>
+  </table></div>
+  {% if r.note %}<p><strong>{% translate "Tenant note" %}:</strong> {{ r.note }}</p>{% endif %}
+  <div class="row">
+    <form method="post" action="{% url 'saas-console-plan-request-approve' r.tenant.pk r.token %}" class="card">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      <h2>{% translate "Approve" %}</h2>
+      <label><input type="checkbox" name="apply" value="1" checked> {% translate "Apply the new plan now" %}</label>
+      <label for="approve-note-{{ r.token }}">{% translate "Note" %}</label>
+      <input type="text" name="note" id="approve-note-{{ r.token }}" maxlength="500">
+      <p class="muted">{% translate "Remember to update the billing subscription price." %}{% if billing_installed %} <a href="{% url 'orvahr_billing:tenant-billing' r.tenant.pk %}">{% translate "Open billing" %}</a>{% endif %}</p>
+      <p><button class="btn" type="submit">{% translate "Approve request" %}</button></p>
+    </form>
+    <form method="post" action="{% url 'saas-console-plan-request-reject' r.tenant.pk r.token %}" class="card">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      <h2>{% translate "Reject" %}</h2>
+      <label for="reject-note-{{ r.token }}">{% translate "Note" %}</label>
+      <input type="text" name="note" id="reject-note-{{ r.token }}" maxlength="500">
+      <p><button class="btn danger" type="submit">{% translate "Reject request" %}</button></p>
+    </form>
+  </div>
+</div>
+{% endwith %}{% empty %}
+<p class="muted">{% translate "No pending plan change requests." %}</p>
+{% endfor %}
+{% endblock %}

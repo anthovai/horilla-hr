@@ -13,6 +13,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 
+from base.dashboard import plan_module_required, plan_modules
 from base.templatetags.horillafilters import is_check_in_enabled
 from horilla.decorators import login_required
 
@@ -83,6 +84,8 @@ def ess_dashboard(request):
             "can_switch_to_main_dashboard": can_see_analytics_home(
                 resolve_home_role(request)
             ),
+            # SaaS: widgets of modules outside the tenant's plan are left out.
+            "plan_modules": plan_modules(),
         },
     )
 
@@ -236,6 +239,7 @@ def ess_kpi_data(request):
 
 
 @login_required
+@plan_module_required("leave")
 def ess_leave_balance(request):
     """GET /my-dashboard/api/leave-balance/?year=&month= — leave balance with days taken in the selected month."""
     from leave.models import AvailableLeave, LeaveRequest
@@ -285,6 +289,7 @@ def ess_leave_balance(request):
 
 
 @login_required
+@plan_module_required("leave")
 def ess_leave_requests(request):
     """GET /my-dashboard/api/leave-requests/?year=&month= — leave requests overlapping the picker month."""
     from leave.models import LeaveRequest
@@ -339,6 +344,7 @@ def ess_leave_requests(request):
 
 
 @login_required
+@plan_module_required("attendance")
 def ess_monthly_summary(request):
     """GET /my-dashboard/api/monthly-summary/ — the attendance monthly summary calendar for
     the logged-in employee over the selected period, read-only (no regularising)."""
@@ -363,6 +369,7 @@ def ess_monthly_summary(request):
 
 
 @login_required
+@plan_module_required("attendance")
 def ess_attendance_calendar(request):
     """GET /my-dashboard/api/attendance-calendar/?year=&month= — day-by-day attendance status."""
 
@@ -496,6 +503,7 @@ def ess_attendance_calendar(request):
 
 
 @login_required
+@plan_module_required("attendance")
 def ess_work_hours_month(request):
     """GET /my-dashboard/api/work-hours-month/?from_date=&to_date= — daily hours across the selected month."""
     employee = _get_employee(request)
@@ -547,6 +555,7 @@ def ess_work_hours_month(request):
 
 
 @login_required
+@plan_module_required("payroll")
 def ess_payslips(request):
     """GET /my-dashboard/api/payslips/?year=&month= — last 6 confirmed/paid payslips ending on or before the selected month."""
     employee = _get_employee(request)
@@ -588,6 +597,7 @@ def ess_payslips(request):
 
 
 @login_required
+@plan_module_required("pms")
 def ess_objectives(request):
     """GET /my-dashboard/api/objectives/?year=&month= — open PMS objectives of the logged-in employee."""
 
@@ -828,6 +838,7 @@ def ess_upcoming(request):
 
 
 @login_required
+@plan_module_required("recruitment")
 def ess_interviews(request):
     """GET /my-dashboard/api/interviews/ — pending interviews (today onwards) where the
     logged-in employee is an interviewer."""

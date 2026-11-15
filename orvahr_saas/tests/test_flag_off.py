@@ -70,3 +70,67 @@ class FlagOffTests(TestCase):
             [{"Email": f"bulk{i}@x.test", "Phone": "0800000000"} for i in range(3)]
         )
         self.assertEqual(len(created), 3)
+
+
+class FlagOffConcurrencyAndDashboardTests(TestCase):
+    """The employee-limit lock and the dashboard plan gating are no-ops."""
+
+    def test_limit_guard_opens_no_transaction_and_runs_no_query(self):
+        from orvahr_saas.limits import employee_limit_guard
+
+        # Inside TestCase an atomic() would show up as a SAVEPOINT query.
+        with self.assertNumQueries(0):
+            with employee_limit_guard():
+                pass
+
+    def test_plan_modules_all_enabled_without_queries(self):
+        from base.dashboard import plan_modules
+        from orvahr_saas.plans import MODULE_CATALOG, ModuleFlags
+
+        with self.assertNumQueries(0):
+            flags = plan_modules()
+            for label in MODULE_CATALOG:
+                self.assertTrue(flags[label])
+            self.assertTrue(all(ModuleFlags().as_dict().values()))
+
+    def test_dashboards_show_every_module_widget(self):
+        from horilla.testkit.factories import make_company, make_employee, make_user
+
+        user = make_user("flagoff-dash", is_superuser=True)
+        make_employee(
+            company=make_company("Flag Co"), email="flagoff-dash@x.test", user=user
+        )
+        self.client.force_login(user)
+        html = self.client.get("/dashboard/").content.decode()
+        for chart in (
+            "leave_trends",
+            "leave_breakdown",
+            "attendance_overview",
+            "recruitment_pipeline",
+            "hiring_timeline",
+            "ticket_priority",
+            "overdue_tickets",
+        ):
+            self.assertIn(f'data-chart-id="{chart}"', html, chart)
+        self.assertIn("?open_tab=2&asset_request_status=Requested", html)
+        self.assertIn("&type=reimbursement&filter_applied=1", html)
+        self.assertIn("Checked In Today", html)
+        pending = self.client.get("/dashboard/api/pending-approvals/").json()["pending"]
+        for key in (
+            "leave_requests",
+            "attendance_requests",
+            "asset_requests",
+            "reimbursements",
+        ):
+            self.assertIn(key, pending)
+        self.assertNotEqual(
+            self.client.get("/dashboard/api/recruitment-by-stage/").status_code, 403
+        )
+        ess = self.client.get("/my-dashboard/").content.decode()
+        self.assertIn('id="essInterviewsPanel"', ess)
+        self.assertIn('id="essMonthlySummary"', ess)
+        self.assertIn("kpiCard('purple'", ess)
+
+    def test_operator_pages_not_mounted(self):
+        for path in ("/billing/notices/", "/console/plan-requests/"):
+            self.assertEqual(self.client.get(path).status_code, 404, path)

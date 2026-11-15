@@ -25,4 +25,20 @@ urlpatterns = [
     path("tenants/", views.tenant_list, name="tenant-list"),
     path("tenants/<int:pk>/", views.tenant_billing, name="tenant-billing"),
     path("prices/", views.price_list, name="price-list"),
+    path("notices/", views.notice_list, name="notice-list"),
+    path(
+        "notices/<int:tenant_pk>/<uuid:token>/slip/",
+        views.notice_slip,
+        name="notice-slip",
+    ),
+    path(
+        "notices/<int:tenant_pk>/<uuid:token>/confirm/",
+        views.notice_confirm,
+        name="notice-confirm",
+    ),
+    path(
+        "notices/<int:tenant_pk>/<uuid:token>/reject/",
+        views.notice_reject,
+        name="notice-reject",
+    ),
 ]

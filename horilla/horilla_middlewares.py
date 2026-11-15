@@ -107,6 +107,12 @@ class MethodNotAllowedMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         if isinstance(response, HttpResponseNotAllowed):
+            from horilla.tenancy import in_public_schema
+
+            # SaaS control plane (console, billing): 405.html needs the
+            # context processors, which query tenant tables public lacks.
+            if in_public_schema():
+                return response
             return render(request, "405.html", status=405)
         return response
 

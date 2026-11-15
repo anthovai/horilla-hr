@@ -39,6 +39,7 @@ from orvahr_account.forms import (
     billing_profile_form_class,
 )
 from orvahr_account.models import MANAGE_PERMISSION, PaymentNotice, PlanChangeRequest
+from orvahr_account.services import invalidate_pending_counts
 
 logger = logging.getLogger(__name__)
 
@@ -199,6 +200,7 @@ def payment_notify(request, tenant):
                 note=data.get("note", ""),
                 submitted_by=request.user,
             )
+            invalidate_pending_counts()  # operator nav badge
             messages.success(
                 request,
                 _("Thank you. We will confirm your payment and issue the receipt."),
@@ -267,6 +269,7 @@ def plan_change(request, tenant):
                 note=form.cleaned_data.get("note", ""),
                 requested_by=request.user,
             )
+            invalidate_pending_counts()  # operator nav badge
             messages.success(
                 request, _("Your request was sent. OrvaHR will contact you shortly.")
             )
@@ -320,5 +323,6 @@ def plan_change_cancel(request, tenant, token):
     ).update(status=PlanChangeRequest.STATUS_CANCELLED)
     if not updated:
         raise Http404
+    invalidate_pending_counts()
     messages.info(request, _("The plan change request was cancelled."))
     return redirect("orvahr_account:plan-change")

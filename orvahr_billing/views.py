@@ -7,6 +7,7 @@ processors query tenant tables the public schema does not have. The CSRF
 token and messages are passed explicitly instead.
 """
 
+import logging
 import mimetypes
 import os
 
@@ -32,6 +33,8 @@ from orvahr_billing.forms import (
     EmailForm,
     InvoiceForm,
     LineFormSet,
+    NoticeConfirmForm,
+    NoticeRejectForm,
     PaymentForm,
     PlanPriceForm,
     SellerSettingsForm,
@@ -52,6 +55,8 @@ from orvahr_billing.models import (
 from orvahr_billing.money import wht_on
 from orvahr_billing.pdf import LANGUAGES, render_pdf
 
+logger = logging.getLogger(__name__)
+
 
 def _render(request, template, context=None, status=200):
     from django.contrib.messages import get_messages
@@ -61,9 +66,44 @@ def _render(request, template, context=None, status=200):
         "operator": getattr(request, "operator", None),
         "messages": list(get_messages(request)),
         "request_path": request.path,
+        "pending_notice_count": _pending_notice_count(),
     }
     ctx.update(context or {})
     return HttpResponse(render_to_string(template, ctx), status=status)
+
+
+def _pending_notice_count():
+    """Nav badge: tenants' pending payment notices (0 if unavailable)."""
+    try:
+        from orvahr_account.services import pending_payment_notice_count
+
+        return pending_payment_notice_count()
+    except Exception:  # noqa: BLE001 - a badge must never break a page
+        logger.exception("Could not count pending payment notices")
+        return 0
+
+
+def _audit(request, action, *, tenant=None, **detail):
+    """
+    Operator action trail: billing has none of its own, so this writes to the
+    console's ``orvahr_saas.OperatorAction`` (shown at /console/audit/).
+    """
+    try:
+        from orvahr_saas.models import ConsoleOperator
+        from orvahr_saas.services import record_action
+    except ImportError:  # pragma: no cover - billing always runs with orvahr_saas
+        return
+    from horilla.client_ip import client_ip
+
+    operator = getattr(request, "operator", None)
+    record_action(
+        action,
+        operator=operator if isinstance(operator, ConsoleOperator) else None,
+        actor_label=operator_label(request) or "billing",
+        tenant=tenant,
+        ip_address=client_ip(request),
+        **detail,
+    )
 
 
 def _redirect(name, *args):
@@ -459,3 +499,153 @@ def price_list(request):
         "orvahr_billing/price_list.html",
         {"form": form, "prices": PlanPrice.objects.all()},
     )
+
+
+# -------------------------------------------------------- payment notices
+# Tenants report transfers on their subscription pages (orvahr_account); the
+# notices live in each tenant's schema and are read / settled through
+# orvahr_account.services. A row is addressed only by (tenant pk, token).
+
+# Slip types shown in the browser; anything else is downloaded.
+_INLINE_SLIP_TYPES = {"application/pdf", "image/png", "image/jpeg"}
+
+
+def _notice_tenant(tenant_pk):
+    return get_object_or_404(
+        _tenant_model().objects.exclude(schema_name="public"), pk=tenant_pk
+    )
+
+
+@operator_required
+def notice_list(request):
+    from orvahr_account.services import pending_payment_notices
+
+    notices = pending_payment_notices()
+    numbers = {n.invoice_number for n in notices}
+    invoices = {
+        (doc.tenant_id, doc.number): doc
+        for doc in BillingDocument.objects.filter(
+            doc_type=DocType.INVOICE, number__in=numbers
+        )
+    }
+    rows = [
+        {
+            "notice": n,
+            "invoice": invoices.get((n.tenant.pk, n.invoice_number)),
+        }
+        for n in notices
+    ]
+    return _render(
+        request,
+        "orvahr_billing/notice_list.html",
+        {
+            "rows": rows,
+            "confirm_form": NoticeConfirmForm(),
+            "reject_form": NoticeRejectForm(),
+        },
+    )
+
+
+@operator_required
+def notice_slip(request, tenant_pk, token):
+    from orvahr_account.services import NoticeError, open_payment_slip
+
+    tenant = _notice_tenant(tenant_pk)
+    try:
+        data, name, content_type = open_payment_slip(tenant, str(token))
+    except (NoticeError, OSError) as exc:
+        raise Http404 from exc
+    if content_type not in _INLINE_SLIP_TYPES:
+        content_type, disposition = "application/octet-stream", "attachment"
+    else:
+        disposition = "inline"
+    safe_name = "".join(c for c in name if c.isalnum() or c in "._-") or "slip"
+    response = HttpResponse(data, content_type=content_type)
+    response["Content-Disposition"] = f'{disposition}; filename="{safe_name}"'
+    response["Cache-Control"] = "no-store"
+    response["X-Content-Type-Options"] = "nosniff"
+    _audit(request, "view_payment_slip", tenant=tenant, token=str(token))
+    return response
+
+
+@operator_required
+@require_POST
+def notice_confirm(request, tenant_pk, token):
+    from orvahr_account.services import NoticeError, confirm_payment_notice
+
+    tenant = _notice_tenant(tenant_pk)
+    form = NoticeConfirmForm(request.POST)
+    if not form.is_valid():
+        messages.error(
+            request,
+            (
+                _("Choose the bank account that received the transfer.")
+                if "bank_account" in form.errors
+                else _("Please correct the payment date or note.")
+            ),
+        )
+        return _redirect("notice-list")
+    data = form.cleaned_data
+    try:
+        payment = confirm_payment_notice(
+            tenant,
+            str(token),
+            by=operator_label(request),
+            bank_account=data["bank_account"],
+            payment_date=data["payment_date"],
+            note=data["note"],
+        )
+    except (NoticeError, services.BillingError) as exc:
+        messages.error(request, str(exc))
+        return _redirect("notice-list")
+    receipt = payment.receipt.number if payment.receipt_id else ""
+    _audit(
+        request,
+        "confirm_payment_notice",
+        tenant=tenant,
+        token=str(token),
+        invoice=payment.invoice.number,
+        payment=payment.pk,
+        receipt=receipt,
+    )
+    messages.success(
+        request,
+        (
+            _("Payment confirmed; %(number)s issued.") % {"number": receipt}
+            if receipt
+            else _("Payment confirmed.")
+        ),
+    )
+    return _redirect("notice-list")
+
+
+@operator_required
+@require_POST
+def notice_reject(request, tenant_pk, token):
+    from orvahr_account.services import NoticeError, reject_payment_notice
+
+    tenant = _notice_tenant(tenant_pk)
+    form = NoticeRejectForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, _("A reason is required to reject a payment notice."))
+        return _redirect("notice-list")
+    try:
+        notice = reject_payment_notice(
+            tenant,
+            str(token),
+            by=operator_label(request),
+            reason=form.cleaned_data["reason"],
+        )
+    except NoticeError as exc:
+        messages.error(request, str(exc))
+        return _redirect("notice-list")
+    _audit(
+        request,
+        "reject_payment_notice",
+        tenant=tenant,
+        token=str(token),
+        invoice=notice.invoice_number,
+        reason=form.cleaned_data["reason"],
+    )
+    messages.success(request, _("Payment notice rejected."))
+    return _redirect("notice-list")

@@ -163,12 +163,24 @@ Inside a tenant (no-op with the flag off, on the public host, or without a plan)
   error into a JSON 403 (`code: employee_limit_reached`) or a redirect back
   with an error message. Bulk imports are checked before any account is
   created (`employee.methods.methods.bulk_create_user_import` /
-  `bulk_create_employee_import`).
+  `bulk_create_employee_import`). Concurrency: `Employee.save()` and the
+  bulk employee import run inside `limits.employee_limit_guard()` — a
+  transaction holding a PostgreSQL advisory lock keyed by the schema
+  (`pg_advisory_xact_lock(0x4F45, hashtext(schema))`), so "count, then
+  insert" is serialised per tenant and two simultaneous creations cannot
+  pass the ceiling (no transaction, no query without a limit).
 * **Modules** — `horilla.config.get_apps_in_base_dir()` drops modules outside
   the plan from the sidebar; `PlanGateMiddleware.process_view` answers 403
   (friendly page, htmx fragment, or JSON `code: module_not_in_plan` under
   `/api/`) for `/<module>/...`, `/api/[v1/]<module>/...` and any view whose
   code lives in a gated app. Employee, reports, PDPA, settings are never gated.
+* **Dashboards** — the analytics dashboard (`templates/dashboard.html`) and
+  "My Dashboard" (`base/ess_dashboard.html`) get `plan_modules`
+  (`base.dashboard.plan_modules()` → `orvahr_saas.plans.ModuleFlags`):
+  charts, KPI tiles, pending-approval cards and their scripts of modules
+  outside the plan are not rendered; their `/dashboard/api/...` and
+  `/my-dashboard/api/...` endpoints answer JSON 403 `module_not_in_plan`, and
+  `pending-approvals` drops their counts.
 
 ## Public site and sign-up (public host)
 
@@ -505,3 +517,34 @@ Django settings or, failing that, the environment (`orvahr_saas/conf.py`).
 Tests: `test_totp_vectors.py` (both modes), `test_twofactor.py`,
 `test_lifecycle.py`, `test_notifications.py`; flag-off:
 `test_flag_off_lifecycle.py`.
+
+## Tenant requests: payment notices and plan changes
+
+What tenants submit on `/subscription/` (`orvahr_account`, rows in the
+tenant schemas) is settled on the public host through
+`orvahr_account.services`. Rows are addressed by `(tenant pk, token)` only;
+every change is a CSRF-protected POST and is recorded in `OperatorAction`
+(billing has no trail of its own).
+
+* `/billing/notices/` — "Payment notices": tenant, invoice (with what is
+  outstanding), amount, WHT, transfer date, reference, submitted at/by, slip
+  (`notices/<tenant>/<token>/slip/`: `no-store`, `nosniff`, inline only for
+  PDF/PNG/JPEG, viewing is audited). **Confirm** (bank account received
+  into; payment date defaults to the transfer date; note) records the
+  payment and issues the receipt (`confirm_payment_notice`); **Reject** needs
+  a reason the tenant sees. Actions: `confirm_payment_notice`,
+  `reject_payment_notice`, `view_payment_slip`.
+* `/console/plan-requests/` — "Plan change requests": approve (with "apply
+  now" → `change_plan`, clearing any employee override) or reject, both with
+  a note. The billing subscription price is not changed: the page links to
+  `/billing/tenants/<id>/` as a reminder. Actions: `approve_plan_change`,
+  `reject_plan_change` (+ `change_plan` when applied).
+* Nav badges: pending counts across tenants, cached 60 s on the public
+  schema and cleared whenever a notice/request is created, cancelled or
+  decided.
+
+Tests: `orvahr_account/tests/test_operator_pages.py`,
+`orvahr_saas/tests/test_dashboard_gating.py`,
+`orvahr_saas/tests/test_employee_limit_race.py` (two threads on separate
+connections racing for the last seat, plus a control run without the lock
+that overshoots); flag-off: `orvahr_saas/tests/test_flag_off.py`.

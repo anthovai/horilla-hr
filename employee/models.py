@@ -836,8 +836,14 @@ class Employee(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
+        # The SaaS employee ceiling is checked in full_clean() (clean()); the
+        # guard makes "check, then insert" atomic per tenant so concurrent
+        # creations cannot overshoot it. No-op unless a limit applies.
+        from orvahr_saas.limits import employee_limit_guard
+
+        with employee_limit_guard():
+            self.full_clean()
+            super().save(*args, **kwargs)
 
         request = getattr(horilla_middlewares._thread_locals, "request", None)
         if request and not self.is_active and self.get_archive_condition() is not False:

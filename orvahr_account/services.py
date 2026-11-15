@@ -33,6 +33,12 @@ Plan change requests::
     decide_plan_change_request(tenant, token, approve=True, by=...,
                                note="", apply=False)
 
+Counts for the operator nav badges (cached for ``COUNT_CACHE_SECONDS`` on
+the public schema; every change made here or on the tenant pages clears
+them)::
+
+    pending_payment_notice_count(), pending_plan_change_request_count()
+
 ``apply=True`` also moves the tenant to the requested plan with
 ``orvahr_saas.services.change_plan`` (clearing any per-tenant employee
 override). The billing ``Subscription.plan_code`` / price is NOT changed here;
@@ -47,6 +53,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.db import DatabaseError, transaction
 from django.utils import timezone
@@ -181,6 +188,50 @@ def pending_plan_change_requests(tenant=None):
     return _collect(build, tenant)
 
 
+# ------------------------------------------------------------------- counts
+
+COUNT_CACHE_SECONDS = 60
+_NOTICE_COUNT_KEY = "orvahr_account:pending-payment-notices"
+_PLAN_COUNT_KEY = "orvahr_account:pending-plan-changes"
+
+
+def _pending_count(model, key):
+    with schema_context(public_schema_name()):
+        cached = cache.get(key)
+    if cached is not None:
+        return cached
+    total = 0
+    for current in _tenants():
+        try:
+            with schema_context(current.schema_name), transaction.atomic():
+                total += model.objects.filter(status=model.STATUS_PENDING).count()
+        except DatabaseError:
+            logger.exception("Could not count requests of %s", current.schema_name)
+    with schema_context(public_schema_name()):
+        cache.set(key, total, COUNT_CACHE_SECONDS)
+    return total
+
+
+def pending_payment_notice_count():
+    """Pending payment notices across all tenants (cached briefly)."""
+    from orvahr_account.models import PaymentNotice
+
+    return _pending_count(PaymentNotice, _NOTICE_COUNT_KEY)
+
+
+def pending_plan_change_request_count():
+    """Pending plan change requests across all tenants (cached briefly)."""
+    from orvahr_account.models import PlanChangeRequest
+
+    return _pending_count(PlanChangeRequest, _PLAN_COUNT_KEY)
+
+
+def invalidate_pending_counts():
+    """Forget the cached counts (keys live on the public schema)."""
+    with schema_context(public_schema_name()):
+        cache.delete_many([_NOTICE_COUNT_KEY, _PLAN_COUNT_KEY])
+
+
 # ------------------------------------------------------------------ actions
 
 
@@ -262,6 +313,7 @@ def confirm_payment_notice(
                 review_note=note,
                 receipt_number=payment.receipt.number if payment.receipt_id else "",
             )
+    invalidate_pending_counts()
     return payment
 
 
@@ -275,6 +327,7 @@ def reject_payment_notice(tenant, token, *, by, reason=""):
         notice.save(
             update_fields=["status", "reviewed_at", "reviewed_by", "review_note"]
         )
+    invalidate_pending_counts()
     return notice
 
 
@@ -312,4 +365,5 @@ def decide_plan_change_request(tenant, token, *, approve, by, note="", apply=Fal
                 if plan is None:
                     raise NoticeError("The requested plan no longer exists.")
                 change_plan(tenant, plan, max_employees=None, actor_label=by)
+    invalidate_pending_counts()
     return request

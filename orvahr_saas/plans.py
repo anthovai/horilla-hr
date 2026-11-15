@@ -75,6 +75,29 @@ def filter_enabled_apps(app_labels):
     return [a for a in app_labels if a not in MODULE_CATALOG or plan.has_module(a)]
 
 
+class ModuleFlags:
+    """
+    ``flags["leave"]`` / ``{{ plan_modules.leave }}`` in templates: False only
+    for a catalogued module the active tenant's plan leaves out. Any other
+    name (and everything outside SaaS mode, on the public schema or for a
+    tenant without a plan) is True. The plan is looked up once.
+    """
+
+    def __init__(self, tenant=None):
+        self._plan = tenant_plan(tenant)
+
+    def __getitem__(self, label):
+        if self._plan is None or label not in MODULE_CATALOG:
+            return True
+        return self._plan.has_module(label)
+
+    def __contains__(self, label):
+        return True
+
+    def as_dict(self):
+        return {label: self[label] for label in MODULE_CATALOG}
+
+
 def module_for_path(path: str):
     """
     The catalogued module a URL belongs to, from its first segment:

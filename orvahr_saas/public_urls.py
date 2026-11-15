@@ -66,6 +66,21 @@ console_patterns = [
         console.request_status,
         name="saas-console-request-status",
     ),
+    path(
+        "plan-requests/",
+        console.plan_request_list,
+        name="saas-console-plan-requests",
+    ),
+    path(
+        "plan-requests/<int:tenant_pk>/<uuid:token>/approve/",
+        console.plan_request_approve,
+        name="saas-console-plan-request-approve",
+    ),
+    path(
+        "plan-requests/<int:tenant_pk>/<uuid:token>/reject/",
+        console.plan_request_reject,
+        name="saas-console-plan-request-reject",
+    ),
     path("audit/", console.audit_log, name="saas-console-audit"),
     path(
         "notifications/",

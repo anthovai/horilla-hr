@@ -29,6 +29,7 @@
   .muted,.helptext{color:var(--muted);font-size:.9rem} .errorlist{color:var(--bad);padding-left:18px}
   pre.log{background:#102a43;color:#d9e2ec;padding:12px;border-radius:8px;max-height:360px;overflow:auto;white-space:pre-wrap}
   .row{display:flex;gap:16px;flex-wrap:wrap} .row>.card{flex:1;min-width:280px}
+  .nav-count{background:#fff;color:var(--brand);font-weight:600}
   .filters a{margin-right:8px} .ok{color:var(--ok)} .bad{color:var(--bad)}
 </style>
 </head>
@@ -38,6 +39,7 @@
   {% if operator %}
   <a href="{% url 'saas-console' %}">{% translate "Tenants" %}</a>
   <a href="{% url 'saas-console-requests' %}">{% translate "Sign-up requests" %}</a>
+  <a href="{% url 'saas-console-plan-requests' %}">{% translate "Plan change requests" %}{% if pending_plan_change_count %} <span class="badge nav-count" title="{% translate 'Waiting for a decision' %}">{{ pending_plan_change_count }}</span>{% endif %}</a>
   <a href="{% url 'saas-console-audit' %}">{% translate "Audit trail" %}</a>
   <a href="{% url 'saas-console-notifications' %}">{% translate "Notifications" %}</a>
   <a href="{% url 'saas-console-2fa' %}">{% translate "Two-factor" %}</a>

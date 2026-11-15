@@ -41,6 +41,7 @@ from orvahr_saas.forms import (
     ConsoleLoginForm,
     ExtendTrialForm,
     PlanChangeForm,
+    PlanRequestDecisionForm,
     ProvisionForm,
     SuspendForm,
     TwoFactorCodeForm,
@@ -134,14 +135,31 @@ def operator_required(view):
 def render_console(request, template, context=None, status=200):
     from django.contrib.messages import get_messages
 
+    operator = getattr(request, "operator", None)
     ctx = {
-        "operator": getattr(request, "operator", None),
+        "operator": operator,
         "messages": list(get_messages(request)),
+        "pending_plan_change_count": (
+            _pending_plan_change_count() if operator is not None else 0
+        ),
     }
     ctx.update(context or {})
     response = render_public(request, template, ctx, status=status)
     response["Cache-Control"] = "no-store"
     return response
+
+
+def _pending_plan_change_count():
+    """Nav badge: tenants' pending plan change requests (0 if unavailable)."""
+    import logging
+
+    try:
+        from orvahr_account.services import pending_plan_change_request_count
+
+        return pending_plan_change_request_count()
+    except Exception:  # noqa: BLE001 - a badge must never break a page
+        logging.getLogger(__name__).exception("Could not count plan requests")
+        return 0
 
 
 def _ip(request):
@@ -755,6 +773,108 @@ def request_status(request, pk):
             "tenant": tenant_request.tenant_id,
         }
     )
+
+
+# ------------------------------------------------- plan change requests
+# Tenants ask for another plan on their subscription page (orvahr_account);
+# the requests live in each tenant's schema. Rows are addressed only by
+# (tenant pk, token).
+
+
+@operator_required
+def plan_request_list(request):
+    from orvahr_account.services import pending_plan_change_requests
+    from orvahr_saas.models import Plan
+
+    pending = pending_plan_change_requests()
+    plans = {p.code: p for p in Plan.objects.all()}
+    rows = [
+        {
+            "req": r,
+            "current_plan": plans.get(r.current_plan_code),
+            "requested_plan": plans.get(r.requested_plan_code),
+        }
+        for r in pending
+    ]
+    return render_console(
+        request,
+        "orvahr_saas/console/plan_requests.html",
+        {"rows": rows, "billing_installed": _billing_installed()},
+    )
+
+
+def _billing_installed():
+    from django.apps import apps
+
+    return apps.is_installed("orvahr_billing")
+
+
+def _decide_plan_request(request, tenant_pk, token, *, approve):
+    from orvahr_account.services import NoticeError, decide_plan_change_request
+
+    tenant = _tenant_or_404(tenant_pk)
+    form = PlanRequestDecisionForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, _("The note is too long."))
+        return HttpResponseRedirect(reverse("saas-console-plan-requests"))
+    apply = approve and form.cleaned_data["apply"]
+    note = form.cleaned_data["note"]
+    try:
+        decided = decide_plan_change_request(
+            tenant,
+            str(token),
+            approve=approve,
+            by=request.operator.username,
+            note=note,
+            apply=apply,
+        )
+    except NoticeError as exc:
+        messages.error(request, str(exc))
+        return HttpResponseRedirect(reverse("saas-console-plan-requests"))
+    services.record_action(
+        "approve_plan_change" if approve else "reject_plan_change",
+        operator=request.operator,
+        tenant=tenant,
+        ip_address=_ip(request),
+        token=str(token),
+        current=decided.current_plan_code,
+        requested=decided.requested_plan_code,
+        applied=apply if approve else None,
+        note=note or None,
+    )
+    if not approve:
+        messages.success(request, _("Plan change request rejected."))
+    elif apply:
+        messages.success(
+            request,
+            _(
+                "Plan change approved and applied. Update the price of the "
+                "billing subscription of %(tenant)s."
+            )
+            % {"tenant": tenant.name},
+        )
+    else:
+        messages.success(
+            request,
+            _(
+                "Plan change approved (not applied yet). Change the plan on the "
+                "tenant page and update the billing subscription of %(tenant)s."
+            )
+            % {"tenant": tenant.name},
+        )
+    return HttpResponseRedirect(reverse("saas-console-plan-requests"))
+
+
+@require_POST
+@operator_required
+def plan_request_approve(request, tenant_pk, token):
+    return _decide_plan_request(request, tenant_pk, token, approve=True)
+
+
+@require_POST
+@operator_required
+def plan_request_reject(request, tenant_pk, token):
+    return _decide_plan_request(request, tenant_pk, token, approve=False)
 
 
 # ------------------------------------------------------------ notifications
