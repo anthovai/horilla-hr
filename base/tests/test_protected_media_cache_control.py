@@ -11,6 +11,7 @@ import tempfile
 from django.test import TestCase, override_settings
 
 from base.models import Company
+from horilla.tenancy import tenant_media_root
 from horilla.testkit import make_employee, make_user
 
 
@@ -18,10 +19,14 @@ class ProtectedMediaCacheControlTests(TestCase):
     def setUp(self):
         self.media_root = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.media_root, True)
-        os.makedirs(os.path.join(self.media_root, "base", "icon"))
-        with open(os.path.join(self.media_root, "base", "icon", "logo.png"), "wb") as fh:
+        # Where uploads live: MEDIA_ROOT itself, or MEDIA_ROOT/<schema>/ in
+        # SaaS mode (protected_media serves the requesting tenant's folder).
+        with override_settings(MEDIA_ROOT=self.media_root):
+            files = tenant_media_root()
+        os.makedirs(os.path.join(files, "base", "icon"))
+        with open(os.path.join(files, "base", "icon", "logo.png"), "wb") as fh:
             fh.write(b"png")
-        with open(os.path.join(self.media_root, "visible.txt"), "w") as fh:
+        with open(os.path.join(files, "visible.txt"), "w") as fh:
             fh.write("visible")
 
     def test_public_asset_is_private_no_store(self):

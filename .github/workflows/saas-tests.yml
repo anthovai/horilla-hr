@@ -1,0 +1,93 @@
+# The whole unit suite in SaaS (schema-per-tenant) mode.
+#
+# With ORVAHR_MULTI_TENANT=1, settings/saas.py selects
+# horilla.testkit.saas_runner.SaasTestRunner: it migrates the public schema,
+# creates one test tenant (schema "testtenant", host "testtenant.localhost")
+# from the pre-migrated template, and runs every ordinary test inside that
+# schema with the test Client routed to its host. orvahr_saas/orvahr_billing
+# tests manage their own tenants. A failure here that does not happen in
+# unit-tests.yml is a tenant-safety bug (code on the public schema, a thread
+# that lost its schema, a shared cache/media path) -- not flakiness.
+
+name: SaaS Tests
+
+on:
+  push:
+    branches: [dev/v2.0, "2.0"]
+  pull_request:
+    branches: [dev/v2.0, "2.0"]
+
+jobs:
+  saas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: horilla_ci
+          POSTGRES_PASSWORD: horilla_ci
+          POSTGRES_DB: horilla_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U horilla_ci -d horilla_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SETTINGS_MODULE: horilla.settings
+      DEBUG: "True"
+      SECRET_KEY: ci-dev-not-for-production
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      ORVAHR_MULTI_TENANT: "1"
+      DATABASE_URL: postgres://horilla_ci:horilla_ci@localhost:5432/horilla_ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install system libraries (Weasy/xhtml2pdf)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libcairo2 libpango-1.0-0 libpangocairo-1.0-0 \
+            libgdk-pixbuf-2.0-0 libffi8 shared-mime-info
+
+      - name: Cache spaCy model wheel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/horilla-ci
+          key: spacy-model-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            spacy-model-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          for attempt in 1 2 3; do
+            bash .github/scripts/install-requirements.sh && break
+            [ "$attempt" -eq 3 ] && exit 1
+            echo "pip install failed (attempt $attempt of 3), retrying in 20s"
+            sleep 20
+          done
+
+      - name: Ensure local_settings stub exists
+        run: |
+          if [ ! -f horilla/settings/local_settings.py ]; then
+            printf '%s\n' '# Ephemeral for CI' > horilla/settings/local_settings.py
+          fi
+
+      - name: Run the suite inside a tenant schema
+        # Same labels as unit-tests.yml (Makefile SMOKE_LABELS) plus the
+        # OrvaHR apps. The test tenant is created once, before the test
+        # database is cloned for the parallel workers.
+        run: make test-saas SAAS_PARALLEL=4

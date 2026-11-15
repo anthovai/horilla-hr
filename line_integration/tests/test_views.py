@@ -65,8 +65,10 @@ class PermissionTests(LineTestCase):
         ch = LineChannel.all_objects.get(name="Default OA")
         self.assertNotIn("tok-fake-2", ch.access_token_encrypted)
         self.assertEqual(ch.access_token, "tok-fake-2")
-        # "testserver" has no TLD, so it is not stored as the public URL
-        self.assertEqual(ch.public_base_url, "")
+        # "testserver" has no TLD, so it is not stored as the public URL; a
+        # real host (a tenant's own, in SaaS mode) is.
+        host = r.wsgi_request.get_host()
+        self.assertEqual(ch.public_base_url, "" if "." not in host else f"http://{host}")
         c.post(
             reverse("line-channel-update", args=[ch.pk]),
             {"name": "Renamed", "access_token": "", "channel_secret": "", "is_active": "on",

@@ -6,8 +6,18 @@ from django.core.cache import cache
 
 from accessibility.methods import check_is_accessible
 from accessibility.models import ACCESSBILITY_FEATURE
+from horilla.tenancy import schema_key
 
+# user -> the per-session cache keys holding that user's accessibility map.
+# Process-wide, so it is keyed by ``schema_key(user_id)``: user ids repeat
+# across tenants in SaaS mode, and a shared entry made tenant A's
+# "revoke access" refresh tenant B's session key instead of A's.
 ACCESSIBILITY_CACHE_USER_KEYS = {}
+
+
+def user_cache_keys(user_id):
+    """The accessibility cache keys recorded for ``user_id`` in this tenant."""
+    return ACCESSIBILITY_CACHE_USER_KEYS.get(schema_key(user_id), [])
 
 
 def update_accessibility_cache(cache_key, request):
@@ -32,11 +42,9 @@ class AccessibilityMiddleware:
         session_key = request.session.session_key
         if session_key:
             cache_key = session_key + "accessibility_filter"
-            exists_user_cache_key = ACCESSIBILITY_CACHE_USER_KEYS.get(
-                request.user.id, []
+            exists_user_cache_key = ACCESSIBILITY_CACHE_USER_KEYS.setdefault(
+                schema_key(request.user.id), []
             )
-            if not exists_user_cache_key:
-                ACCESSIBILITY_CACHE_USER_KEYS[request.user.id] = exists_user_cache_key
             if (
                 session_key
                 and getattr(request.user, "employee_get", None)

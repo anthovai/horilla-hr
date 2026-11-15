@@ -26,6 +26,11 @@ from horilla.scheduling import (
 RUNTIME_CONFIGURED = {"horilla_backup", "pg_backup"}
 
 
+def _noop_job():
+    """A real, importable job: in SaaS mode the runner stores jobs by
+    reference (``module:function``), which a lambda cannot be."""
+
+
 class RegistryTests(SimpleTestCase):
     def setUp(self):
         self._saved = get_registered_jobs()
@@ -215,7 +220,7 @@ class DeploymentWiringTests(SimpleTestCase):
         from base.management.commands.run_scheduler import log_job_error
 
         job = ScheduledJob(
-            func=lambda: None,
+            func=_noop_job,
             trigger="interval",
             job_id="fake_job",
             kwargs={"hours": 1},

@@ -1,4 +1,4 @@
-.PHONY: help dev prod build stop logs logs-web shell clean db-shell status restart makemessages compilemessages test-smoke test-unit test-cov
+.PHONY: help dev prod build stop logs logs-web shell clean db-shell status restart makemessages compilemessages test-smoke test-unit test-cov test-saas
 
 COMPOSE ?= docker compose
 COMPOSE_PROD ?= $(COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml
@@ -60,6 +60,15 @@ test-smoke: ## Run CI smoke unit tests (min bar across first-party apps)
 
 test-unit: ## Run unit-test labels (override UNIT_LABELS=...)
 	python manage.py test $(UNIT_LABELS) --verbosity=1
+
+# SaaS mode: the same suite inside a tenant schema (horilla/testkit/
+# saas_runner.py, picked automatically when ORVAHR_MULTI_TENANT=1; needs
+# PostgreSQL). Add --keepdb locally to reuse the test tenant between runs.
+SAAS_LABELS ?= $(SMOKE_LABELS) orvahr_account orvahr_bank orvahr_benefits orvahr_billing orvahr_filing orvahr_geo orvahr_pdpa orvahr_saas orvahr_th line_integration
+SAAS_PARALLEL ?= 1
+
+test-saas: ## Whole suite in SaaS mode (ORVAHR_MULTI_TENANT=1 + PostgreSQL)
+	ORVAHR_MULTI_TENANT=1 python manage.py test $(SAAS_LABELS) --noinput --parallel $(SAAS_PARALLEL) --verbosity=1
 
 # Measured 27.6% on 2026-09-01 with branch coverage on (.coveragerc). It
 # reads lower than statement coverage because untaken branches count, which

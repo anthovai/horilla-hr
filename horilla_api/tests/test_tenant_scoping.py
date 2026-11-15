@@ -159,12 +159,13 @@ class UnplaceableApiUserTests(TestCase):
     def test_unplaceable_user_is_refused_not_unscoped(self):
         from rest_framework.exceptions import PermissionDenied
         from rest_framework.test import APIRequestFactory
-        from rest_framework_simplejwt.tokens import RefreshToken
-
         from horilla_api.authentication import TenantScopedJWTAuthentication
+        from horilla_api.tokens import TenantRefreshToken
 
         stray = make_user("no_company_user", password="secret123")
-        token = str(RefreshToken.for_user(stray).access_token)
+        # Minted like the login view does (TenantRefreshToken = simplejwt's
+        # RefreshToken with the flag off; bound to the tenant in SaaS mode).
+        token = str(TenantRefreshToken.for_user(stray).access_token)
         request = APIRequestFactory().get(
             EMPLOYEE_LIST_URL, HTTP_AUTHORIZATION=f"Bearer {token}"
         )

@@ -45,7 +45,7 @@ from django.views.decorators.http import require_http_methods
 
 from accessibility.decorators import enter_if_accessible
 from accessibility.methods import update_employee_accessibility_cache
-from accessibility.middlewares import ACCESSIBILITY_CACHE_USER_KEYS
+from accessibility.middlewares import user_cache_keys
 from accessibility.models import DefaultAccessibility
 from base.backends import ConfiguredEmailBackend
 from base.forms import ModelForm
@@ -310,9 +310,7 @@ def profile_edit_access(request, emp_id):
             else:
                 accessibility.employees.add(employee)
 
-            user_cache_key = ACCESSIBILITY_CACHE_USER_KEYS.get(
-                employees.first().employee_user_id.id, None
-            )
+            user_cache_key = user_cache_keys(employees.first().employee_user_id.id)
             if user_cache_key:
                 cache.delete(user_cache_key[-1])
                 update_employee_accessibility_cache(user_cache_key[-1], employee)

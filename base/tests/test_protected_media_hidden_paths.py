@@ -10,18 +10,23 @@ import tempfile
 from django.test import TestCase, override_settings
 
 from base.models import Company
+from horilla.tenancy import tenant_media_root
 from horilla.testkit import make_employee, make_user
 
 
 class HiddenMediaPathsTests(TestCase):
     def setUp(self):
         self.media_root = tempfile.mkdtemp()
-        with open(os.path.join(self.media_root, ".generated_secret_key"), "w") as fh:
+        # MEDIA_ROOT itself, or MEDIA_ROOT/<schema>/ in SaaS mode.
+        with override_settings(MEDIA_ROOT=self.media_root):
+            files = tenant_media_root()
+        os.makedirs(files, exist_ok=True)
+        with open(os.path.join(files, ".generated_secret_key"), "w") as fh:
             fh.write("super-secret")
-        os.makedirs(os.path.join(self.media_root, ".hidden"))
-        with open(os.path.join(self.media_root, ".hidden", "x.txt"), "w") as fh:
+        os.makedirs(os.path.join(files, ".hidden"))
+        with open(os.path.join(files, ".hidden", "x.txt"), "w") as fh:
             fh.write("hidden")
-        with open(os.path.join(self.media_root, "visible.txt"), "w") as fh:
+        with open(os.path.join(files, "visible.txt"), "w") as fh:
             fh.write("visible")
         company = Company.objects.create(company="Acme", hq=True)
         user = make_user("emp", password="pw-not-real")

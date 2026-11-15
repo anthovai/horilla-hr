@@ -72,6 +72,11 @@ def apply_multi_tenant(ns):
     default["OPTIONS"] = options
     ns["DATABASES"] = {**databases, "default": default}
     ns["DATABASE_ROUTERS"] = ["django_tenants.routers.TenantSyncRouter"]
+    # Issue `SET search_path` once per connection/tenant switch instead of
+    # before EVERY query (django-tenants' default doubles the round trips).
+    # Safe: set_tenant()/set_schema*() and close() clear the cached value,
+    # and so do rollback()/savepoint_rollback(), which revert a SET.
+    ns["TENANT_LIMIT_SET_CALLS"] = True
 
     # -------------------------------------------------------------- apps
     installed = [
@@ -175,5 +180,10 @@ def apply_multi_tenant(ns):
         **ns.get("SIMPLE_JWT", {}),
         "AUTH_TOKEN_CLASSES": ("horilla_api.tokens.TenantAccessToken",),
     }
+
+    # ------------------------------------------------------------- tests
+    # `manage.py test` runs the ordinary suite inside a test tenant schema
+    # (horilla/testkit/saas_runner.py); orvahr_saas tests manage their own.
+    ns["TEST_RUNNER"] = "horilla.testkit.saas_runner.SaasTestRunner"
 
     ns["ORVAHR_MULTI_TENANT"] = True

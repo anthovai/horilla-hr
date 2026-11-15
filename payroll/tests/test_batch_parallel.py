@@ -1,12 +1,12 @@
 """Several slices of one run at the same time never pay anyone twice and never lose anyone."""
 
-import threading
 from datetime import date
 from unittest.mock import patch
 
 from django.db import close_old_connections, connection
 from django.test import TransactionTestCase
 
+from horilla.tenancy import TenantAwareThread
 from horilla.testkit import make_company, make_employee
 from payroll.methods import batch_run
 from payroll.models.models import Contract, PayrollBatch, PayrollBatchLine, Payslip
@@ -62,7 +62,9 @@ class ParallelSliceTests(TransactionTestCase):
         ), patch(
             "attendance.methods.utils.get_employee_attendance_summary", return_value={}
         ):
-            threads = [threading.Thread(target=worker) for _ in range(4)]
+            # Each worker stands in for a concurrent request, which in SaaS
+            # mode runs in the tenant's schema (a plain Thread does not).
+            threads = [TenantAwareThread(target=worker) for _ in range(4)]
             for thread in threads:
                 thread.start()
             for thread in threads:
