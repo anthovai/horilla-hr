@@ -155,4 +155,85 @@ def apply_audit_configuration():
 
 def on_config_change(sender, instance=None, **kwargs):
     """Signal handler that reapplies configuration after a row changes."""
+    from horilla.tenancy import is_multi_tenant
+
+    if is_multi_tenant():
+        # Only this tenant's configuration changed; the process-wide auditlog
+        # registry serves every tenant, so it is not resynchronised here.
+        tenant_audit_targets().invalidate()
+        return
     apply_audit_configuration()
+
+
+# ------------------------------------------------------------------ SaaS mode
+#
+# auditlog's registry is process-wide, but each tenant configures its own
+# tracked models (AuditModelConfig lives in the tenant schema). In SaaS mode:
+#
+# * the auditlog registry holds the UNION of what any tenant asked for
+#   (defaults at startup; a tenant's extra models are registered the first
+#   time its configuration is loaded) and never shrinks;
+# * a ``pre_log`` receiver vetoes the entry unless the *active* tenant tracks
+#   that model -- auditlog skips logging when a pre_log receiver returns False;
+# * ``auditlog.get_model_fields`` returns the active tenant's tracked fields,
+#   so include_fields is per tenant too.
+#
+# Each tenant's configuration is loaded lazily, in its own schema, and cached
+# per schema (horilla.tenant_config.TenantConfigCache); saving an
+# AuditModelConfig row invalidates only that tenant's entry.
+
+_TENANT_TARGETS = None
+
+
+def _load_tenant_targets():
+    """{model: [fields]} for the active tenant; registers new models globally."""
+    targets = {model: list(fields) for model, fields in _load_targets()}
+    for model in targets:
+        if not auditlog.contains(model):
+            _register(model, [])
+    return targets
+
+
+def tenant_audit_targets():
+    global _TENANT_TARGETS
+    if _TENANT_TARGETS is None:
+        from horilla.tenant_config import TenantConfigCache
+
+        _TENANT_TARGETS = TenantConfigCache(
+            "audit-models", _load_tenant_targets, default=None
+        )
+    return _TENANT_TARGETS
+
+
+def _tenant_pre_log(sender, instance=None, action=None, **kwargs):
+    """Veto audit entries for models the active tenant does not track."""
+    targets = tenant_audit_targets().get()
+    if targets is None:
+        # Public schema / config not readable: nothing tenant-owned to log.
+        return False
+    model = getattr(sender, "_meta", None) and sender._meta.concrete_model
+    if sender in targets or model in targets:
+        return None
+    return False
+
+
+def install_tenant_audit():
+    """Wire the SaaS-mode behaviour above (idempotent; SaaS mode only)."""
+    from auditlog.signals import pre_log
+
+    pre_log.connect(
+        _tenant_pre_log, weak=False, dispatch_uid="orvahr-tenant-audit-pre-log"
+    )
+    if getattr(auditlog, "_orvahr_tenant_fields", False):
+        return
+    original = auditlog.get_model_fields
+
+    def get_model_fields(model):
+        fields = original(model)
+        targets = tenant_audit_targets().get()
+        if targets is not None and model in targets:
+            fields["include_fields"] = list(targets[model])
+        return fields
+
+    auditlog.get_model_fields = get_model_fields
+    auditlog._orvahr_tenant_fields = True

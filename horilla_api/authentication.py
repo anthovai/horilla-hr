@@ -38,8 +38,10 @@ import logging
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 from horilla.horilla_middlewares import set_selected_company
+from horilla_api.tokens import check_token_tenant
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +97,18 @@ class TenantScopedJWTAuthentication(JWTAuthentication):
     the value set here does not outlive the request even though it is set
     later in the cycle.
     """
+
+    def get_validated_token(self, raw_token):
+        validated_token = super().get_validated_token(raw_token)
+        # SaaS mode: the token must have been minted for this tenant (see
+        # horilla_api/tokens.py). Normally already enforced by
+        # AUTH_TOKEN_CLASSES; repeated here so it holds even if that setting
+        # is overridden. No-op with ORVAHR_MULTI_TENANT off.
+        try:
+            check_token_tenant(validated_token.payload)
+        except TokenError as exc:
+            raise InvalidToken({"detail": str(exc.args[0])}) from exc
+        return validated_token
 
     def authenticate(self, request):
         result = super().authenticate(request)

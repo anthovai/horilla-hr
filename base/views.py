@@ -8980,6 +8980,11 @@ def protected_media(request, path):
     # Block MIME sniffing -- a browser must honour the declared type and not
     # re-interpret e.g. an octet-stream as HTML.
     response["X-Content-Type-Options"] = "nosniff"
+    # Never let a shared cache (Cloudflare, a corporate proxy) keep a copy:
+    # access is decided per user above, and in SaaS mode the same /media/
+    # path is a different tenant's file on every host. Applies to the
+    # public-prefix assets too -- they are per tenant as well.
+    response["Cache-Control"] = "private, no-store"
     if force_download:
         filename = os.path.basename(media_path)
         response["Content-Disposition"] = f'attachment; filename="{filename}"'

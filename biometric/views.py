@@ -486,10 +486,10 @@ def biometric_device_schedule(request, device_id):
                 device.scheduler_duration = duration
                 device.save()
                 scheduler = BackgroundScheduler()
-                existing_thread = settings.BIO_DEVICE_THREADS.get(device.id)
+                existing_thread = settings.BIO_DEVICE_THREADS.get(schema_key(device.id))
                 if existing_thread:
                     existing_thread.stop()
-                    del settings.BIO_DEVICE_THREADS[device.id]
+                    del settings.BIO_DEVICE_THREADS[schema_key(device.id)]
                 scheduler.add_job(
                     tenant_aware(lambda: cosec_biometric_attendance_scheduler(device.id)),
                     "interval",
@@ -2102,7 +2102,7 @@ def biometric_device_live(request):
                     device.save()
                     thread = COSECBioAttendanceThread(device.id)
                     thread.start()
-                    settings.BIO_DEVICE_THREADS[device.id] = thread
+                    settings.BIO_DEVICE_THREADS[schema_key(device.id)] = thread
                 else:
                     raise TimeoutError
             else:
@@ -2147,10 +2147,10 @@ def biometric_device_live(request):
         device.is_live = False
         device.save()
         if device.machine_type == "cosec":
-            existing_thread = settings.BIO_DEVICE_THREADS.get(device.id)
+            existing_thread = settings.BIO_DEVICE_THREADS.get(schema_key(device.id))
             if existing_thread:
                 existing_thread.stop()
-                del settings.BIO_DEVICE_THREADS[device.id]
+                del settings.BIO_DEVICE_THREADS[schema_key(device.id)]
 
         script = """
            <script>

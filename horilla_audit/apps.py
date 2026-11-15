@@ -16,12 +16,22 @@ class HorillaAuditConfig(AppConfig):
         # re-apply once user configuration is readable.
         registry.apply_audit_configuration()
 
+        from horilla.tenancy import is_multi_tenant
+
+        if is_multi_tenant():
+            # Per-tenant tracked models/fields on top of the process-wide
+            # auditlog registry (see registry.install_tenant_audit).
+            registry.install_tenant_audit()
+
         def _reapply_after_migrate(sender, **kwargs):
             from horilla.tenancy import app_has_tables
 
             if not app_has_tables("horilla_audit"):
                 return
-            registry.apply_audit_configuration()
+            if is_multi_tenant():
+                registry.tenant_audit_targets().invalidate()
+            else:
+                registry.apply_audit_configuration()
 
             from horilla_audit.models import HistoryTrackingFields
 

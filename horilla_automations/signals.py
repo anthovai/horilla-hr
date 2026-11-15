@@ -26,6 +26,7 @@ from horilla.tenancy import (
     TenantAwareThread,
     app_has_tables,
     current_schema,
+    is_multi_tenant,
     schema_matches,
 )
 
@@ -46,6 +47,28 @@ setattr(QuerySet, "from_list", from_list)
 SIGNAL_HANDLERS = []
 INSTANCE_HANDLERS = []
 REFRESH_METHODS = {}
+
+# SaaS mode only: each tenant's automations live in a per-schema registry
+# (horilla.tenant_config.TenantSignalRegistry) instead of being connected to
+# the signals process-wide. Built on the first start_automation() call.
+_TENANT_REGISTRY = None
+_TENANT_LOADER = {}
+
+
+def tenant_registry():
+    """The SaaS-mode registry (None in single-tenant mode)."""
+    global _TENANT_REGISTRY
+    if not is_multi_tenant():
+        return None
+    if _TENANT_REGISTRY is None:
+        from horilla.tenant_config import TenantSignalRegistry
+
+        _TENANT_REGISTRY = TenantSignalRegistry(
+            "mail-automations",
+            lambda: _TENANT_LOADER["load"](),
+            [pre_save, post_save, pre_bulk_update, post_bulk_update],
+        )
+    return _TENANT_REGISTRY
 
 _suspension = threading.local()
 
@@ -82,12 +105,38 @@ def start_automation():
     from horilla_automations.methods.methods import get_model_class, split_query_string
     from horilla_automations.models import MailAutomation
 
+    registry = tenant_registry()
+
+    def _connect(signal, handler, sender):
+        """signal.connect(handler, sender=sender), or the tenant registry."""
+        if registry is not None:
+            registry.connect(signal, handler, sender)
+        else:
+            signal.connect(handler, sender=sender)
+
+    if registry is not None:
+        # SaaS mode: the active tenant's automations are (re)loaded lazily, in
+        # its own schema, the next time one of its models is saved.
+        def _invalidate(sender, instance, **kwargs):
+            registry.invalidate()
+
+        for signal in (post_save, post_delete):
+            for model in (MailAutomation, HorillaMailTemplate):
+                signal.connect(
+                    _invalidate,
+                    sender=model,
+                    weak=False,
+                    dispatch_uid=f"orvahr-mail-automation-reload-{model.__name__}",
+                )
+
     @receiver(post_delete, sender=MailAutomation)
     @receiver(post_save, sender=MailAutomation)
     def automation_signal(sender, instance, **kwargs):
         """
         signal method to handle automation post save
         """
+        if registry is not None:
+            return  # SaaS: _invalidate above handles it
         start_connection()
         track_previous_instance()
 
@@ -97,6 +146,8 @@ def start_automation():
         """
         signal method to handle automation post save
         """
+        if registry is not None:
+            return  # SaaS: _invalidate above handles it
         start_connection()
         track_previous_instance()
 
@@ -190,7 +241,7 @@ def start_automation():
             )
             SIGNAL_HANDLERS.append(handler)
 
-            post_bulk_update.connect(handler, sender=model_class)
+            _connect(post_bulk_update, handler, model_class)
 
             def create_signal_handler(name, automation, query_strings, model_class):
                 handler_schema = current_schema()
@@ -245,8 +296,8 @@ def start_automation():
                 handler_name, automation, query_strings, model_class
             )
             SIGNAL_HANDLERS.append(dynamic_signal_handler)
-            post_save.connect(
-                dynamic_signal_handler, sender=dynamic_signal_handler.model_class
+            _connect(
+                post_save, dynamic_signal_handler, dynamic_signal_handler.model_class
             )
 
     REFRESH_METHODS["start_connection"] = start_connection
@@ -302,13 +353,12 @@ def start_automation():
 
             handler = create_pre_bulk_update_handler(automation, model_class)
             INSTANCE_HANDLERS.append(handler)
-            pre_bulk_update.connect(handler, sender=model_class)
+            _connect(pre_bulk_update, handler, model_class)
 
             # _model/_automation are bound as defaults rather than read from
             # the enclosing loop: the handler stays connected after the loop
             # ends, so a closure would make every handler use the last
             # iteration's values. Django only passes sender/instance/**kwargs.
-            @receiver(pre_save, sender=model_class)
             def instance_handler(
                 sender,
                 instance,
@@ -336,8 +386,22 @@ def start_automation():
             instance_handler.__name__ = f"{automation.method_title}_instance_handler"
             instance_handler.model_class = model_class
             instance_handler.automation = automation
+            _connect(pre_save, instance_handler, model_class)
 
             INSTANCE_HANDLERS.append(instance_handler)
+
+    if registry is not None:
+        # Nothing is loaded now (startup runs on the public schema). The
+        # registry calls this inside a tenant's schema on first use there.
+        def load_for_active_tenant():
+            track_previous_instance()
+            start_connection()
+
+        _TENANT_LOADER["load"] = load_for_active_tenant
+        # The automation views call these after a change.
+        REFRESH_METHODS["clear_connection"] = lambda: None
+        REFRESH_METHODS["start_connection"] = registry.invalidate
+        return
 
     # SaaS mode: at startup the connection is on the public schema, which has
     # no automation tables; the handlers load when a tenant saves one.

@@ -7,9 +7,13 @@ Provision a new customer (SaaS mode only).
 
 Steps, in order:
 
-1. register the tenant in the public schema, which CREATES the schema
-   ``acme`` and runs every tenant migration in it (post_migrate seeds the
-   standard groups, shift days, themes and payroll components there);
+1. register the tenant in the public schema and create its schema ``acme``
+   by CLONING the pre-migrated template schema (orvahr_saas/tenant_template.py;
+   built on first use, refreshed with ``refresh_tenant_template``), then run
+   ``migrate_schemas -s acme`` -- which applies anything the template lacked
+   and fires post_migrate there (seeding the standard groups, shift days,
+   themes and payroll components). ``--no-template`` replays every migration
+   instead (the old, ~2-minute path);
 2. add the domain (primary);
 3. inside the new schema: the first Company (HQ), the administrator
    (superuser + Employee, the same code as ``createhorillauser``) attached to
@@ -32,6 +36,7 @@ before django_tenants in INSTALLED_APPS), which only creates the row.
 
 import getpass
 import os
+import time
 from datetime import date
 
 from django.conf import settings
@@ -39,7 +44,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+from django.db import connection, transaction
 
 DEFAULT_PASSWORD_ENV = "ORVAHR_TENANT_ADMIN_PASSWORD"
 
@@ -86,6 +91,14 @@ class Command(BaseCommand):
                 "single-tenant 'public' renamed to the slug) instead of creating "
                 "one: no company/admin is created, pending tenant migrations run. "
                 "See orvahr_saas/README.md."
+            ),
+        )
+        parser.add_argument(
+            "--no-template",
+            action="store_true",
+            help=(
+                "Create the schema by replaying every migration instead of "
+                "cloning the template schema (slow; for troubleshooting)."
             ),
         )
         parser.add_argument(
@@ -158,7 +171,7 @@ class Command(BaseCommand):
 
         password = self._password(options, username, email)
 
-        self.stdout.write(f"Creating schema {schema_name!r} and running migrations...")
+        started = time.monotonic()
         tenant = Tenant(
             schema_name=schema_name,
             slug=slug,
@@ -169,9 +182,12 @@ class Command(BaseCommand):
             max_employees=options["max_employees"],
         )
         tenant.full_clean()
+        # The schema is created below (clone or migrate), not by save().
+        tenant.auto_create_schema = False
         tenant.save(verbosity=max(verbosity - 1, 0))
 
         try:
+            self._create_schema(tenant, options, verbosity)
             Domain.objects.create(domain=domain, tenant=tenant, is_primary=True)
             with tenant_context(tenant):
                 employee = self._populate(tenant, options, username, email, password)
@@ -186,6 +202,7 @@ class Command(BaseCommand):
             self.stderr.write(
                 self.style.ERROR(f"Provisioning failed; removing {schema_name!r}.")
             )
+            connection.set_schema_to_public()
             Domain.objects.filter(tenant=tenant).delete()
             tenant.delete(force_drop=True)
             raise
@@ -193,9 +210,43 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f"Tenant {tenant.name!r} ready: schema {schema_name!r}, "
-                f"https://{domain}/ , admin {username!r} (employee #{employee.pk})."
+                f"https://{domain}/ , admin {username!r} (employee #{employee.pk}) "
+                f"in {time.monotonic() - started:.1f}s."
             )
         )
+
+    def _create_schema(self, tenant, options, verbosity):
+        """Clone the template (default) or replay all migrations (--no-template)."""
+        from django_tenants.models import TenantMixin
+        from django_tenants.signals import post_schema_sync
+
+        from orvahr_saas import tenant_template
+
+        schema_name = tenant.schema_name
+        if options["no_template"]:
+            self.stdout.write(f"Creating schema {schema_name!r} and running migrations...")
+            # Exactly what Tenant.save() does with auto_create_schema.
+            tenant.create_schema(check_if_exists=True, verbosity=max(verbosity - 1, 0))
+        else:
+            template = tenant_template.template_schema_name()
+            if not tenant_template.template_exists(template):
+                self.stdout.write(
+                    f"Template schema {template!r} missing; building it once "
+                    "(runs every migration)..."
+                )
+                tenant_template.build_template(template, verbosity=max(verbosity - 1, 0))
+            self.stdout.write(f"Cloning {template!r} into {schema_name!r}...")
+            tenant_template.clone_template(schema_name, template)
+            # A real (not --fake) migrate: applies whatever the template lacks
+            # and runs post_migrate seeding inside the new schema.
+            call_command(
+                "migrate_schemas",
+                schema_name=schema_name,
+                interactive=False,
+                verbosity=max(verbosity - 1, 0),
+            )
+        connection.set_schema_to_public()
+        post_schema_sync.send(sender=TenantMixin, tenant=tenant.serializable_fields())
 
     def _adopt(self, options, slug, domain):
         """Register an existing, already-populated schema as a tenant."""

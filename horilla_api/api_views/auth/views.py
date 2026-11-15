@@ -7,13 +7,16 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import (
+    TokenBlacklistSerializer,
+    TokenRefreshSerializer,
+)
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.utils import get_md5_hash_password
 from rest_framework_simplejwt.views import TokenBlacklistView, TokenRefreshView
 
 from horilla_api.docs import document_api
+from horilla_api.tokens import TenantRefreshToken
 
 from ...api_methods.base.capabilities import build_capabilities
 from ...api_serializers.auth.serializers import (
@@ -86,7 +89,9 @@ class LoginAPIView(APIView):
             # and axes raises rather than silently allowing it.
             user = authenticate(request, username=username, password=password)
             if user:
-                refresh = RefreshToken.for_user(user)
+                # Carries the tenant schema as a claim in SaaS mode (a plain
+                # RefreshToken otherwise): see horilla_api/tokens.py.
+                refresh = TenantRefreshToken.for_user(user)
                 employee = user.employee_get
                 face_detection = False
                 face_detection_image = None
@@ -208,7 +213,13 @@ class RevocationAwareTokenRefreshSerializer(TokenRefreshSerializer):
     Checked here rather than left to the access token so that a password reset
     means what it says: the credential stops working at the point it is
     presented.
+
+    ``token_class`` is ``TenantRefreshToken``: in SaaS mode a refresh token
+    minted for another tenant (or without the tenant claim) is refused, and
+    the rotated token and new access token keep the claim.
     """
+
+    token_class = TenantRefreshToken
 
     def validate(self, attrs):
         if jwt_settings.CHECK_REVOKE_TOKEN:
@@ -245,6 +256,12 @@ class TokenRefreshAPIView(TokenRefreshView):
     throttle_scope = "login"
 
 
+class TenantTokenBlacklistSerializer(TokenBlacklistSerializer):
+    """Logout decodes with TenantRefreshToken (SaaS: same-tenant tokens only)."""
+
+    token_class = TenantRefreshToken
+
+
 class LogoutAPIView(TokenBlacklistView):
     """
     Blacklist a refresh token so it can no longer be exchanged.
@@ -256,4 +273,5 @@ class LogoutAPIView(TokenBlacklistView):
     the immediate kill switch, via CHECK_REVOKE_TOKEN.
     """
 
+    serializer_class = TenantTokenBlacklistSerializer
     throttle_scope = "login"

@@ -90,10 +90,14 @@ def apply_multi_tenant(ns):
     ns["PUBLIC_SCHEMA_URLCONF"] = "orvahr_saas.public_urls"
 
     # -------------------------------------------------------- middleware
-    middleware = [
-        m for m in ns["MIDDLEWARE"] if m != "orvahr_saas.middleware.TenantMiddleware"
-    ]
-    ns["MIDDLEWARE"] = ["orvahr_saas.middleware.TenantMiddleware", *middleware]
+    # PlanGateMiddleware (module gating + employee-limit errors) needs
+    # request.tenant, so it comes right after TenantMiddleware.
+    ours = (
+        "orvahr_saas.middleware.TenantMiddleware",
+        "orvahr_saas.middleware.PlanGateMiddleware",
+    )
+    middleware = [m for m in ns["MIDDLEWARE"] if m not in ours]
+    ns["MIDDLEWARE"] = [*ours, *middleware]
 
     # ------------------------------------------------------------- hosts
     base_domain = env("ORVAHR_SAAS_BASE_DOMAIN", default="").strip().lstrip(".")
@@ -153,12 +157,23 @@ def apply_multi_tenant(ns):
     ns["TEMPLATES"] = templates
 
     # ------------------------------------------------------------- media
-    # Per-tenant folder MEDIA_ROOT/<schema>/ (horilla.tenancy). S3 setups
-    # (addons.py) keep their backend: see docs -- not tenant-prefixed yet.
+    # Per-tenant folder MEDIA_ROOT/<schema>/ (horilla.tenancy). S3/GCS setups
+    # (addons.py) keep their backend class; horilla/horilla_backends*.py
+    # prefix every key with the schema themselves (horilla.tenant_storage).
     storages = dict(ns["STORAGES"])
     default_backend = storages.get("default", {}).get("BACKEND", "")
     if default_backend == "django.core.files.storage.FileSystemStorage":
         storages["default"] = {"BACKEND": "horilla.tenancy.TenantMediaStorage"}
     ns["STORAGES"] = storages
+
+    # --------------------------------------------------------------- JWT
+    # Tokens carry the tenant schema and are only accepted on that tenant's
+    # host (horilla_api/tokens.py). Every JWTAuthentication validates with
+    # AUTH_TOKEN_CLASSES, so this covers the DRF default class and the
+    # ad-hoc JWT checks (Swagger, protected_media) alike.
+    ns["SIMPLE_JWT"] = {
+        **ns.get("SIMPLE_JWT", {}),
+        "AUTH_TOKEN_CLASSES": ("horilla_api.tokens.TenantAccessToken",),
+    }
 
     ns["ORVAHR_MULTI_TENANT"] = True

@@ -15,7 +15,7 @@ from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 from zk import ZK
 
-from horilla.tenancy import tenant_aware
+from horilla.tenancy import schema_key, tenant_aware
 from biometric.filters import BiometricDeviceFilter
 from biometric.forms import BiometricDeviceForm, BiometricDeviceSchedulerForm
 from biometric.models import BiometricDevices
@@ -334,10 +334,10 @@ class BiometricSheduleForm(HorillaFormView):
                     device.scheduler_duration = duration
                     device.save()
                     scheduler = BackgroundScheduler()
-                    existing_thread = settings.BIO_DEVICE_THREADS.get(device.id)
+                    existing_thread = settings.BIO_DEVICE_THREADS.get(schema_key(device.id))
                     if existing_thread:
                         existing_thread.stop()
-                        del settings.BIO_DEVICE_THREADS[device.id]
+                        del settings.BIO_DEVICE_THREADS[schema_key(device.id)]
                     scheduler.add_job(
                         tenant_aware(lambda: cosec_biometric_attendance_scheduler(device.id)),
                         "interval",

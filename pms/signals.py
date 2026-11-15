@@ -19,10 +19,37 @@ from pms.models import BonusPointSetting
 logger = logging.getLogger(__name__)
 
 
-from horilla.tenancy import app_has_tables, current_schema, schema_matches
+from horilla.tenancy import (
+    app_has_tables,
+    current_schema,
+    is_multi_tenant,
+    schema_matches,
+)
 
 SIGNAL_HANDLERS = []
 INSTANCE_HANDLERS = []
+
+# SaaS mode only: each tenant's bonus-point automations live in a per-schema
+# registry (horilla.tenant_config.TenantSignalRegistry), loaded lazily inside
+# that tenant's schema, instead of being connected process-wide.
+_TENANT_REGISTRY = None
+_TENANT_LOADER = {}
+
+
+def tenant_registry():
+    """The SaaS-mode registry (None in single-tenant mode)."""
+    global _TENANT_REGISTRY
+    if not is_multi_tenant():
+        return None
+    if _TENANT_REGISTRY is None:
+        from horilla.tenant_config import TenantSignalRegistry
+
+        _TENANT_REGISTRY = TenantSignalRegistry(
+            "pms-bonus-automations",
+            lambda: _TENANT_LOADER["load"](),
+            [pre_save, post_save],
+        )
+    return _TENANT_REGISTRY
 
 
 def start_automation():
@@ -31,12 +58,36 @@ def start_automation():
     """
     from horilla_automations.methods.methods import get_model_class, split_query_string
 
+    registry = tenant_registry()
+
+    def _connect(signal, handler, sender):
+        """signal.connect(handler, sender=sender), or the tenant registry."""
+        if registry is not None:
+            registry.connect(signal, handler, sender)
+        else:
+            signal.connect(handler, sender=sender)
+
+    if registry is not None:
+
+        def _invalidate(sender, instance, **kwargs):
+            registry.invalidate()
+
+        for signal in (post_save, post_delete):
+            signal.connect(
+                _invalidate,
+                sender=BonusPointSetting,
+                weak=False,
+                dispatch_uid="orvahr-pms-bonus-automation-reload",
+            )
+
     @receiver(post_delete, sender=BonusPointSetting)
     @receiver(post_save, sender=BonusPointSetting)
     def automation_pre_create(sender, instance, **kwargs):
         """
         signal method to handle automation post save
         """
+        if registry is not None:
+            return  # SaaS: _invalidate above handles it
         start_connection()
         track_previous_instance()
 
@@ -161,8 +212,8 @@ def start_automation():
                 handler_name, bonus_point_setting, model_class, type=type, field=field
             )
             SIGNAL_HANDLERS.append(dynamic_signal_handler)
-            post_save.connect(
-                dynamic_signal_handler, sender=dynamic_signal_handler.model_class
+            _connect(
+                post_save, dynamic_signal_handler, dynamic_signal_handler.model_class
             )
 
     def track_previous_instance():
@@ -188,7 +239,6 @@ def start_automation():
             # enclosing loop: the handler stays connected after the loop ends,
             # so a closure would make every handler use the last iteration's
             # values. Django only ever passes sender/instance/**kwargs.
-            @receiver(pre_save, sender=model_class)
             def instance_handler(
                 sender,
                 instance,
@@ -216,8 +266,18 @@ def start_automation():
             instance_handler.__name__ = f"{bonus_setting.id}_instance_handler"
             instance_handler.model_class = model_class
             instance_handler.bonus_setting = bonus_setting
+            _connect(pre_save, instance_handler, model_class)
 
             INSTANCE_HANDLERS.append(instance_handler)
+
+    if registry is not None:
+        # Loaded per tenant, in its schema, on first use there.
+        def load_for_active_tenant():
+            track_previous_instance()
+            start_connection()
+
+        _TENANT_LOADER["load"] = load_for_active_tenant
+        return
 
     # SaaS mode: at startup the connection is on the public schema, which has
     # no pms tables; the handlers load when a tenant saves a setting.
