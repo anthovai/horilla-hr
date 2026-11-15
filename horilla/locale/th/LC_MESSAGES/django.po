@@ -33789,3 +33789,45 @@ msgstr "ใช้ปุ่มลูกศรขึ้นและลง หร�
 
 msgid "Add At Least One Vacancy."
 msgstr "กรุณาเพิ่มตำแหน่งงานว่างอย่างน้อยหนึ่งตำแหน่ง"
+
+msgid ""
+"By submitting this application you confirm that you have read this privacy "
+"notice."
+msgstr "การส่งใบสมัครนี้ถือว่าท่านยืนยันว่าได้อ่านประกาศความเป็นส่วนตัวนี้แล้ว"
+
+msgid "Not now"
+msgstr "ไว้ภายหลัง"
+
+#, python-format
+msgid "Please give your consent to: %(purpose)s"
+msgstr "กรุณาให้ความยินยอมสำหรับ: %(purpose)s"
+
+#, python-format
+msgid ""
+"Stopped before any payslip was generated: the provident fund and deduction "
+"order deductions could not be updated (%(error)s). Fix the cause, then run "
+"this payroll again."
+msgstr ""
+"หยุดก่อนสร้างสลิปเงินเดือนใดๆ: ไม่สามารถอัปเดตรายการหักกองทุนสำรองเลี้ยงชีพและคำสั่งหักเงิน "
+"(%(error)s) กรุณาแก้ไขสาเหตุแล้วรันรอบเงินเดือนนี้อีกครั้ง"
+
+msgid ""
+"The 1,650-17,500 base applies 1 Jan 2026 - 31 Dec 2028 (Ministerial "
+"Regulation B.E. 2568, Royal Gazette 12 Dec 2025); it rises to 20,000 in 2029 "
+"and 23,000 in 2032: run `manage.py sync_th_sso_base` (it reads the engine "
+"rule files) to move the component onto the base in force. Verify the rate "
+"and the wage base against current law. Assign it only to employees "
+"registered with the Social Security Office. Taken after tax: Thai income tax "
+"allows the contribution as a deduction itself, so making it pre-tax would "
+"count it twice. The base assumes monthly pay periods, and gross pay is used "
+"as the wage; exclude anything that is not wages under the Social Security "
+"Act."
+msgstr ""
+"ฐาน 1,650-17,500 บาท ใช้ตั้งแต่ 1 ม.ค. 2569 ถึง 31 ธ.ค. 2571 (กฎกระทรวง พ.ศ. 2568 "
+"ราชกิจจานุเบกษา 12 ธ.ค. 2568) และจะเพิ่มเป็น 20,000 บาทในปี 2572 และ 23,000 บาทในปี 2575 "
+"ให้รัน `manage.py sync_th_sso_base` (อ่านจากไฟล์กฎของ engine) เพื่อปรับรายการนี้ให้ตรงกับฐานที่มีผลบังคับ "
+"กรุณาตรวจสอบอัตราและฐานค่าจ้างกับกฎหมายปัจจุบัน "
+"กำหนดให้เฉพาะพนักงานที่ขึ้นทะเบียนกับสำนักงานประกันสังคมเท่านั้น หักหลังภาษี: "
+"ภาษีเงินได้ของไทยให้นำเงินสมทบไปลดหย่อนได้อยู่แล้ว การหักก่อนภาษีจึงเป็นการนับซ้ำ "
+"ฐานนี้สมมติว่างวดการจ่ายเป็นรายเดือน และใช้เงินได้รวมเป็นค่าจ้าง "
+"ให้ตัดรายการที่ไม่ใช่ค่าจ้างตามพระราชบัญญัติประกันสังคมออก"
