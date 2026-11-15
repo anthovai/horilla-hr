@@ -111,7 +111,11 @@ class Catalog:
     def rows(self, model):
         """All components of ``model`` the current company filter lets through, loaded once."""
         if model not in self._rows:
-            rows = list(model.objects.filter().prefetch_related("apply_conditions"))
+            # is_active explicitly: the company manager only filters it inside a web
+            # request, and a run reads its catalog outside one.
+            rows = list(
+                model.objects.filter(is_active=True).prefetch_related("apply_conditions")
+            )
             # The who-it-applies-to relations are read straight from their link tables: only ids are
             # needed, and going through the related models' managers costs a company filter each.
             relations = {name: _links(model, name) for name in _RELATED}

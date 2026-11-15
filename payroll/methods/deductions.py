@@ -40,6 +40,7 @@ def update_compensation_deduction(
                 Deduction,
                 employee,
             )
+            .filter(is_active=True)
             .exclude(one_time_date__lt=start_date)
             .exclude(one_time_date__gt=end_date)
             # .exclude(exclude_employees=employee)

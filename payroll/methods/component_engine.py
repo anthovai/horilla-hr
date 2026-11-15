@@ -260,7 +260,10 @@ def eligible_allowances(employee, start_date, end_date):
         | structure_components(Allowance, employee)
     )
     return (
-        allowances.exclude(one_time_date__lt=start_date)
+        # is_active explicitly: HorillaCompanyManager only filters it inside a
+        # web request, so background payroll runs used to pay switched-off rows.
+        allowances.filter(is_active=True)
+        .exclude(one_time_date__lt=start_date)
         .exclude(one_time_date__gt=end_date)
         # A system component is a template for the rows a loan or a
         # reimbursement generates, not something anyone is paid. Nothing

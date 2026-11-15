@@ -550,7 +550,7 @@ def calculate_tax_deduction(*_args, **kwargs):
             )
         ).distinct()
         deductions = (
-            deductions.exclude(one_time_date__lt=start_date)
+            deductions.filter(is_active=True).exclude(one_time_date__lt=start_date)
             .exclude(one_time_date__gt=end_date)
             .exclude(update_compensation__isnull=False)
             # Templates say how their kind behaves; they are never deducted. See
@@ -663,7 +663,7 @@ def calculate_pre_tax_deduction(*_args, **kwargs):
                 )
             ).distinct()
             deductions = (
-                deductions.exclude(one_time_date__lt=start_date)
+                deductions.filter(is_active=True).exclude(one_time_date__lt=start_date)
                 .exclude(one_time_date__gt=end_date)
                 .exclude(update_compensation__isnull=False)
                 # Templates say how their kind behaves; they are never deducted. See
@@ -779,7 +779,7 @@ def calculate_post_tax_deduction(*_args, **kwargs):
             )
         ).distinct()
         deductions = (
-            deductions.exclude(one_time_date__lt=start_date)
+            deductions.filter(is_active=True).exclude(one_time_date__lt=start_date)
             .exclude(one_time_date__gt=end_date)
             .exclude(update_compensation__isnull=False)
             # Templates say how their kind behaves; they are never deducted. See
