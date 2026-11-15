@@ -18,6 +18,7 @@ from base.import_template_data import import_template_frame, write_import_xlsx
 from horilla.http.response import HorillaRedirect, with_bulk_result
 from horilla.methods import remove_dynamic_url
 from horilla.posted_ids import posted_ids
+from horilla.tenancy import tenant_media_root
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +134,7 @@ from horilla.decorators import (
     permission_required,
 )
 from notifications.signals import notify
+from horilla.tenancy import TenantAwareThread
 
 
 def attendance_validate(attendance):
@@ -1726,7 +1728,7 @@ def approve_bulk_overtime(request):
             finally:
                 connection.close()
 
-        threading.Thread(target=send_overtime_notifications, daemon=True).start()
+        TenantAwareThread(target=send_overtime_notifications, daemon=True).start()
     if otapprove_ids:
         messages.success(request, _(" {} Overtime approved".format(len(otapprove_ids))))
 
@@ -3138,7 +3140,7 @@ def work_record_export(request):
         worksheet.merge_range(0, 0, 2, 0, "")
 
         logo_full_path = (
-            str(os.path.join(settings.MEDIA_ROOT, str(logo_path)))
+            str(os.path.join(tenant_media_root(), str(logo_path)))
             if logo_path
             else None
         )

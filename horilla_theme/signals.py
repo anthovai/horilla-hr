@@ -19,6 +19,10 @@ def create_default_themes(sender, **kwargs):
     # Only run for the horilla_theme app
     if sender.name != "horilla_theme":
         return
+    from horilla.tenancy import app_has_tables
+
+    if not app_has_tables("horilla_theme"):
+        return
 
     # Check if horilla_theme already exist
     try:

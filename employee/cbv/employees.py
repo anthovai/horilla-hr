@@ -98,6 +98,7 @@ class EmployeesView(TemplateView):
 
 
 from base import models as base_models
+from horilla.tenancy import TenantAwareThread
 
 
 @method_decorator(login_required, name="dispatch")
@@ -763,7 +764,7 @@ def user_generic_import_or_update(sender, **kwargs):
                     f"{len(users_to_update)} user passwords were successfully updated."
                 )
 
-    thread = threading.Thread(target=_set_password, args=(records,))
+    thread = TenantAwareThread(target=_set_password, args=(records,))
     thread.start()
 
 

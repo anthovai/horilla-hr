@@ -16,11 +16,12 @@ from base.backends import ConfiguredEmailBackend
 from base.models import Department
 from employee.models import EmployeeWorkInformation
 from helpdesk.models import Ticket
+from horilla.tenancy import TenantAwareThread
 
 logger = logging.getLogger(__name__)
 
 
-class TicketSendThread(Thread):
+class TicketSendThread(TenantAwareThread):
     """
     MailSend
     """
@@ -135,7 +136,7 @@ class TicketSendThread(Thread):
         return
 
 
-class AddAssigneeThread(Thread):
+class AddAssigneeThread(TenantAwareThread):
     """
     MailSend
     """
@@ -196,7 +197,7 @@ class AddAssigneeThread(Thread):
                 )
 
 
-class RemoveAssigneeThread(Thread):
+class RemoveAssigneeThread(TenantAwareThread):
     """
     MailSend
     """

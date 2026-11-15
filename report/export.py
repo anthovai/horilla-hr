@@ -20,6 +20,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 
 from horilla.export_safety import FORMULA_TRIGGERS, neutralize_formula
+from horilla.tenancy import tenant_media_root
 
 logger = logging.getLogger(__name__)
 
@@ -1187,7 +1188,7 @@ def _pdf_link_callback(uri: str, rel: str):
                     return candidate
         elif media_url and uri.startswith(media_url):
             candidate = _os.path.join(
-                getattr(_settings, "MEDIA_ROOT", ""), uri[len(media_url) :]
+                tenant_media_root() or "", uri[len(media_url) :]
             )
             if _os.path.isfile(candidate):
                 return candidate

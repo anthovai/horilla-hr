@@ -23,6 +23,7 @@ from dateutil import parser
 from django import forms
 from django.apps import apps
 from django.conf import settings
+from horilla.tenancy import tenant_media_root
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -205,6 +206,7 @@ from horilla_audit.models import AccountBlockUnblock, AuditTag, HistoryTrackingF
 from horilla_auth.models import HorillaUser
 from notifications.models import Notification
 from notifications.signals import notify
+from horilla.tenancy import TenantAwareThread
 
 CHARTS = [
     ("employee_work_info", _("Employee Work Info")),
@@ -1276,7 +1278,7 @@ def send_otp(request):
         from_email=display_email_name,
         to=[email],
     )
-    thread = threading.Thread(target=email.send)
+    thread = TenantAwareThread(target=email.send)
     thread.start()
 
     return redirect("two-factor")
@@ -8918,7 +8920,8 @@ def protected_media(request, path):
 
     # Prevent path traversal
     try:
-        media_path = safe_join(settings.MEDIA_ROOT, path)
+        # SaaS mode: resolves inside the requesting tenant's own folder.
+        media_path = safe_join(tenant_media_root(), path)
     except Exception:
         # safe_join raises ValueError if traversal detected
         raise Http404("Invalid file path")

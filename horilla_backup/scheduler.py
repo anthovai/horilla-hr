@@ -87,7 +87,27 @@ scheduler = BackgroundScheduler()
 #     start_backup_job()
 
 
+def _refuse_in_saas_mode():
+    """
+    The Google Drive backup dumps the WHOLE database (every tenant schema)
+    and the whole MEDIA_ROOT. In SaaS mode that would hand all customers'
+    data to whichever tenant configured a Drive folder, so it never runs.
+    """
+    from horilla.tenancy import is_multi_tenant
+
+    if is_multi_tenant():
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "Google Drive backup is disabled in multi-tenant mode."
+        )
+        return True
+    return False
+
+
 def google_drive_backup():
+    if _refuse_in_saas_mode():
+        return
     if GoogleDriveBackup.objects.exists():
         google_drive = GoogleDriveBackup.objects.first()
         service_account_file = google_drive.service_account_file.path
@@ -114,6 +134,8 @@ def start_gdrive_backup_job():
     """
     Start the backup job based on the LocalBackup configuration.
     """
+    if _refuse_in_saas_mode():
+        return
     # Check if any Gdrive Backup object exists
     if GoogleDriveBackup.objects.exists():
         gdrive_backup = GoogleDriveBackup.objects.first()

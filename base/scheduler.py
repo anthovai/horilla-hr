@@ -523,6 +523,8 @@ register_job(
     trim_scheduler_history,
     "cron",
     job_id="trim_scheduler_history",
+    # django_apscheduler's tables are shared (public schema) in SaaS mode.
+    per_tenant=False,
     hour=3,
     minute=15,
     misfire_grace_time=3600 * 6,

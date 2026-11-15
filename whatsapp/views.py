@@ -51,6 +51,7 @@ from whatsapp.utils import (
     update_flow,
     work_type_create,
 )
+from horilla.tenancy import TenantAwareThread
 
 DETAILED_FLOW = [
     {
@@ -411,7 +412,7 @@ def send_notification_on_whatsapp(
     ).exists():
         return
     request = getattr(_thread_locals, "request", None)
-    thread = threading.Thread(
+    thread = TenantAwareThread(
         target=send_notification_task, args=(request, recipient, verb, redirect, icon)
     )
     thread.start()
@@ -486,7 +487,7 @@ def send_announcement(instance):
     ):
         request = getattr(_thread_locals, "request", None)
 
-        thread = threading.Thread(
+        thread = TenantAwareThread(
             target=send_announcement_task,
             args=(instance, request),
             daemon=True,

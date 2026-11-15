@@ -13,6 +13,11 @@ def ensure_officer_group(sender=None, **kwargs):
     """Create/refresh the "PDPA Officer" permission set after migrate."""
     from django.contrib.auth.models import Group, Permission
 
+    from horilla.tenancy import app_has_tables
+
+    # SaaS mode: the officer group belongs in each tenant schema, not public.
+    if not app_has_tables("orvahr_pdpa"):
+        return
     perms = Permission.objects.filter(content_type__app_label="orvahr_pdpa").exclude(
         codename__in=OFFICER_EXCLUDED
     )

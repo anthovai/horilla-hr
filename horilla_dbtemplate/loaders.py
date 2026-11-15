@@ -126,6 +126,13 @@ class Loader(BaseLoader):
           6. DB: global + language-agnostic
           7. Mark not-found, raise TemplateDoesNotExist
         """
+        # SaaS mode, public schema (landing page, probes): this app's tables
+        # exist only in tenant schemas, so there is nothing to look up.
+        from horilla.tenancy import app_has_tables
+
+        if not app_has_tables("horilla_dbtemplate"):
+            raise TemplateDoesNotExist(template_name)
+
         site = self._resolve_site()
         language = self._get_language()
         cache_key = get_cache_key(template_name, site, language)

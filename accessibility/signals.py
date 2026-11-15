@@ -12,6 +12,7 @@ from accessibility.middlewares import ACCESSIBILITY_CACHE_USER_KEYS
 from accessibility.models import DefaultAccessibility
 from employee.models import EmployeeWorkInformation
 from horilla.signals import post_bulk_update
+from horilla.tenancy import TenantAwareThread
 
 
 def _clear_accessibility_cache():
@@ -56,7 +57,7 @@ def monitor_accessibility_update(sender, instance, created, **kwargs):
     _sender = sender
     _created = created
     _instance = instance
-    thread = threading.Thread(target=_clear_accessibility_cache)
+    thread = TenantAwareThread(target=_clear_accessibility_cache)
     thread.start()
 
 
@@ -67,5 +68,5 @@ def monitor_employee_bulk_update(sender, queryset, *args, **kwargs):
     """
     _sender = sender
     _queryset = queryset
-    thread = threading.Thread(target=_clear_bulk_employees_cache(queryset))
+    thread = TenantAwareThread(target=_clear_bulk_employees_cache(queryset))
     thread.start()

@@ -28,6 +28,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from horilla.models import has_xss
+from horilla.tenancy import tenant_media_root
 
 logger = logging.getLogger(__name__)
 
@@ -1410,7 +1411,7 @@ def link_callback(uri, rel):
         sUrl = settings.STATIC_URL
         sRoot = settings.STATIC_ROOT
         mUrl = settings.MEDIA_URL
-        mRoot = settings.MEDIA_ROOT
+        mRoot = tenant_media_root()
 
         if uri.startswith(sUrl):
             path = os.path.join(sRoot, uri.replace(sUrl, ""))

@@ -22,6 +22,12 @@ from horilla.horilla_middlewares import _thread_locals
 from horilla.models import has_xss
 from horilla.signals import post_bulk_update, pre_bulk_update
 from notifications.signals import notify
+from horilla.tenancy import (
+    TenantAwareThread,
+    app_has_tables,
+    current_schema,
+    schema_matches,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -106,8 +112,11 @@ def start_automation():
     REFRESH_METHODS["clear_connection"] = clear_connection
 
     def create_post_bulk_update_handler(automation, model_class, query_strings):
+        # SaaS mode: the automation belongs to the schema it was read from.
+        handler_schema = current_schema()
+
         def post_bulk_update_handler(sender, queryset, *args, **kwargs):
-            if automations_suspended():
+            if automations_suspended() or not schema_matches(handler_schema):
                 return
 
             def _bulk_update_thread_handler(
@@ -136,7 +145,7 @@ def start_automation():
             # Deferred for the same reason as the post_save handler above:
             # the thread reads the rows back on its own connection.
             transaction.on_commit(
-                lambda: threading.Thread(
+                lambda: TenantAwareThread(
                     target=_bulk_update_thread_handler,
                     args=(queryset, previous_queryset_copy, automation),
                 ).start()
@@ -184,11 +193,13 @@ def start_automation():
             post_bulk_update.connect(handler, sender=model_class)
 
             def create_signal_handler(name, automation, query_strings, model_class):
+                handler_schema = current_schema()
+
                 def signal_handler(sender, instance, created, **kwargs):
                     """
                     Signal handler for post-save events of the model instances.
                     """
-                    if automations_suspended():
+                    if automations_suspended() or not schema_matches(handler_schema):
                         return
                     request = getattr(_thread_locals, "request", None)
                     previous_record = getattr(_thread_locals, "previous_record", None)
@@ -215,7 +226,7 @@ def start_automation():
                     # a mail should not go out for a save that was undone.
                     # Outside a transaction on_commit runs immediately.
                     transaction.on_commit(
-                        lambda: threading.Thread(
+                        lambda: TenantAwareThread(
                             target=lambda: send_automated_mail(*args),
                         ).start()
                     )
@@ -299,11 +310,18 @@ def start_automation():
             # iteration's values. Django only passes sender/instance/**kwargs.
             @receiver(pre_save, sender=model_class)
             def instance_handler(
-                sender, instance, _model=model_class, _automation=automation, **kwargs
+                sender,
+                instance,
+                _model=model_class,
+                _automation=automation,
+                _schema=current_schema(),
+                **kwargs,
             ):
                 """
                 Signal handler for pres-save events of the model instances.
                 """
+                if not schema_matches(_schema):
+                    return
                 # prevented storing the scheduled activities
                 request = getattr(_thread_locals, "request", None)
                 if instance.pk:
@@ -321,6 +339,10 @@ def start_automation():
 
             INSTANCE_HANDLERS.append(instance_handler)
 
+    # SaaS mode: at startup the connection is on the public schema, which has
+    # no automation tables; the handlers load when a tenant saves one.
+    if not app_has_tables("horilla_automations"):
+        return
     track_previous_instance()
     start_connection()
 
@@ -601,13 +623,13 @@ def send_mail(request, automation, instance):
             )
 
         if automation.delivery_channel != "notification":
-            thread = threading.Thread(
+            thread = TenantAwareThread(
                 target=lambda: _send_mail(email),
             )
             thread.start()
 
         if automation.delivery_channel != "email":
-            thread = threading.Thread(
+            thread = TenantAwareThread(
                 target=lambda: _send_notification(plain_text),
             )
             thread.start()

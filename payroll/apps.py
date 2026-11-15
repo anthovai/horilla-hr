@@ -43,8 +43,11 @@ def seed_system_components(sender, **kwargs):
     """Create any standard pay item that does not exist yet."""
     import logging
 
+    from horilla.tenancy import app_has_tables
     from payroll.system_components import seed
 
+    if not app_has_tables("payroll"):
+        return
     try:
         created = seed()
     except Exception:  # a partially migrated database, say

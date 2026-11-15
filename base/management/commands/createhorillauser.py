@@ -10,6 +10,41 @@ from employee.models import Employee
 from horilla_auth.models import HorillaUser
 
 
+def create_horilla_superuser(
+    *, username, password, email, first_name, last_name="", phone=""
+):
+    """
+    Create a superuser, its Employee record and the "Horilla Bot" user.
+
+    Shared by this command and ``orvahr_saas``'s ``create_tenant`` (which calls
+    it inside the new tenant's schema). Raises CommandError, after removing a
+    half-created user, if anything fails.
+    """
+    try:
+        user = HorillaUser.objects.create_superuser(
+            username=username, email=email, password=password
+        )
+        employee = Employee()
+        employee.employee_user_id = user
+        employee.employee_first_name = first_name
+        employee.employee_last_name = last_name
+        employee.email = email
+        employee.phone = phone
+        employee.save()
+
+        bot = HorillaUser.objects.filter(username="Horilla Bot").first()
+        if bot is None:
+            HorillaUser.objects.create_user(
+                username="Horilla Bot",
+                password=str(uuid.uuid4()),
+            )
+        return employee
+    except Exception as e:
+        if "user" in locals():
+            user.delete()
+        raise CommandError(f'Error creating user "{username}": {e}') from e
+
+
 class Command(BaseCommand):
     """
     OrvaHR management command to create a new user and associated employee.
@@ -47,29 +82,14 @@ class Command(BaseCommand):
             )
             return
 
-        try:
-            user = HorillaUser.objects.create_superuser(
-                username=username, email=email, password=password
-            )
-            employee = Employee()
-            employee.employee_user_id = user
-            employee.employee_first_name = first_name
-            employee.employee_last_name = last_name
-            employee.email = email
-            employee.phone = phone
-            employee.save()
-
-            bot = HorillaUser.objects.filter(username="Horilla Bot").first()
-            if bot is None:
-                HorillaUser.objects.create_user(
-                    username="Horilla Bot",
-                    password=str(uuid.uuid4()),
-                )
-
-            self.stdout.write(
-                self.style.SUCCESS(f'Employee "{employee}" created successfully')
-            )
-        except Exception as e:
-            if "user" in locals():
-                user.delete()
-            raise CommandError(f'Error creating user "{username}": {e}') from e
+        employee = create_horilla_superuser(
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f'Employee "{employee}" created successfully')
+        )

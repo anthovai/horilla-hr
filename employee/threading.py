@@ -4,11 +4,12 @@ Async email sending for employee-invitation actions.
 
 import logging
 from threading import Thread
+from horilla.tenancy import TenantAwareThread
 
 logger = logging.getLogger(__name__)
 
 
-class InvitationMailSendThread(Thread):
+class InvitationMailSendThread(TenantAwareThread):
     """
     Sends a "set your password" invitation email to each of the given
     employees in the background, so a bulk invite doesn't block the

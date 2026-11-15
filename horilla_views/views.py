@@ -11,6 +11,7 @@ from bidi.algorithm import get_display
 from django import forms
 from django.apps import apps
 from django.conf import settings
+from horilla.tenancy import tenant_media_root
 from django.contrib import messages
 from django.contrib.admin.utils import NestedObjects
 from django.contrib.contenttypes.models import ContentType
@@ -768,7 +769,7 @@ def link_callback(uri, rel):
     media_path = None
     if uri.startswith(settings.MEDIA_URL):
         rel_path = uri.replace(settings.MEDIA_URL, "")
-        media_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+        media_path = os.path.join(tenant_media_root(), rel_path)
 
     # If a path found, return it
     for path in (static_path, media_path, uri):

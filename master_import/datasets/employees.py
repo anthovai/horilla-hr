@@ -43,6 +43,7 @@ from .salary_structure import (
     structure_table,
 )
 from .scoping import managers_by_name, pick, pick_manager
+from horilla.tenancy import TenantAwareThread
 
 BANK_KEYS = [
     "Bank Name",
@@ -684,7 +685,7 @@ class EmployeesDataset(Dataset):
         # A random password for everyone the sheet gave none, so nobody can
         # sign in until they are invited.
         has_password = {r["Badge ID"] for r in rows if r.get("Password")}
-        threading.Thread(
+        TenantAwareThread(
             target=set_initial_password,
             args=([e for e in employees if e.badge_id not in has_password],),
         ).start()

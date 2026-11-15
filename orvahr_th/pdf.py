@@ -22,6 +22,7 @@ import os
 from urllib.parse import urlparse
 
 from django.conf import settings
+from horilla.tenancy import tenant_media_root
 from django.contrib.staticfiles import finders
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
@@ -125,8 +126,10 @@ def _local_path_for(uri, request_host=None):
         root = settings.STATIC_ROOT
     elif path.startswith(media_url) and settings.MEDIA_ROOT:
         relative = path[len(media_url) :]
-        candidates.append(os.path.join(settings.MEDIA_ROOT, relative))
-        root = settings.MEDIA_ROOT
+        # SaaS mode: the active tenant's folder, never another tenant's.
+        media_root = tenant_media_root()
+        candidates.append(os.path.join(media_root, relative))
+        root = media_root
     else:
         return None
     for candidate in candidates:

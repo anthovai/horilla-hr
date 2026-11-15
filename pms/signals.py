@@ -19,6 +19,8 @@ from pms.models import BonusPointSetting
 logger = logging.getLogger(__name__)
 
 
+from horilla.tenancy import app_has_tables, current_schema, schema_matches
+
 SIGNAL_HANDLERS = []
 INSTANCE_HANDLERS = []
 
@@ -78,10 +80,15 @@ def start_automation():
             def create_signal_handler(
                 name, bonus_point_setting, model_class, type=None, field=None
             ):
+                # SaaS mode: the setting belongs to the schema it was read from.
+                handler_schema = current_schema()
+
                 def signal_handler(sender, instance, *args, **kwargs):
                     """
                     Signal handler for post-save events of the model instances.
                     """
+                    if not schema_matches(handler_schema):
+                        return
                     if type == "ManyToManyField":
 
                         @receiver(
@@ -183,11 +190,18 @@ def start_automation():
             # values. Django only ever passes sender/instance/**kwargs.
             @receiver(pre_save, sender=model_class)
             def instance_handler(
-                sender, instance, _model=model_class, _setting=bonus_setting, **kwargs
+                sender,
+                instance,
+                _model=model_class,
+                _setting=bonus_setting,
+                _schema=current_schema(),
+                **kwargs,
             ):
                 """
                 Signal handler for pres-save events of the model instances.
                 """
+                if not schema_matches(_schema):
+                    return
                 # prevented storing the scheduled activities
                 request = getattr(_thread_locals, "request", None)
                 if instance.pk:
@@ -205,5 +219,9 @@ def start_automation():
 
             INSTANCE_HANDLERS.append(instance_handler)
 
+    # SaaS mode: at startup the connection is on the public schema, which has
+    # no pms tables; the handlers load when a tenant saves a setting.
+    if not app_has_tables("pms"):
+        return
     track_previous_instance()
     start_connection()

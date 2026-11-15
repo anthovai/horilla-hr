@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}OrvaHR{% endblock %}</title>
+<style>
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#f6f7f9;color:#1f2933;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:16px}
+  main{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:32px;max-width:480px;width:100%}
+  h1{font-size:1.4rem;margin:0 0 12px}
+  p{line-height:1.5;margin:0 0 8px;color:#52606d}
+</style>
+</head>
+<body><main>{% block content %}{% endblock %}</main></body>
+</html>

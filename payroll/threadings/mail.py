@@ -15,11 +15,12 @@ from employee.models import EmployeeWorkInformation
 from horilla.horilla_middlewares import get_selected_company, set_selected_company
 from payroll.models.models import Payslip
 from payroll.views.views import payslip_pdf
+from horilla.tenancy import TenantAwareThread
 
 logger = logging.getLogger(__name__)
 
 
-class MailSendThread(Thread):
+class MailSendThread(TenantAwareThread):
     """
     MailSend
     """

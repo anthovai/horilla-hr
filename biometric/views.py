@@ -58,6 +58,7 @@ from .forms import (
     MapBioUsers,
 )
 from .models import BiometricDevices, BiometricEmployees, COSECAttendanceArguments
+from horilla.tenancy import TenantAwareThread, schema_key, tenant_aware
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +122,7 @@ def biometric_set_time(conn):
     conn.set_time(new_time)
 
 
-class ZKBioAttendance(Thread):
+class ZKBioAttendance(TenantAwareThread):
     """
     Represents a thread for capturing live attendance data from a ZKTeco biometric device.
 
@@ -221,7 +222,7 @@ class ZKBioAttendance(Thread):
         self.conn.end_live_capture = True
 
 
-class COSECBioAttendanceThread(Thread):
+class COSECBioAttendanceThread(TenantAwareThread):
     """
     A thread class that handles the real-time retrieval and processing of
     biometric attendance data from a COSEC biometric device.
@@ -430,7 +431,7 @@ def biometric_device_schedule(request, device_id):
                     device.save()
                     scheduler = BackgroundScheduler()
                     scheduler.add_job(
-                        lambda: zk_biometric_attendance_scheduler(device.id),
+                        tenant_aware(lambda: zk_biometric_attendance_scheduler(device.id)),
                         "interval",
                         seconds=str_time_seconds(device.scheduler_duration),
                     )
@@ -460,7 +461,7 @@ def biometric_device_schedule(request, device_id):
                 device.save()
                 scheduler = BackgroundScheduler()
                 scheduler.add_job(
-                    lambda: anviz_biometric_attendance_scheduler(device.id),
+                    tenant_aware(lambda: anviz_biometric_attendance_scheduler(device.id)),
                     "interval",
                     seconds=str_time_seconds(device.scheduler_duration),
                 )
@@ -473,7 +474,7 @@ def biometric_device_schedule(request, device_id):
                 device.save()
                 scheduler = BackgroundScheduler()
                 scheduler.add_job(
-                    lambda: dahua_biometric_attendance_scheduler(device.id),
+                    tenant_aware(lambda: dahua_biometric_attendance_scheduler(device.id)),
                     "interval",
                     seconds=str_time_seconds(device.scheduler_duration),
                 )
@@ -490,7 +491,7 @@ def biometric_device_schedule(request, device_id):
                     existing_thread.stop()
                     del settings.BIO_DEVICE_THREADS[device.id]
                 scheduler.add_job(
-                    lambda: cosec_biometric_attendance_scheduler(device.id),
+                    tenant_aware(lambda: cosec_biometric_attendance_scheduler(device.id)),
                     "interval",
                     seconds=str_time_seconds(device.scheduler_duration),
                 )
@@ -503,7 +504,7 @@ def biometric_device_schedule(request, device_id):
                 device.save()
                 scheduler = BackgroundScheduler()
                 scheduler.add_job(
-                    lambda: etimeoffice_biometric_attendance_scheduler(device.id),
+                    tenant_aware(lambda: etimeoffice_biometric_attendance_scheduler(device.id)),
                     "interval",
                     seconds=str_time_seconds(device.scheduler_duration),
                 )
@@ -2687,10 +2688,12 @@ def poll_biometric_devices():
             continue
         if interval <= 0:
             continue
-        last = _biometric_last_run.get(device.pk)
+        # Device pks repeat across tenant schemas (SaaS mode).
+        run_key = schema_key(device.pk)
+        last = _biometric_last_run.get(run_key)
         if last is not None and (now - last) < interval:
             continue
-        _biometric_last_run[device.pk] = now
+        _biometric_last_run[run_key] = now
         try:
             # Bind the id per iteration: the previous lambdas closed over the
             # loop variable, so every device could poll the last one's id.

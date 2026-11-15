@@ -114,6 +114,13 @@ def load_ldap_settings():
       the table genuinely does not exist. That is an ordinary state, not an
       error, and it must not stop anything.
     """
+    from horilla.tenancy import app_has_tables
+
+    # SaaS mode: this runs at startup on the public schema, which has no LDAP
+    # table. (LDAP settings are process-wide; per-tenant LDAP is not supported
+    # in SaaS mode yet.)
+    if not app_has_tables("horilla_ldap"):
+        return settings.DEFAULT_LDAP_CONFIG
     try:
         from django.db import connection
 

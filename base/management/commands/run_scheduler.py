@@ -22,7 +22,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 
-from horilla.scheduling import get_registered_jobs
+from horilla.scheduling import get_registered_jobs, scheduler_target
 
 logger = logging.getLogger(__name__)
 
@@ -80,8 +80,16 @@ class Command(BaseCommand):
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
         for job in jobs:
+            # Single-tenant: job.func itself. SaaS mode: a runner that executes
+            # job.func once per active tenant schema (horilla.tenancy).
+            func, func_args = scheduler_target(job)
+            if func_args:
+                job_kwargs = dict(job.kwargs)
+                job_kwargs["args"] = func_args + list(job_kwargs.get("args", ()))
+            else:
+                job_kwargs = job.kwargs
             scheduler.add_job(
-                job.func,
+                func,
                 job.trigger,
                 id=job.job_id,
                 # A job whose previous run is still going must not stack a
@@ -90,7 +98,7 @@ class Command(BaseCommand):
                 max_instances=1,
                 coalesce=True,
                 replace_existing=True,
-                **job.kwargs,
+                **job_kwargs,
             )
             logger.info("Scheduled %s (%s, %s)", job.job_id, job.trigger, job.kwargs)
 

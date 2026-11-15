@@ -3,6 +3,8 @@ from django.db import connection
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
+from horilla.tenancy import is_multi_tenant
+
 from horilla.decorators import (
     hx_request_required,
     login_required,
@@ -112,7 +114,9 @@ def gdrive_setup(request):
     form = GdriveBackupSetupForm()
     show = False
     active = False
-    if connection.vendor != "postgresql":
+    # SaaS mode: the backup dumps the whole database and MEDIA_ROOT, i.e.
+    # every tenant's data, into one customer's Drive. Not offered there.
+    if connection.vendor != "postgresql" or is_multi_tenant():
         return render(request, "backup/404.html")
     if GoogleDriveBackup.objects.exists():
         instance = GoogleDriveBackup.objects.first()

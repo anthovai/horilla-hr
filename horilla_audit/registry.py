@@ -109,7 +109,13 @@ def _load_targets():
     empty or unavailable (e.g. before migrations run).
     """
     targets = []
+    from horilla.tenancy import app_has_tables
+
     try:
+        if not app_has_tables("horilla_audit"):
+            # SaaS public schema: no table; and a failed query here would
+            # abort an enclosing transaction on PostgreSQL.
+            raise LookupError("horilla_audit tables not in this schema")
         from horilla_audit.models import AuditModelConfig
 
         configs = list(AuditModelConfig.objects.filter(is_enabled=True))

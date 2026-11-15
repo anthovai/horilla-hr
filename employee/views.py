@@ -143,6 +143,7 @@ from horilla_documents.forms import (
 )
 from horilla_documents.models import Document, DocumentRequest
 from notifications.signals import notify
+from horilla.tenancy import TenantAwareThread
 
 
 def return_none(a, b):
@@ -3208,7 +3209,7 @@ def work_info_import(request):
                     bulk_create_shifts(success_list)
                     bulk_create_employee_types(success_list)
                     bulk_create_work_info_import(success_list)
-                    thread = threading.Thread(
+                    thread = TenantAwareThread(
                         target=set_initial_password, args=(employees,)
                     )
                     thread.start()

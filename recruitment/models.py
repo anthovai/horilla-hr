@@ -1784,8 +1784,16 @@ class Candidate(HorillaModel):
         )
 
     @classmethod
-    @lru_cache(maxsize=1)
     def get_unique_questions(cls):
+        # Cached per schema: in SaaS mode a process-wide cache would hand one
+        # tenant's survey questions to every other tenant.
+        from horilla.tenancy import current_schema
+
+        return cls._unique_questions(current_schema())
+
+    @classmethod
+    @lru_cache(maxsize=256)
+    def _unique_questions(cls, _schema):
         return dict(
             RecruitmentSurvey.objects.values("question")
             .annotate(pk=Min("pk"))

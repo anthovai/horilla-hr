@@ -29,6 +29,13 @@ env = environ.Env(
 env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=False)
 
 # ========================================
+# MULTI-TENANT (SaaS) SWITCH
+# ========================================
+# One PostgreSQL schema per customer via django-tenants; see
+# horilla/settings/saas.py. Off by default: nothing changes unless set.
+ORVAHR_MULTI_TENANT = env.bool("ORVAHR_MULTI_TENANT", default=False)
+
+# ========================================
 # CORE DJANGO SETTINGS
 # ========================================
 SECRET_KEY = env("SECRET_KEY")

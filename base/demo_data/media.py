@@ -7,6 +7,7 @@ import shutil
 from pathlib import Path
 
 from django.conf import settings
+from horilla.tenancy import tenant_media_root
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ def copy_demo_media(load_dir: Path | None = None) -> dict[str, int]:
     ``employee/profile/avatar_*.jpg`` — without this step those URLs 404.
     """
     root = Path(load_dir) if load_dir else Path(settings.BASE_DIR) / "load_data"
-    media = Path(settings.MEDIA_ROOT)
+    media = Path(tenant_media_root())
 
     icons = _copy_glob(root / "icons", media / "base" / "icon", "*.png")
     # Also accept legacy Horilla_*.png already under media if icons/ was empty

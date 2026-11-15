@@ -219,6 +219,12 @@ def clean_work_records(sender, **kwargs):
 @receiver(post_migrate)
 def create_shift_days(sender, **kwargs):
     from base.models import EmployeeShiftDay
+    from horilla.tenancy import app_has_tables
+
+    # SaaS mode: post_migrate also fires while migrating the public schema,
+    # which has no base tables.
+    if not app_has_tables("base"):
+        return
 
     if not EmployeeShiftDay.objects.exists():
         days = [
@@ -514,6 +520,10 @@ def create_default_hrms_groups(sender, **kwargs):
     Groups are created without assigning employees; admins can assign later.
     """
     if getattr(sender, "label", None) not in _HRMS_GROUP_MIGRATE_APPS:
+        return
+    from horilla.tenancy import app_has_tables
+
+    if not app_has_tables("base"):
         return
     try:
         _sync_export_permissions()

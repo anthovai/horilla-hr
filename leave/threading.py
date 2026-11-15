@@ -11,11 +11,12 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from base.backends import ConfiguredEmailBackend
+from horilla.tenancy import TenantAwareThread
 
 logger = logging.getLogger(__name__)
 
 
-class LeaveMailSendThread(Thread):
+class LeaveMailSendThread(TenantAwareThread):
 
     def __init__(self, request, leave_request, type):
         Thread.__init__(self)
@@ -210,7 +211,7 @@ class LeaveMailSendThread(Thread):
         return
 
 
-class LeaveClashThread(Thread):
+class LeaveClashThread(TenantAwareThread):
 
     def __init__(self, leave_request):
         Thread.__init__(self)

@@ -17,6 +17,10 @@ class HorillaAuditConfig(AppConfig):
         registry.apply_audit_configuration()
 
         def _reapply_after_migrate(sender, **kwargs):
+            from horilla.tenancy import app_has_tables
+
+            if not app_has_tables("horilla_audit"):
+                return
             registry.apply_audit_configuration()
 
             from horilla_audit.models import HistoryTrackingFields

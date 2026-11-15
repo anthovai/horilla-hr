@@ -18,6 +18,7 @@ from django.utils.translation import gettext as _
 from base.models import IntegrationApps
 from line_integration.client import LineClient
 from line_integration.models import LineChannel, LineMessageLog, LineUserLink
+from horilla.tenancy import TenantAwareThread
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ def run_async(func, *args):
         finally:
             close_old_connections()
 
-    threading.Thread(target=target, daemon=True, name="line-dispatch").start()
+    TenantAwareThread(target=target, daemon=True, name="line-dispatch").start()
 
 
 def queue(func, *args):

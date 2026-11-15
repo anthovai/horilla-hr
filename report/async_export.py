@@ -8,6 +8,7 @@ from typing import Optional
 
 from django.core.mail import EmailMessage
 from django.utils.translation import gettext as _
+from horilla.tenancy import tenant_aware
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +135,9 @@ def queue_export_email(
         raise ExportQueueFull(
             "Too many report exports already running; try again shortly."
         )
-    thread = threading.Thread(target=_run, name=f"report-export-{slug}", daemon=True)
+    thread = threading.Thread(
+        target=tenant_aware(_run), name=f"report-export-{slug}", daemon=True
+    )
     thread.start()
 
 

@@ -2137,9 +2137,11 @@ def attendance_monthly_summary_export(request):
             try:
                 import os
 
+                from horilla.tenancy import tenant_media_root
+
                 worksheet.insert_image(
                     "A1",
-                    str(os.path.join(settings.MEDIA_ROOT, str(company_logo))),
+                    str(os.path.join(tenant_media_root(), str(company_logo))),
                     {"x_scale": 0.25, "y_scale": 0.25},
                 )
             except Exception:
