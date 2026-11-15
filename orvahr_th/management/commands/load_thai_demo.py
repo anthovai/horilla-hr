@@ -215,6 +215,7 @@ class Command(BaseCommand):
             self._currency(companies, all_companies=opts["company"] == "all")
             self._tax_pack(companies)
             sso = self._sso_deduction()
+            self._retire_foreign_statutory()
             self._company_profiles(companies, sso)
             self._bank_accounts(companies)
             self._thai_profiles()
@@ -297,6 +298,23 @@ class Command(BaseCommand):
         self.count("SSO deduction created", len(created))
         title = next(e["name"] for e in COMPONENT_LIBRARY if e["key"] == "th_sso")
         return Deduction.objects.filter(title__iexact=title).order_by("pk").first()
+
+    # Statutory deductions of other countries that the generic demo data
+    # assigns to everyone. Left active they double the retirement and payroll
+    # tax lines on a Thai payslip (India's PF next to the Thai PVD). Switched
+    # off, never deleted, so the original demo can be restored by hand.
+    FOREIGN_STATUTORY_DEDUCTIONS = ("Provident Fund (PF)", "Professional Tax", "ESI")
+
+    def _retire_foreign_statutory(self):
+        from django.db.models import Q
+
+        from payroll.models.models import Deduction
+
+        match = Q()
+        for title in self.FOREIGN_STATUTORY_DEDUCTIONS:
+            match |= Q(title__iexact=title)
+        changed = Deduction.objects.filter(match, is_active=True).update(is_active=False)
+        self.count("Non-Thai statutory deductions switched off (PF, Professional Tax, ESI)", changed)
 
     def _assign_sso(self, sso):
         if sso is None:

@@ -165,3 +165,17 @@ class LoadThaiDemoTests(TestCase):
     def test_single_company(self):
         run("--company", str(self.other.pk))
         self.assertEqual(EmployeeThaiProfile._base_manager.count(), 2)
+
+
+class ForeignStatutoryDeductionTests(TestCase):
+    def test_india_statutory_deductions_are_switched_off_not_deleted(self):
+        from payroll.models.models import Deduction
+
+        make_company("Foreign Co")
+        pf = Deduction.objects.create(title="Provident Fund (PF)", is_fixed=True, amount=100)
+        other = Deduction.objects.create(title="Canteen", is_fixed=True, amount=50)
+        run()
+        pf.refresh_from_db()
+        other.refresh_from_db()
+        self.assertFalse(pf.is_active)
+        self.assertTrue(other.is_active)
