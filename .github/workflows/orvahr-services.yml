@@ -1,5 +1,5 @@
-# Gates for the OrvaHR side services (Rust payroll engine, Go exports) and the
-# Svelte web app. Runs only when one of them (or this file) changes.
+# Gates for the OrvaHR side services (Rust payroll engine and face-verify, Go
+# exports) and the Svelte web app. Runs only when one of them (or this file) changes.
 # The Rust tests also parse every bundled services/payroll-engine/rules/*.json,
 # so no separate rules-validation job is needed.
 
@@ -59,6 +59,52 @@ jobs:
         run: cargo clippy --locked --all-targets -- -D warnings
 
       - name: Tests (includes bundled rules parsing)
+        run: cargo test --locked
+
+  face-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: services/face-verify
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            services/face-verify/target
+          key: cargo-face-${{ runner.os }}-${{ hashFiles('services/face-verify/Cargo.lock') }}
+          restore-keys: |
+            cargo-face-${{ runner.os }}-
+
+      - name: Cache models
+        uses: actions/cache@v4
+        with:
+          path: |
+            services/face-verify/models/yunet_2023mar.onnx
+            services/face-verify/models/sface_2021dec.onnx
+          key: face-models-${{ hashFiles('services/face-verify/models/fetch.sh') }}
+
+      # Verifies SHA-256 of cached files too, so a stale cache cannot slip in.
+      - name: Fetch models
+        run: ./models/fetch.sh
+
+      - name: rustfmt
+        run: cargo fmt --check
+
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+
+      - name: Tests (unit + end-to-end on the real models)
         run: cargo test --locked
 
   exports:

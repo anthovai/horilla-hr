@@ -1,0 +1,38 @@
+[package]
+name = "orvahr-face-verify"
+version = "0.1.0"
+edition = "2021"
+description = "OrvaHR stateless face verification: YuNet detection, SFace embeddings, MiniFASNet passive liveness. Stores nothing."
+
+[lib]
+name = "face_verify"
+path = "src/lib.rs"
+
+[[bin]]
+name = "face-verify"
+path = "src/main.rs"
+
+[dependencies]
+axum = "0.8"
+base64 = "0.22"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+subtle = "2.6"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time", "signal"] }
+tower-http = { version = "0.6", features = ["timeout", "limit"] }
+tract-onnx = "0.23"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+
+# Inference is the hot path: optimise dependencies even in debug/test builds,
+# or the test suite spends minutes in unoptimised tract kernels.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

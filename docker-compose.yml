@@ -27,6 +27,9 @@ services:
       - REDIS_URL=redis://:horilla_pass@redis:6379/0
       # Payroll engine (Rust). Unused unless the payroll code opts in.
       - ORVAHR_PAYROLL_ENGINE_URL=http://payroll-engine:8090
+      # Face verification (Rust). Must equal face-verify's FACE_SERVICE_TOKEN.
+      - ORVAHR_FACE_SERVICE_URL=http://face-verify:8092
+      - ORVAHR_FACE_SERVICE_TOKEN=${FACE_SERVICE_TOKEN:-dev-face-service-token-change-in-production}
     depends_on:
       db:
         condition: service_healthy
@@ -101,6 +104,15 @@ services:
   # reach it as http://exports:8091 from other services.
   exports:
     build: ./services/exports
+    restart: unless-stopped
+
+  # Face verification (Rust). Internal only: no host port is published; the
+  # Django services reach it as http://face-verify:8092 and must send
+  # X-Service-Token. Stateless: stores no images or templates.
+  face-verify:
+    build: ./services/face-verify
+    environment:
+      - FACE_SERVICE_TOKEN=${FACE_SERVICE_TOKEN:-dev-face-service-token-change-in-production}
     restart: unless-stopped
 
   db:

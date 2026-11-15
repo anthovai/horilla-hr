@@ -39,6 +39,8 @@ services:
       # replaces it with the real client IP taken from CF-Connecting-IP.
       HORILLA_TRUSTED_PROXIES: ${HORILLA_TRUSTED_PROXIES:-nginx}
       GUNICORN_WORKERS: ${GUNICORN_WORKERS:-3}
+      # Shared secret for services/face-verify (same value as that service).
+      ORVAHR_FACE_SERVICE_TOKEN: ${FACE_SERVICE_TOKEN:?Set FACE_SERVICE_TOKEN in .env}
     # No host port: nginx is the only way in. Debug with
     # `deploy/saas/bin/orvahr-compose exec web curl localhost:8000/health/`.
     ports: !reset []
@@ -148,6 +150,21 @@ services:
         limits:
           cpus: "0.5"
           memory: 256m
+
+  face-verify:
+    # Internal only: never route it from the tunnel. Token is required here
+    # (no dev default); the Django side must be given the same value.
+    environment:
+      FACE_SERVICE_TOKEN: ${FACE_SERVICE_TOKEN:?Set FACE_SERVICE_TOKEN in .env}
+      # One inference job per CPU granted below; extra requests queue.
+      FACE_WORKERS: "2"
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512m
 
   # The Svelte tax simulator is not part of the tenant-facing product and its
   # base port (127.0.0.1:8080) collides with erp-api on this Mac. Off by

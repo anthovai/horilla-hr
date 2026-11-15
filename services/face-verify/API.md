@@ -24,3 +24,20 @@ Response: {"match": bool, "score": float (best cosine similarity), "threshold": 
 `match` is true only when exactly one face, live, and score >= threshold.
 
 ## GET /healthz -> {"status":"ok","models":{"detector":..,"recognizer":..,"liveness":..}}
+
+## Implementation notes (added by the service; the contract above is unchanged)
+- Model id today: `sface_2021dec@1`. Treat it as opaque; store it with the
+  template and send it back on verify. A different id gives
+  `reason: "model_mismatch"`, `match: false`, `faces: 0` (image not analysed).
+- `/healthz` also requires the token (the Docker HEALTHCHECK sends it).
+- Errors are JSON `{"error": "..."}`: 400 bad JSON/base64/image/template
+  (templates must be 128 finite non-zero floats, 1..32 per call, re-normalised
+  server-side), 401 token, 413 body over FACE_MAX_BODY_BYTES (default 4 MiB)
+  or image over FACE_MAX_PIXELS (default 16 MP), 408 timeout (default 15 s).
+- 422 from /v1/embed: `{"error":"no frame accepted","template":null,"dims":128,"model":...,"frames":[...]}`.
+- `score` is reported whenever exactly one usable face was found, including
+  `not_live` (so callers can audit spoof attempts); it is 0 otherwise.
+- `reason` precedence: no_face, multiple_faces, too_small, blurry, not_live.
+  `live`/`live_score` are reported whenever exactly one face was found.
+- FACE_REQUIRE_LIVENESS=false makes liveness advisory: scores are still
+  returned but `not_live` is never set and does not block `match`/`accepted`.
