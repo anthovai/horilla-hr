@@ -68,11 +68,11 @@
             <label>{% trans "Enabled Languages" %}</label>
             <span
                 class="oh-info mr-2"
-                title="{% trans 'Choose which languages employees of this company can switch to. Leave empty to allow every language.' %}"
+                title="{% trans 'Choose which languages employees of this company can switch to. Select at least two to show the language switcher.' %}"
             ></span>
         </div>
         <p class="text-xs text-gray-500 mt-1 pb-2">
-            {% trans "Selected languages will appear in the language switcher for employees of this company. Leave empty to enable every language." %}
+            {% trans "Selected languages will appear in the language switcher for employees of this company. The switcher is hidden when fewer than two are selected." %}
         </p>
 
         <div class="lang-select-wrap">
