@@ -15,6 +15,17 @@ use serde::{Deserialize, Serialize};
 pub type Satang = i64;
 
 pub const TH_2026_RULES: &str = include_str!("../rules/th-2026.json");
+pub const TH_2029_RULES: &str = include_str!("../rules/th-2029.json");
+pub const TH_2032_RULES: &str = include_str!("../rules/th-2032.json");
+
+/// Every rules file compiled into the binary, as `(file name, JSON)`. Adding a
+/// file under `rules/` means adding it here too; the test
+/// `every_rules_file_is_bundled` fails until it is.
+pub const BUNDLED_RULES: &[(&str, &str)] = &[
+    ("th-2026.json", TH_2026_RULES),
+    ("th-2029.json", TH_2029_RULES),
+    ("th-2032.json", TH_2032_RULES),
+];
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub enum EngineError {
@@ -303,8 +314,15 @@ impl RuleBook {
         RuleBook { sets: vec![rules] }
     }
 
+    /// Every bundled rule set, so `select` picks by date without `RULES_DIR`.
     pub fn bundled() -> RuleBook {
-        RuleBook::single(Rules::th_2026())
+        let sets = BUNDLED_RULES
+            .iter()
+            .map(|(name, json)| {
+                Rules::from_json(json).unwrap_or_else(|e| panic!("bundled {name} is invalid: {e}"))
+            })
+            .collect();
+        RuleBook::from_rules(sets).expect("bundled rule sets must form a valid book")
     }
 
     pub fn sets(&self) -> &[Rules] {
@@ -1020,6 +1038,64 @@ mod tests {
         v["effective_from"] = serde_json::json!("2026-01-01");
         let r = Rules::from_json(&v.to_string()).unwrap();
         assert!(RuleBook::from_rules(vec![r.clone(), r]).is_err());
+    }
+
+    #[test]
+    fn bundled_book_steps_the_sso_ceiling_by_date() {
+        let b = RuleBook::bundled();
+        assert_eq!(b.sets().len(), BUNDLED_RULES.len());
+        let employee_at = |d: &str| {
+            social_security(b.select(Some(d)).unwrap(), 10_000_000)
+                .unwrap()
+                .employee
+        };
+        assert_eq!(employee_at("2026-01-01"), 875 * 100);
+        assert_eq!(employee_at("2028-12-31"), 875 * 100);
+        assert_eq!(employee_at("2029-01-01"), 1_000 * 100);
+        assert_eq!(employee_at("2031-12-31"), 1_000 * 100);
+        assert_eq!(employee_at("2032-06-01"), 1_150 * 100);
+        for r in b.sets() {
+            let ss = &r.social_security;
+            let max_monthly = ss.base_max * ss.rate_bp / 10_000;
+            assert_eq!(
+                ss.employee_deduction_cap_per_year,
+                12 * max_monthly,
+                "{}",
+                r.year
+            );
+            assert_eq!(ss.base_min, 165_000, "{}", r.year);
+        }
+    }
+
+    #[test]
+    fn bundled_future_sets_differ_from_2026_only_in_sso_ceiling() {
+        let base: serde_json::Value = serde_json::from_str(TH_2026_RULES).unwrap();
+        for json in [TH_2029_RULES, TH_2032_RULES] {
+            let mut v: serde_json::Value = serde_json::from_str(json).unwrap();
+            assert!(v["_notice"].as_str().unwrap().contains("UNVERIFIED"));
+            for key in ["_notice", "year", "effective_from"] {
+                v[key] = base[key].clone();
+            }
+            for key in ["_source", "base_max", "employee_deduction_cap_per_year"] {
+                v["social_security"][key] = base["social_security"][key].clone();
+            }
+            assert_eq!(v, base);
+        }
+    }
+
+    #[test]
+    fn every_rules_file_is_bundled() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("rules");
+        let mut on_disk: Vec<String> = std::fs::read_dir(dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .map(|e| e.file_name().to_string_lossy().into_owned())
+            .filter(|n| n.ends_with(".json"))
+            .collect();
+        on_disk.sort();
+        let mut bundled: Vec<String> = BUNDLED_RULES.iter().map(|(n, _)| n.to_string()).collect();
+        bundled.sort();
+        assert_eq!(on_disk, bundled);
     }
 
     #[test]

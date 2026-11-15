@@ -1,0 +1,46 @@
+{
+  "_notice": "TAX FIGURES ARE COPIED UNCHANGED FROM th-2026.json AND ARE UNVERIFIED FOR 2029: only the social_security base_max and employee_deduction_cap_per_year differ. STARTING POINT ONLY. Verify every figure against the current Revenue Department and Social Security Office announcements, and have an accountant sign off, before anyone is paid by it. Money is in satang (1 baht = 100 satang); rates are in basis points (100 bp = 1%).",
+  "country": "TH",
+  "year": 2029,
+  "effective_from": "2029-01-01",
+  "tax": {
+    "expense_rate_bp": 5000,
+    "expense_cap": 10000000,
+    "brackets": [
+      { "from": 0,          "to": 15000000,  "rate_bp": 0 },
+      { "from": 15000000,   "to": 30000000,  "rate_bp": 500 },
+      { "from": 30000000,   "to": 50000000,  "rate_bp": 1000 },
+      { "from": 50000000,   "to": 75000000,  "rate_bp": 1500 },
+      { "from": 75000000,   "to": 100000000, "rate_bp": 2000 },
+      { "from": 100000000,  "to": 200000000, "rate_bp": 2500 },
+      { "from": 200000000,  "to": 500000000, "rate_bp": 3000 },
+      { "from": 500000000,  "to": null,      "rate_bp": 3500 }
+    ],
+    "allowances": [
+      { "code": "personal",        "kind": "fixed",    "amount": 6000000 },
+      { "code": "spouse",          "kind": "per_unit", "amount": 6000000, "max_units": 1 },
+      { "code": "child",           "kind": "per_unit", "amount": 3000000 },
+      { "code": "child_extra",     "kind": "per_unit", "amount": 3000000, "note": "additional per child born 2018 or later, second child onward" },
+      { "code": "parent",          "kind": "per_unit", "amount": 3000000, "max_units": 4 },
+      { "code": "life_insurance",  "kind": "capped",   "cap": 10000000 },
+      { "code": "health_insurance","kind": "capped",   "cap": 2500000 },
+      { "code": "provident_fund",  "kind": "capped",   "cap": 50000000 },
+      { "code": "rmf",             "kind": "capped",   "cap": 50000000 },
+      { "code": "home_loan_interest","kind": "capped", "cap": 10000000 }
+    ],
+    "groups": [
+      { "code": "insurance_combined", "members": ["life_insurance", "health_insurance"], "cap": 10000000,
+        "note": "UNVERIFIED. Understood as life + health premiums sharing one ceiling; confirm the figure and members with the Revenue Department / an accountant." },
+      { "code": "retirement_funds_combined", "members": ["provident_fund", "rmf"], "cap": 50000000, "cap_percent_of_income_bp": 3000,
+        "note": "UNVERIFIED. Understood as retirement-type funds sharing one ceiling that also cannot exceed a share of income. The 3000 bp (30%) and the member list are NOT confirmed; real rules may apply separate per-fund percentage limits (not modelled) and include further fund types (not listed)." }
+    ]
+  },
+  "social_security": {
+    "_source": "Wage base 1,650-20,000 baht/month for 1 Jan 2029 - 31 Dec 2031 (2572-2574) per กฎกระทรวงกำหนดค่าจ้างขั้นต่ำและขั้นสูงที่ใช้เป็นฐานในการคำนวณเงินสมทบของผู้ประกันตนตามมาตรา 33 พ.ศ. 2568 (Royal Gazette vol. 142 part 81 Kor, 12 Dec 2568, https://ratchakitcha.soc.go.th/documents/98728.pdf). employee_deduction_cap_per_year is 12 x the maximum monthly contribution. The 5% rate is NOT in that regulation; verify it separately.",
+    "rate_bp": 500,
+    "base_min": 165000,
+    "base_max": 2000000,
+    "rounding_satang": 100,
+    "employee_deduction_cap_per_year": 1200000
+  }
+}

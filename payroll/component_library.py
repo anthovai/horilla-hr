@@ -322,7 +322,8 @@ COMPONENT_LIBRARY = [
         "note": _(
             "The 1,650-17,500 base applies 1 Jan 2026 - 31 Dec 2028 (Ministerial "
             "Regulation B.E. 2568, Royal Gazette 12 Dec 2025); it rises to 20,000 "
-            "in 2029 and 23,000 in 2032, so update the component then. "
+            "in 2029 and 23,000 in 2032: run `manage.py sync_th_sso_base` (it reads "
+            "the engine rule files) to move the component onto the base in force. "
             "Verify the rate and the wage base against current law. Assign it "
             "only to employees registered with the Social Security Office. "
             "Taken after tax: Thai income tax allows the contribution as a "

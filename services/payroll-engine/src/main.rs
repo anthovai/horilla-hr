@@ -1,6 +1,6 @@
 //! HTTP front for the payroll engine. Stateless: the rules are loaded once at
 //! start (`RULES_DIR`: every *.json in a directory; `RULES_FILE`: one file; else
-//! the bundled Thai rules) and every request is a pure calculation, so it
+//! every bundled Thai rule set, see `BUNDLED_RULES`) and every request is a pure calculation, so it
 //! scales out and tests without a database. Each request may carry `as_of`
 //! (YYYY-MM-DD, default today UTC) to pick the rule set in force on that date.
 
@@ -283,6 +283,43 @@ mod tests {
         assert_eq!(sets.len(), 2);
         assert_eq!(sets[0]["effective_from"], "2026-01-01");
         assert_eq!(sets[1]["year"], 2027);
+    }
+
+    #[tokio::test]
+    async fn bundled_book_selects_the_sso_ceiling_by_as_of() {
+        for (d, employee) in [
+            ("2028-12-31", 87_500),
+            ("2029-01-01", 100_000),
+            ("2032-06-01", 115_000),
+        ] {
+            let (s, v) = call(
+                RuleBook::bundled(),
+                post_req(
+                    "/v1/sso",
+                    serde_json::json!({ "wage": 10_000_000, "as_of": d }),
+                ),
+            )
+            .await;
+            assert_eq!(s, StatusCode::OK, "{d}");
+            assert_eq!(v["employee"], employee, "{d}");
+        }
+    }
+
+    #[tokio::test]
+    async fn rules_endpoint_lists_every_bundled_set() {
+        let (s, v) = call(
+            RuleBook::bundled(),
+            Request::get("/v1/rules").body(Body::empty()).unwrap(),
+        )
+        .await;
+        assert_eq!(s, StatusCode::OK);
+        let dates: Vec<&str> = v["sets"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| r["effective_from"].as_str().unwrap())
+            .collect();
+        assert_eq!(dates, ["2026-01-01", "2029-01-01", "2032-01-01"]);
     }
 
     #[tokio::test]
