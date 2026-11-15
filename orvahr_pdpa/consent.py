@@ -2,11 +2,13 @@
 Consent helpers. Every change appends a ConsentRecord; nothing is updated in
 place, so the table is the evidence trail.
 
-Call sites outside this app (not wired here, see the app report):
+Call sites outside this app:
 
-* login / first visit:  ``needs_acknowledgement(employee)`` then redirect to
-  ``reverse("orvahr_pdpa:my-privacy")``
-* candidate apply form: ``record_candidate_consent(candidate, purpose_ids,
+* login (base.views.login_user): ``needs_acknowledgement(employee)`` then a
+  one-off redirect to ``reverse("orvahr_pdpa:my-privacy")`` with ``?next=``
+* candidate apply form (recruitment.views.surveys.application_form):
+  ``candidate_apply_context`` / ``missing_required_purposes`` to render and
+  validate, then ``record_candidate_consent(candidate, purpose_ids,
   request=request)`` after the Candidate is saved
 """
 
@@ -153,3 +155,24 @@ def record_candidate_consent(candidate, purpose_ids=(), *, request=None, channel
                     action="granted", channel=channel, request=request)
         )
     return created
+
+
+def candidate_apply_context(company):
+    """
+    What the public apply form shows: ``{"notice", "purposes"}`` for the
+    candidate notice in force for ``company``, or None when none is published
+    (the form then behaves as if this app were not installed).
+    """
+    notice = PrivacyNotice.current("candidate", company)
+    if notice is None:
+        return None
+    return {
+        "notice": notice,
+        "purposes": list(ConsentPurpose.for_subject("candidate", company)),
+    }
+
+
+def missing_required_purposes(purposes, purpose_ids):
+    """The non-optional purposes among ``purposes`` that were not ticked."""
+    ticked = {str(pk) for pk in purpose_ids}
+    return [p for p in purposes if not p.optional and str(p.pk) not in ticked]

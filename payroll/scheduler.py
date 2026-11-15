@@ -10,6 +10,7 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from horilla.scheduling import register_job
+from payroll.methods.batch_run import BenefitSyncError, sync_benefit_deductions
 from payroll.methods.methods import payslip_fields, save_payslip
 from payroll.methods.payroll_run import payroll_calculation
 from payroll.methods.tax_calc import TaxComputationError
@@ -168,6 +169,9 @@ def generate_pay_period_payslips(today=None):
         if today != end + timedelta(days=1):
             continue
         try:
+            # Before anything is claimed: if the benefit deductions cannot be
+            # brought up to date, no payslip is computed and the next run retries.
+            sync_benefit_deductions(end)
             generate_for_setting(setting, today)
         except Exception:
             # One company's failure must not stop the others; the next run (every 3 hours,
@@ -175,5 +179,27 @@ def generate_pay_period_payslips(today=None):
             logger.exception("Payslip generation failed for %s", setting.get_company())
 
 
+def sync_benefit_deductions_daily():
+    """
+    Keep the provident fund and deduction-order Deductions current every day,
+    so payslips made outside a batch run (the payslip form, imports) also see
+    joiners, leavers and orders that start or end. A batch run syncs again for
+    its own period before it computes anything.
+    """
+    try:
+        return sync_benefit_deductions(date.today())
+    except BenefitSyncError:
+        # Logged with its traceback by sync_benefit_deductions; tomorrow retries.
+        return None
+
+
 register_job(expire_contract, "interval", hours=4)
+register_job(
+    sync_benefit_deductions_daily,
+    "cron",
+    job_id="sync_benefit_deductions_daily",
+    hour=0,
+    minute=20,
+    misfire_grace_time=3600 * 6,
+)
 register_job(generate_pay_period_payslips, "interval", hours=3)

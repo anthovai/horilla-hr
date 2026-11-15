@@ -9,10 +9,12 @@ import os
 from datetime import datetime
 from uuid import uuid4
 
+from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
 from django.core.files.storage import default_storage
+from django.db import transaction
 from django.db.models import ProtectedError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -540,6 +542,31 @@ def delete_survey_question(request, survey_id):
     return redirect("recruitment-survey-question-template-view")
 
 
+def _candidate_pdpa_context(company):
+    """The PDPA candidate notice + purposes, or None (app absent / unpublished)."""
+    if not apps.is_installed("orvahr_pdpa"):
+        return None
+    from orvahr_pdpa.consent import candidate_apply_context
+
+    return candidate_apply_context(company)
+
+
+def _pdpa_consent_given(request, pdpa, purpose_ids):
+    """False (with a message per purpose) when a required PDPA purpose was not ticked."""
+    if not pdpa:
+        return True
+    from orvahr_pdpa.consent import missing_required_purposes
+
+    missing = missing_required_purposes(pdpa["purposes"], purpose_ids)
+    for purpose in missing:
+        messages.error(
+            request,
+            _("Please give your consent to: %(purpose)s")
+            % {"purpose": purpose.name_th or purpose.name},
+        )
+    return not missing
+
+
 def application_form(request):
     """
     This method renders candidate form to create candidate
@@ -562,15 +589,28 @@ def application_form(request):
         messages.error(request, _("Invalid Recruitment ID"))
         return redirect("open-recruitments")
 
+    pdpa = _candidate_pdpa_context(recruitment.company_id)
+    pdpa_selected = request.POST.getlist("pdpa_purposes")
     if request.method == "POST":
         form = ApplicationForm(request.POST, request.FILES)
-        if form.is_valid():
+        valid = form.is_valid()
+        if valid:
+            # Consent is recorded for the submitted recruitment's company.
+            pdpa = _candidate_pdpa_context(form.cleaned_data["recruitment_id"].company_id)
+        if valid and _pdpa_consent_given(request, pdpa, pdpa_selected):
             candidate_obj = form.save(commit=False)
             candidate_obj.source = "application"
             recruitment_obj = candidate_obj.recruitment_id
             candidate_obj.stage_id = recruitment_obj.get_or_create_applied_stage()
             messages.success(request, _("Application saved."))
-            candidate_obj.save()
+            with transaction.atomic():
+                candidate_obj.save()
+                if pdpa:
+                    from orvahr_pdpa.consent import record_candidate_consent
+
+                    record_candidate_consent(
+                        candidate_obj, pdpa_selected, request=request
+                    )
             has_template_survey = RecruitmentSurvey.objects.filter(
                 template_id__in=recruitment.survey_templates.all()
             ).exists()
@@ -603,7 +643,12 @@ def application_form(request):
     return render(
         request,
         "candidate/application_form.html",
-        {"form": form, "recruitment": recruitment},
+        {
+            "form": form,
+            "recruitment": recruitment,
+            "pdpa": pdpa,
+            "pdpa_selected": pdpa_selected,
+        },
     )
 
 

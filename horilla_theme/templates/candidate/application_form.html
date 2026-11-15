@@ -456,6 +456,34 @@
                         </div>
                     </div>
                 </div>
+                {% if pdpa %}
+                    {# PDPA: the candidate privacy notice in force, plus its consent purposes (required ones are enforced server-side too). #}
+                    <div class="px-6 pb-6" id="pdpa-candidate-consent">
+                        <div class="border border-secondary-200 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold mb-2">{{ pdpa.notice.title }} <span class="text-xs text-dark-100">v{{ pdpa.notice.version }}</span></h3>
+                            <div class="text-sm" style="white-space: pre-wrap; max-height: 240px; overflow-y: auto">{{ pdpa.notice.text_th }}</div>
+                            {% if pdpa.notice.text_en %}
+                                <details class="mt-2"><summary class="text-sm cursor-pointer">{% trans "English version" %}</summary>
+                                    <div class="text-sm mt-2" style="white-space: pre-wrap; max-height: 240px; overflow-y: auto">{{ pdpa.notice.text_en }}</div>
+                                </details>
+                            {% endif %}
+                            <p class="text-xs text-dark-100 mt-3">{% trans "By submitting this application you confirm that you have read this privacy notice." %}</p>
+                            {% for purpose in pdpa.purposes %}
+                                <label class="flex items-start gap-2 text-sm mt-2">
+                                    <input type="checkbox" name="pdpa_purposes" value="{{ purpose.pk }}" class="mt-1"
+                                        {% if not purpose.optional %}required{% endif %}
+                                        {% if purpose.pk|stringformat:"s" in pdpa_selected %}checked{% endif %}>
+                                    <span>
+                                        <span class="{% if not purpose.optional %}required-star{% endif %}">{{ purpose.name_th|default:purpose.name }}</span>
+                                        {% if purpose.name_th %}<span class="block text-xs text-dark-100">{{ purpose.name }}</span>{% endif %}
+                                        {% if purpose.description %}<span class="block text-xs text-dark-100">{{ purpose.description }}</span>{% endif %}
+                                        {% if purpose.optional %}<span class="block text-xs text-dark-100">{% trans "Optional" %}</span>{% endif %}
+                                    </span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="sticky bottom-0 z-10 bg-white border-t border-secondary-200 rounded-b-2xl px-6 py-4">
                     <button type="submit"
                         class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-800 [transition:.2s]">

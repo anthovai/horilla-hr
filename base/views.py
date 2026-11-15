@@ -878,6 +878,30 @@ def _login_failed(request, username="", field_errors=None):
     return redirect("login")
 
 
+def _privacy_notice_redirect(employee, next_url):
+    """
+    The PDPA "My privacy" URL (carrying ``next``) when a published employee
+    privacy notice still needs this employee's acknowledgement, else None.
+
+    Only the browser login form calls this, once per login; nothing blocks
+    later navigation, so anyone (superusers included) can carry on without
+    acknowledging. API / mobile token logins never come through here.
+    """
+    if not apps.is_installed("orvahr_pdpa"):
+        return None
+    try:
+        from orvahr_pdpa.consent import needs_acknowledgement
+
+        if not needs_acknowledgement(employee):
+            return None
+        privacy_url = reverse("orvahr_pdpa:my-privacy")
+    except Exception:
+        return None
+    if urlparse(next_url).path == privacy_url:
+        return None
+    return f"{privacy_url}?{urlencode({'next': next_url})}"
+
+
 def login_user(request):
     """
     Handles user login and authentication.
@@ -941,6 +965,9 @@ def login_user(request):
 
         if params:
             next_url += f"?{params}"
+        privacy_url = _privacy_notice_redirect(employee, next_url)
+        if privacy_url:
+            return redirect(privacy_url)
         return redirect(next_url)
 
     form_state = request.session.pop(LOGIN_FORM_STATE_KEY, None) or {}

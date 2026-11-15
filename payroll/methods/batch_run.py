@@ -330,6 +330,85 @@ def create_batch(*, name, start_date, end_date, employees, user=None, settings=N
     return batch
 
 
+class BenefitSyncError(Exception):
+    """The benefit deductions could not be brought up to date for a run."""
+
+
+def sync_benefit_deductions(on):
+    """
+    Bring the payroll Deductions that orvahr_benefits owns -- provident fund
+    memberships and student-loan / garnishment orders -- in line as of ``on``.
+
+    Payroll reads those Deductions (their ``specific_employees`` and amounts)
+    when it computes a payslip, so a run computed before the sync pays with
+    whatever the last sync left: a new fund member not deducted, a leaver still
+    deducted, a court order's remaining balance out of date. Does nothing when
+    orvahr_benefits is not installed. Each sync runs in its own savepoint, so
+    one that fails leaves nothing half-written. Returns the two summaries;
+    raises BenefitSyncError naming the sync that failed.
+    """
+    from django.apps import apps
+
+    if not apps.is_installed("orvahr_benefits"):
+        return {}
+    from orvahr_benefits.services.orders import sync_deduction_orders
+    from orvahr_benefits.services.pvd import sync_pvd_deductions
+
+    summaries = {}
+    for label, sync in (
+        ("provident fund", sync_pvd_deductions),
+        ("deduction orders", sync_deduction_orders),
+    ):
+        try:
+            with transaction.atomic():
+                summaries[label] = sync(on)
+        except Exception as exc:  # noqa: BLE001 - reported to the caller
+            logger.exception("Benefit sync (%s) failed for %s", label, on)
+            raise BenefitSyncError(f"{label}: {type(exc).__name__}: {exc}") from exc
+    return summaries
+
+
+def _start_run(batch):
+    """
+    PENDING -> RUNNING, syncing the benefit deductions first, exactly once.
+
+    The batch row is locked so parallel slices wait here until the sync is
+    done instead of computing payslips against stale deductions. The sync uses
+    the period's last day: who is in the fund, and which orders are in force,
+    on that day.
+
+    If the sync fails the run is stopped (FAILED, with the reason in
+    ``last_error``) before any payslip is computed. Carrying on would issue
+    payslips with the wrong provident fund or court-ordered deductions -- a
+    wrong net pay, and for a garnishment a legal obligation missed -- which is
+    worse than a run that has to be started again once the cause is fixed.
+    The lines stay queued, nothing is paid, and nothing is raised to the caller.
+    """
+    from payroll.models.models import PayrollBatch
+
+    with transaction.atomic():
+        locked = PayrollBatch.objects.entire().select_for_update().get(pk=batch.pk)
+        if locked.progress_state == PayrollBatch.PENDING:
+            try:
+                sync_benefit_deductions(locked.period_end)
+            except BenefitSyncError as exc:
+                locked.progress_state = PayrollBatch.FAILED
+                locked.last_error = str(
+                    _(
+                        "Stopped before any payslip was generated: the provident fund "
+                        "and deduction order deductions could not be updated (%(error)s). "
+                        "Fix the cause, then run this payroll again."
+                    )
+                    % {"error": exc}
+                )
+                locked.save(update_fields=["progress_state", "last_error"])
+            else:
+                locked.progress_state = PayrollBatch.RUNNING
+                locked.save(update_fields=["progress_state"])
+    batch.progress_state = locked.progress_state
+    batch.last_error = locked.last_error
+
+
 # Set while a slice is being written: the batch row is then not touched per payslip, because that
 # row lock would make parallel slices wait for each other. The totals are refreshed once the slice commits.
 defer_batch_totals = ContextVar("defer_batch_totals", default=False)
@@ -362,8 +441,10 @@ def generate_slice(batch, size=SLICE_SIZE):
     from payroll.models.models import PayrollBatch, PayrollBatchLine
 
     if batch.progress_state == PayrollBatch.PENDING:
-        batch.progress_state = PayrollBatch.RUNNING
-        batch.save(update_fields=["progress_state"])
+        _start_run(batch)
+    if batch.progress_state == PayrollBatch.FAILED:
+        # A stopped run is not carried on by a late slice request; start a new run.
+        return 0
 
     token = defer_batch_totals.set(True)
     try:

@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.dateparse import parse_date
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -186,11 +187,19 @@ def my_privacy(request):
         raise Http404
     notice = consent_service.current_notice_for_employee(employee)
     purposes = list(consent_service.purposes_for_employee(employee))
+    # Set by the login redirect: where the employee was going. Local URLs only.
+    next_url = request.POST.get("next") or request.GET.get("next") or ""
+    if not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        next_url = ""
     if request.method == "POST":
         action = request.POST.get("action")
         if action == "acknowledge" and notice is not None:
             consent_service.acknowledge_notice(employee, notice, request=request)
             messages.success(request, _("Thank you. Your acknowledgement was recorded."))
+            if next_url:
+                return redirect(next_url)
         elif action in ("grant", "withdraw"):
             purpose = next((p for p in purposes if str(p.pk) == request.POST.get("purpose")), None)
             if purpose is None or not purpose.optional:
@@ -223,6 +232,7 @@ def my_privacy(request):
             "employee": employee,
             "notice": notice,
             "acknowledged": consent_service.has_acknowledged(employee, notice),
+            "next_url": next_url,
             "rows": rows,
             "history": ConsentRecord.all_objects.filter(employee=employee).select_related("purpose")[:50],
             "my_requests": DataSubjectRequest.all_objects.filter(employee=employee).order_by("-received_at")[:20],
