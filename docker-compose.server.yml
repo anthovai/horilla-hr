@@ -1,0 +1,13 @@
+services:
+  web:
+    ports: !reset []
+  nginx:
+    ports: !reset []
+    volumes: !override
+      - staticfiles:/static:ro
+      - ./docker/nginx.server.conf:/etc/nginx/nginx.conf:ro
+    networks: [default, caddy]
+networks:
+  caddy:
+    name: aqg_default
+    external: true
