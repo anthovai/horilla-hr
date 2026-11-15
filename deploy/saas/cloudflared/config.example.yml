@@ -1,0 +1,27 @@
+# REFERENCE ONLY -- the compose stack uses a remotely-managed tunnel (token in
+# .env, routes in the Cloudflare dashboard). This is the equivalent
+# locally-managed config, for when you prefer routes in version control:
+#   cloudflared tunnel login
+#   cloudflared tunnel create orvahr-saas            # writes <UUID>.json
+#   cloudflared tunnel route dns orvahr-saas orvahr.example
+#   cloudflared tunnel route dns orvahr-saas '*.orvahr.example'
+# then mount this file + the credentials JSON into the cloudflared service and
+# run `tunnel --config /etc/cloudflared/config.yml run` instead of the token.
+# The credentials JSON is a secret: it is git-ignored in this directory.
+tunnel: 00000000-0000-0000-0000-000000000000
+credentials-file: /etc/cloudflared/00000000-0000-0000-0000-000000000000.json
+no-autoupdate: true
+metrics: 127.0.0.1:20241
+
+ingress:
+  # Apex: public schema (signup, landing, platform admin).
+  - hostname: orvahr.example
+    service: http://nginx:80
+  # Every tenant: acme.orvahr.example, globex.orvahr.example, ...
+  # cloudflared forwards the original Host header; nginx and django-tenants
+  # pick the tenant from it. Do NOT set originRequest.httpHostHeader.
+  - hostname: "*.orvahr.example"
+    service: http://nginx:80
+    originRequest:
+      connectTimeout: 10s
+  - service: http_status:404

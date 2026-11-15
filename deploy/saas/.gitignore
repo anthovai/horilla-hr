@@ -1,0 +1,8 @@
+# Secrets and machine state for the SaaS deployment -- never commit.
+backup.env
+monitor.env
+cloudflared/*.json
+*.key
+*identity*.txt
+.previous-deploy-rev
+backups/

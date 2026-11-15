@@ -1,0 +1,276 @@
+# SaaS overlay for OrvaHR: one Postgres schema per customer, one subdomain per
+# tenant (acme.<base-domain>), served from a single Mac mini behind a
+# Cloudflare Tunnel. Layered on the production overlay:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+#                  -f docker-compose.saas.yml up -d --build
+#   # or simply: deploy/saas/bin/orvahr-compose up -d --build
+#
+# Requires .env (copy deploy/saas/env.saas.example, never commit it) and
+# Docker Compose v2.24+ (!reset / !override). Full guide: deploy/saas/RUNBOOK.md
+#
+# Traffic path:
+#   browser -> Cloudflare edge (TLS) -> cloudflared (outbound tunnel, "edge"
+#   network) -> nginx (Host-preserving reverse proxy) -> web (gunicorn)
+#
+# Nothing listens on the Mac's 80/443 (kgf-caddy owns them) or 8080 (erp-api).
+# The only host port is nginx on 127.0.0.1:${ORVAHR_PROXY_PORT:-8480}, for the
+# local uptime check and debugging.
+
+x-logging: &logging
+  # Unbounded json-file logs are the usual way a small box fills its disk.
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  web:
+    environment:
+      ORVAHR_MULTI_TENANT: "1"
+      # horilla/settings/saas.py: bare domain + www. get the public urlconf,
+      # *.<domain> is added to ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS.
+      ORVAHR_SAAS_BASE_DOMAIN: ${ORVAHR_BASE_DOMAIN:?Set ORVAHR_BASE_DOMAIN in .env}
+      ORVAHR_SAAS_PUBLIC_HOSTS: ${ORVAHR_SAAS_PUBLIC_HOSTS:-}
+      # Cloudflare terminates TLS; nginx always sends X-Forwarded-Proto: https
+      # and Django trusts it (SECURE_PROXY_SSL_HEADER, settings/security.py).
+      SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-1}
+      # Only nginx's X-Forwarded-For is believed (horilla/client_ip.py). nginx
+      # replaces it with the real client IP taken from CF-Connecting-IP.
+      HORILLA_TRUSTED_PROXIES: ${HORILLA_TRUSTED_PROXIES:-nginx}
+      GUNICORN_WORKERS: ${GUNICORN_WORKERS:-3}
+    # No host port: nginx is the only way in. Debug with
+    # `deploy/saas/bin/orvahr-compose exec web curl localhost:8000/health/`.
+    ports: !reset []
+    # The base file curls localhost:8000/health/ with Host: localhost, which a
+    # SaaS ALLOWED_HOSTS (.<base-domain>) rejects with a 400 before the tenant
+    # middleware runs. Ask as the apex (public urlconf) over "https" so it also
+    # passes with SECURE_SSL_REDIRECT=1 instead of only following a 301.
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -fsS
+        - -o
+        - /dev/null
+        - -H
+        - "Host: ${ORVAHR_BASE_DOMAIN:?Set ORVAHR_BASE_DOMAIN in .env}"
+        - -H
+        - "X-Forwarded-Proto: https"
+        - http://localhost:8000/health/
+      interval: 30s
+      timeout: 10s
+      start_period: 10m
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2g
+
+  scheduler:
+    environment:
+      ORVAHR_MULTI_TENANT: "1"
+      ORVAHR_SAAS_BASE_DOMAIN: ${ORVAHR_BASE_DOMAIN:?Set ORVAHR_BASE_DOMAIN in .env}
+      ORVAHR_SAAS_PUBLIC_HOSTS: ${ORVAHR_SAAS_PUBLIC_HOSTS:-}
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+
+  db:
+    # Sized for a share of a Colima VM (see RUNBOOK "Resources"): ~2 GB.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=512MB
+      - -c
+      - effective_cache_size=1536MB
+      - -c
+      - work_mem=8MB
+      - -c
+      - maintenance_work_mem=128MB
+      - -c
+      - max_connections=100
+      - -c
+      - wal_compression=on
+      - -c
+      - checkpoint_timeout=15min
+      - -c
+      - log_min_duration_statement=2000
+    shm_size: 256m
+    # Give Postgres time to checkpoint on `docker compose down` / shutdown.
+    stop_grace_period: 60s
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2g
+
+  redis:
+    # Cache only (django-redis); sessions live in Postgres, so LRU eviction
+    # costs a cache miss, never a logout.
+    command: >-
+      redis-server --appendonly yes
+      --requirepass ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+      --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 384m
+
+  payroll-engine:
+    # Internal only and unauthenticated: never route it from the tunnel.
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256m
+
+  exports:
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256m
+
+  # The Svelte tax simulator is not part of the tenant-facing product and its
+  # base port (127.0.0.1:8080) collides with erp-api on this Mac. Off by
+  # default; `--profile web-app up -d web-app` starts it with no host port.
+  web-app:
+    ports: !reset []
+    profiles: ["web-app"]
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128m
+
+  # Internal reverse proxy. Same service name as the prod overlay so
+  # HORILLA_TRUSTED_PROXIES=nginx keeps working; SaaS config from deploy/saas.
+  nginx:
+    image: nginx:1.27-alpine
+    environment:
+      ORVAHR_BASE_DOMAIN: ${ORVAHR_BASE_DOMAIN:?Set ORVAHR_BASE_DOMAIN in .env}
+      ORVAHR_EDGE_SUBNET: ${ORVAHR_EDGE_SUBNET:-172.31.240.0/24}
+      # The image renders templates/*.template into conf.d/ with envsubst;
+      # substitute only our variables so nginx's own $host etc. survive.
+      NGINX_ENVSUBST_FILTER: "^ORVAHR_"
+    volumes: !override
+      - staticfiles:/static:ro
+      - ./deploy/saas/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/saas/nginx/templates:/etc/nginx/templates:ro
+    ports: !override
+      - "127.0.0.1:${ORVAHR_PROXY_PORT:-8480}:80"
+    networks:
+      - default
+      - edge
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/nginx-health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128m
+
+  # Outbound-only Cloudflare Tunnel: no inbound port, no router forwarding,
+  # survives a changing home/office IP. Routes (apex + *.<base-domain> ->
+  # http://nginx:80) are configured in the Cloudflare dashboard for the
+  # token's tunnel; see RUNBOOK "DNS and Cloudflare".
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.0
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
+      # Same address for `run` (serves /ready) and the `ready` health probe.
+      TUNNEL_METRICS: 127.0.0.1:20241
+      TUNNEL_TRANSPORT_PROTOCOL: ${TUNNEL_TRANSPORT_PROTOCOL:-auto}
+    # Only on the edge network: it can reach nginx and nothing else.
+    networks:
+      - edge
+    depends_on:
+      nginx:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "cloudflared", "tunnel", "ready"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128m
+
+  # Nightly encrypted backups (crond inside the container). Runs with the
+  # stack so it comes back with it after a reboot, uses the same Postgres
+  # major as the server, and writes to a host directory outside the Colima VM
+  # so a lost VM disk does not take the backups with it.
+  backup:
+    build: ./deploy/saas/backup
+    image: orvahr-backup:local
+    env_file:
+      - path: ./deploy/saas/backup.env
+        required: false
+    environment:
+      TZ: Asia/Bangkok
+      PGHOST: db
+      PGDATABASE: ${POSTGRES_DB:-horilla_db}
+      PGUSER: ${POSTGRES_USER:-horilla_user}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      BACKUP_DIR: /backups
+      MEDIA_DIR: /media
+    volumes:
+      - media:/media:ro
+      - ${ORVAHR_BACKUP_HOST_DIR:?Set ORVAHR_BACKUP_HOST_DIR in .env}:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/backup-healthcheck.sh"]
+      interval: 1h
+      timeout: 10s
+      start_period: 1m
+      retries: 1
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512m
+
+networks:
+  # Shared only by nginx and cloudflared (and, in the Caddy alternative,
+  # kgf-caddy). nginx trusts CF-Connecting-IP only from this subnet.
+  edge:
+    name: orvahr-saas-edge
+    ipam:
+      config:
+        - subnet: ${ORVAHR_EDGE_SUBNET:-172.31.240.0/24}

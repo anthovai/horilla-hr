@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  ALTERNATIVE to the LaunchAgent: a LaunchDaemon that starts at boot without
+  anyone logging in. Goes in /Library/LaunchDaemons (root:wheel, 644) and runs
+  the same script as __USER__. Trade-offs in RUNBOOK "Auto-start after
+  reboot": Colima/vz without a GUI session is not an officially supported
+  setup -- test a real reboot before relying on it -- and with FileVault on
+  nothing runs until the disk is unlocked anyway.
+  Install by hand (not done by install-launchd.sh):
+    sed -e "s#__REPO__#$PWD#g" -e "s#__HOME__#$HOME#g" -e "s#__USER__#$(id -un)#g" \
+      deploy/saas/launchd/com.orvahr.saas.start.daemon.plist.template \
+      | sudo tee /Library/LaunchDaemons/com.orvahr.saas.start.plist >/dev/null
+    sudo chown root:wheel /Library/LaunchDaemons/com.orvahr.saas.start.plist
+    sudo chmod 644 /Library/LaunchDaemons/com.orvahr.saas.start.plist
+    sudo launchctl bootstrap system /Library/LaunchDaemons/com.orvahr.saas.start.plist
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.orvahr.saas.start</string>
+    <key>UserName</key>
+    <string>__USER__</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>__REPO__/deploy/saas/bin/start-stack.sh</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>__HOME__</string>
+        <key>USER</key>
+        <string>__USER__</string>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>__HOME__/Library/Logs/OrvaHR/start-stack.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/Library/Logs/OrvaHR/start-stack.log</string>
+</dict>
+</plist>

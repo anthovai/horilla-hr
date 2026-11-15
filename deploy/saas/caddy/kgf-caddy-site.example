@@ -1,0 +1,45 @@
+# ALTERNATIVE to Cloudflare Tunnel (document only -- nothing here is applied):
+# serve OrvaHR through the existing kgf-caddy, which already owns :80/:443.
+#
+# 1. Put kgf-caddy on OrvaHR's edge network (in the kgf project's compose
+#    file, owned by that project):
+#        services:
+#          caddy:
+#            networks: [default, orvahr-edge]
+#        networks:
+#          orvahr-edge:
+#            external: true
+#            name: orvahr-saas-edge
+#    (one-off equivalent: docker network connect orvahr-saas-edge kgf-caddy-1)
+#
+# 2. Wildcard certificates need the ACME DNS-01 challenge, which the stock
+#    caddy:2-alpine image cannot do. Either build Caddy with a DNS module
+#    (xcaddy build --with github.com/caddy-dns/cloudflare) and use the
+#    `tls { dns cloudflare {env.CF_API_TOKEN} }` block below, or use on-demand
+#    TLS with an `ask` endpoint that returns 200 only for existing tenants
+#    (a new Django view -- not built yet).
+#
+# 3. Router: forward TCP 80/443 to the Mac mini, and keep the public IP (or
+#    DDNS) in DNS. The Mac's IP becomes visible on the internet.
+#
+# 4. Real client IP: Caddy appends the peer to X-Forwarded-For, so in
+#    deploy/saas/nginx/templates/orvahr.conf.template change
+#        real_ip_header CF-Connecting-IP;   ->   real_ip_header X-Forwarded-For;
+#    (set_real_ip_from stays the edge subnet; real_ip_recursive on). If
+#    Cloudflare also proxies in front of Caddy (orange cloud), keep
+#    CF-Connecting-IP and add Cloudflare's IP ranges to Caddy's
+#    trusted_proxies instead.
+
+orvahr.example, *.orvahr.example {
+	tls {
+		dns cloudflare {env.CF_API_TOKEN}
+	}
+	encode zstd gzip
+	request_body {
+		max_size 50MB
+	}
+	reverse_proxy orvahr-saas-nginx-1:80 {
+		# Caddy preserves Host by default; keep it (django-tenants needs it).
+		header_up X-Forwarded-Proto https
+	}
+}

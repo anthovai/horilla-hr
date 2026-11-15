@@ -1,0 +1,14 @@
+#!/bin/sh
+# docker compose with the three SaaS files, from the repository root, so every
+# script (launchd, update, backup drill) and every human uses the same stack.
+#   deploy/saas/bin/orvahr-compose ps
+#   deploy/saas/bin/orvahr-compose logs -f web nginx cloudflared
+set -eu
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+cd "$ROOT"
+[ -f .env ] || { echo "orvahr-compose: $ROOT/.env missing (cp deploy/saas/env.saas.example .env)" >&2; exit 1; }
+exec docker compose \
+    -f docker-compose.yml \
+    -f docker-compose.prod.yml \
+    -f docker-compose.saas.yml \
+    "$@"

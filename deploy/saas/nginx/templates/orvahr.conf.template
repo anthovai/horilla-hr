@@ -1,0 +1,136 @@
+# Rendered to /etc/nginx/conf.d/orvahr.conf at container start. Only
+# ${ORVAHR_*} placeholders are substituted (NGINX_ENVSUBST_FILTER); every
+# other $variable below is nginx's own.
+
+# ---- Real client IP --------------------------------------------------------
+# Cloudflare puts the visitor's address in CF-Connecting-IP. Believe it only
+# from the edge network (cloudflared, or kgf-caddy in the Caddy alternative);
+# nothing else can reach this nginx except the localhost-only host port.
+# For the Caddy alternative change the header to X-Forwarded-For and keep
+# real_ip_recursive on (see RUNBOOK).
+set_real_ip_from ${ORVAHR_EDGE_SUBNET};
+real_ip_header CF-Connecting-IP;
+real_ip_recursive on;
+
+# Anything not addressed to our domain: drop it (scanners hitting the tunnel
+# by IP, stale DNS). /nginx-health stays answerable for the container check.
+server {
+    listen 80 default_server;
+    server_name _;
+
+    location = /nginx-health {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 444;
+    }
+}
+
+server {
+    listen 80;
+    # Apex = public schema (signup/landing/admin of tenants), *.domain = tenants.
+    # Only one label deep: Cloudflare's free certificate covers *.domain, not
+    # *.*.domain, so a.b.domain would fail TLS before reaching us anyway.
+    server_name ${ORVAHR_BASE_DOMAIN} *.${ORVAHR_BASE_DOMAIN};
+
+    # Uploads (documents, payslip imports, photos). Cloudflare Free/Pro reject
+    # bodies over 100 MB at the edge regardless of this value.
+    client_max_body_size 50M;
+    client_body_timeout 60s;
+
+    # Security headers. Django already sends the first three; hide its copies
+    # so each header appears exactly once, on static responses too.
+    # HSTS comes from Django (SECURE_SSL_REDIRECT=1 + SECURE_HSTS_SECONDS).
+    proxy_hide_header X-Frame-Options;
+    proxy_hide_header X-Content-Type-Options;
+    proxy_hide_header Referrer-Policy;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    # Face-detection attendance needs the camera, geofencing needs location.
+    add_header Permissions-Policy "camera=(self), geolocation=(self), microphone=(), payment=(), usb=()" always;
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+
+    set $django http://web:8000;
+
+    # Static files straight from the shared volume (collectstatic output).
+    location /static/ {
+        alias /static/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        add_header X-Content-Type-Options "nosniff" always;
+        access_log off;
+    }
+
+    # /media/ is NOT served from disk here: Django's protected_media view
+    # enforces authentication and the tenant boundary, and an alias would
+    # bypass both. It is proxied, and marked uncacheable: protected_media sends
+    # no Cache-Control, and Cloudflare caches .pdf/.jpg/.png... by extension
+    # by default, ignoring cookies -- one employee's payslip PDF or photo
+    # would then be served from the edge to anyone with the URL.
+    location /media/ {
+        proxy_pass $django;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_read_timeout 100s;
+        proxy_connect_timeout 10s;
+
+        proxy_hide_header Cache-Control;
+        proxy_hide_header Expires;
+        # add_header here stops inheritance of the server-level headers, so
+        # they are repeated.
+        add_header Cache-Control "private, no-store" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "camera=(self), geolocation=(self), microphone=(), payment=(), usb=()" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+    }
+
+    # Operational metrics: scrape from inside the Docker network only.
+    location /metrics/ {
+        return 404;
+    }
+
+    # The payroll engine is unauthenticated and Django calls it internally;
+    # the Svelte simulator that uses /engine/ is not published. Never proxy it.
+    location /engine/ {
+        return 404;
+    }
+
+    # Credential endpoints: rate limited per real client IP.
+    location ~ ^/(login|api/auth/login)/?$ {
+        limit_req zone=horilla_login burst=10 nodelay;
+
+        proxy_pass $django;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        # Overwrite, not append: after realip $remote_addr is the visitor, and
+        # Django (HORILLA_TRUSTED_PROXIES=nginx) reads exactly one hop.
+        proxy_set_header X-Forwarded-For $remote_addr;
+        # Every public request reached Cloudflare over HTTPS (tunnel hostnames
+        # are HTTPS-only with "Always Use HTTPS"). Set, never pass through, so
+        # a client cannot choose it (SECURE_PROXY_SSL_HEADER trusts it).
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_read_timeout 100s;
+        proxy_connect_timeout 10s;
+    }
+
+    location / {
+        proxy_pass $django;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto https;
+        # Cloudflare returns 524 after ~100 s without a response on most
+        # plans, so a longer read timeout here buys nothing.
+        proxy_read_timeout 100s;
+        proxy_connect_timeout 10s;
+        proxy_buffering on;
+    }
+}

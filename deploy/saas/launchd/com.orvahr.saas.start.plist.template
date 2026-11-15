@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  LaunchAgent: at login, start Colima (if needed) and the OrvaHR SaaS stack.
+  Installed by deploy/saas/launchd/install-launchd.sh, which replaces
+  __REPO__ and __HOME__. A LaunchAgent runs only once a user is logged in:
+  see RUNBOOK "Auto-start after reboot" for auto-login / LaunchDaemon.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.orvahr.saas.start</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>__REPO__/deploy/saas/bin/start-stack.sh</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>__HOME__</string>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>COLIMA_PROFILE</key>
+        <string>default</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- One-shot: do not respawn. If it fails, the uptime job alerts. -->
+    <key>KeepAlive</key>
+    <false/>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>StandardOutPath</key>
+    <string>__HOME__/Library/Logs/OrvaHR/start-stack.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/Library/Logs/OrvaHR/start-stack.log</string>
+</dict>
+</plist>
