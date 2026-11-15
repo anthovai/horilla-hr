@@ -154,9 +154,13 @@ class Tenant(TenantMixin):
     STATUS_ACTIVE = "active"
     STATUS_TRIAL = "trial"
     STATUS_SUSPENDED = "suspended"
+    # Trial over and not converted: users can still sign in, but only the
+    # account/billing pages answer (TenantMiddleware); data is kept.
+    STATUS_TRIAL_EXPIRED = "trial_expired"
     STATUS_CHOICES = [
         (STATUS_ACTIVE, _("Active")),
         (STATUS_TRIAL, _("Trial")),
+        (STATUS_TRIAL_EXPIRED, _("Trial ended")),
         (STATUS_SUSPENDED, _("Suspended")),
     ]
     # Background jobs run only for these (horilla.tenancy.iter_schedulable_tenants).
@@ -186,6 +190,9 @@ class Tenant(TenantMixin):
         _("Maximum employees"), null=True, blank=True
     )
     trial_ends_on = models.DateField(_("Trial ends on"), null=True, blank=True)
+    trial_expired_at = models.DateTimeField(
+        _("Trial expired at"), null=True, blank=True
+    )
     suspended_at = models.DateTimeField(_("Suspended at"), null=True, blank=True)
     suspension_reason = models.CharField(
         _("Suspension reason"), max_length=255, blank=True, default=""
@@ -208,6 +215,10 @@ class Tenant(TenantMixin):
     @property
     def is_suspended(self) -> bool:
         return self.status == self.STATUS_SUSPENDED
+
+    @property
+    def is_trial_expired(self) -> bool:
+        return self.status == self.STATUS_TRIAL_EXPIRED
 
     @property
     def employee_limit(self):
@@ -324,9 +335,19 @@ class ConsoleOperator(models.Model):
     is_active = models.BooleanField(_("Active"), default=True)
     last_login = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Two-factor sign-in (orvahr_saas.totp): base32 RFC 6238 secret, set once
+    # the operator has confirmed a code from their authenticator app.
+    totp_secret = models.CharField(max_length=64, blank=True, default="")
+    totp_enabled_at = models.DateTimeField(null=True, blank=True)
+    # Last time step accepted, so a code cannot be replayed.
+    totp_last_counter = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ["username"]
+
+    @property
+    def has_totp(self) -> bool:
+        return bool(self.totp_secret and self.totp_enabled_at)
 
     def __str__(self):
         return self.username
@@ -348,6 +369,20 @@ class ConsoleOperator(models.Model):
     # validate_password's UserAttributeSimilarityValidator reads these.
     def get_username(self):
         return self.username
+
+
+class OperatorRecoveryCode(models.Model):
+    """One-time 2FA recovery code (salted SHA-256; the code is shown once)."""
+
+    operator = models.ForeignKey(
+        ConsoleOperator, on_delete=models.CASCADE, related_name="recovery_codes"
+    )
+    code_hash = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["pk"]
 
 
 class OperatorAction(models.Model):
@@ -388,3 +423,53 @@ class OperatorAction(models.Model):
         if self.operator_id:
             return self.operator.username
         return self.actor_label or "system"
+
+
+# ---------------------------------------------------------- notifications
+
+
+class NotificationLog(models.Model):
+    """
+    One control-plane e-mail (orvahr_saas.notifications): who, what, when,
+    outcome. Deliberately no subject or body -- the only personal datum kept
+    is the recipient address.
+    """
+
+    STATUS_SENT = "sent"
+    STATUS_FAILED = "failed"
+    STATUS_SKIPPED = "skipped"
+    STATUS_CHOICES = [
+        (STATUS_SENT, _("Sent")),
+        (STATUS_FAILED, _("Failed")),
+        (STATUS_SKIPPED, _("Skipped")),
+    ]
+
+    created_at = models.DateTimeField(default=timezone.now, db_index=True)
+    event = models.CharField(max_length=50, db_index=True)
+    recipient = models.EmailField(max_length=254)
+    # operator / tenant / applicant
+    audience = models.CharField(max_length=20, blank=True, default="")
+    language = models.CharField(max_length=10, blank=True, default="")
+    tenant = models.ForeignKey(
+        Tenant, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    tenant_request = models.ForeignKey(
+        TenantRequest,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    # Reference to the billing document / payment etc. ("invoice:42").
+    object_ref = models.CharField(max_length=100, blank=True, default="")
+    # Same key + recipient already sent -> not sent again (scheduler re-runs).
+    dedupe_key = models.CharField(max_length=150, blank=True, default="", db_index=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    # Exception class and a short message; never the message content.
+    error = models.CharField(max_length=255, blank=True, default="")
+
+    class Meta:
+        ordering = ["-created_at", "-pk"]
+
+    def __str__(self):
+        return f"{self.created_at:%Y-%m-%d %H:%M} {self.event} -> {self.recipient}"

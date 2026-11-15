@@ -1,0 +1,14 @@
+{% autoescape off %}New OrvaHR trial request: {{ company_name }} ({{ slug }})
+
+A new trial request is waiting for review.
+
+Company: {{ company_name }}
+Requested sub-domain: {{ slug }}
+Employees: {{ employee_count }}
+Plan: {{ plan_name|default:"-" }}
+
+Review it in the operator console:
+{{ review_url }}
+
+Contact details are in the console only.
+{% endautoescape %}

@@ -1,0 +1,14 @@
+{% autoescape off %}ใบแจ้งหนี้ OrvaHR เลขที่ {{ number }} สำหรับ {{ tenant_name }}
+
+ออกใบแจ้งหนี้เลขที่ {{ number }} สำหรับ {{ tenant_name }} แล้ว
+
+ยอดรวม: {{ total }} บาท
+{% if due_date %}ครบกำหนดชำระ: {{ due_date|date:"j F Y" }}
+{% endif %}
+ดูใบแจ้งหนี้และวิธีชำระเงินได้ที่หน้าบัญชีของท่าน:
+{{ account_url }}
+{% if support_email %}
+สอบถามเพิ่มเติม: {{ support_email }}
+{% endif %}
+OrvaHR
+{% endautoescape %}

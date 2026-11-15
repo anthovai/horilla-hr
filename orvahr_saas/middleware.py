@@ -8,7 +8,11 @@ Extends django-tenants' TenantMainMiddleware with three OrvaHR rules:
   load balancer probing by IP still sees /health/;
 * any other unknown host gets a plain 404 page instead of a debug traceback;
 * a suspended tenant gets a friendly 403 page and its schema is never
-  activated, so nothing below this middleware can read its data.
+  activated, so nothing below this middleware can read its data;
+* a tenant whose trial ended (``trial_expired``) still serves the paths in
+  ORVAHR_SAAS_ALLOWED_WHEN_LOCKED (sign-in/out, the /subscription/ pages, static
+  and media files) so an administrator can sign in and subscribe; every
+  other path gets a friendly "trial ended" page (JSON 403 under /api/).
 
 The pages are rendered without a request context on purpose: the context
 processors query tenant tables (companies, menus...) that the public schema
@@ -38,6 +42,13 @@ class TenantMiddleware(TenantMainMiddleware):
                     "orvahr_saas/suspended.html", {"tenant_name": tenant.name}
                 )
             )
+        if (
+            tenant is not None
+            and getattr(tenant, "is_trial_expired", False)
+            and not allowed_when_locked(request.path_info)
+        ):
+            connection.set_schema_to_public()
+            return trial_expired_response(request, tenant)
         return None
 
     def no_tenant_found(self, request, hostname):
@@ -47,6 +58,50 @@ class TenantMiddleware(TenantMainMiddleware):
             self.setup_url_routing(request=request, force_public=True)
             return None
         return HttpResponseNotFound(render_to_string("orvahr_saas/not_found.html"))
+
+
+def allowed_when_locked(path):
+    """True if a trial-expired tenant still serves ``path``."""
+    from orvahr_saas.conf import allowed_when_locked as prefixes
+
+    if path in PROBE_PATHS:
+        return True
+    for prefix in prefixes():
+        if not prefix:
+            continue
+        # "/login/" also covers "/login" (settings.LOGIN_URL has no slash).
+        if path.startswith(prefix) or (
+            prefix.endswith("/") and path == prefix.rstrip("/")
+        ):
+            return True
+    return False
+
+
+def trial_expired_response(request, tenant):
+    from orvahr_saas.conf import support_email
+
+    if _is_api(request):
+        from django.http import JsonResponse
+
+        return JsonResponse(
+            {
+                "detail": "The trial of this organisation has ended.",
+                "code": "trial_expired",
+            },
+            status=403,
+        )
+    return HttpResponseForbidden(
+        render_to_string(
+            "orvahr_saas/trial_expired.html",
+            {
+                "tenant_name": tenant.name,
+                "support_email": support_email(),
+                "account_url": "/subscription/",
+                "login_url": "/login/",
+                "logout_url": "/logout/",
+            },
+        )
+    )
 
 
 def _is_api(request):

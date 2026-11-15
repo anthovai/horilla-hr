@@ -15,6 +15,8 @@ from orvahr_saas import console, views
 console_patterns = [
     path("", console.tenant_list, name="saas-console"),
     path("login/", console.login_view, name="saas-console-login"),
+    path("login/verify/", console.login_verify, name="saas-console-login-verify"),
+    path("2fa/", console.two_factor, name="saas-console-2fa"),
     path("logout/", console.logout_view, name="saas-console-logout"),
     path("tenants/<int:pk>/", console.tenant_detail, name="saas-console-tenant"),
     path(
@@ -31,6 +33,16 @@ console_patterns = [
         "tenants/<int:pk>/plan/",
         console.tenant_change_plan,
         name="saas-console-tenant-plan",
+    ),
+    path(
+        "tenants/<int:pk>/activate/",
+        console.tenant_activate,
+        name="saas-console-tenant-activate",
+    ),
+    path(
+        "tenants/<int:pk>/extend-trial/",
+        console.tenant_extend_trial,
+        name="saas-console-tenant-extend-trial",
     ),
     path("requests/", console.request_list, name="saas-console-requests"),
     path("requests/<int:pk>/", console.request_detail, name="saas-console-request"),
@@ -55,6 +67,11 @@ console_patterns = [
         name="saas-console-request-status",
     ),
     path("audit/", console.audit_log, name="saas-console-audit"),
+    path(
+        "notifications/",
+        console.notification_log,
+        name="saas-console-notifications",
+    ),
 ]
 
 urlpatterns = [

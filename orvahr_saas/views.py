@@ -99,6 +99,9 @@ def signup(request):
             obj.language = (get_language() or "")[:10]
             obj.ip_address = client_ip(request)
             obj.save()
+            from orvahr_saas import notifications
+
+            notifications.request_received(obj)
             return redirect("saas-signup-thanks")
         if form.is_spam or too_fast:
             # Look like success to a bot; store nothing.

@@ -1,0 +1,42 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Two-factor authentication" %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:640px;margin:24px auto">
+<h1>{% translate "Two-factor authentication" %}</h1>
+{% if error %}<div class="msg error">{{ error }}</div>{% endif %}
+{% if codes %}
+  <div class="msg warning">{% translate "Save these recovery codes now. Each one works once, and they will not be shown again." %}</div>
+  <pre class="log" id="recovery-codes">{% for c in codes %}{{ c }}
+{% endfor %}</pre>
+  <p><a class="btn" href="{{ continue_url }}">{% translate "Continue" %}</a></p>
+{% elif not enrolled %}
+  {% if required %}<div class="msg info">{% translate "Two-factor authentication is mandatory for operators. Set it up to continue." %}</div>{% endif %}
+  <ol>
+    <li>{% translate "Open an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password, Bitwarden...) and add an account." %}</li>
+    <li>{% translate "Enter this key by hand (time-based, 6 digits, 30 seconds):" %}<br><code style="font-size:1.1rem">{{ secret_grouped }}</code></li>
+    <li>{% translate "Or open / copy this setup link on the device that holds your authenticator:" %}<br><a href="{{ otpauth_uri }}" style="word-break:break-all">{{ otpauth_uri }}</a></li>
+    <li>{% translate "Type the 6-digit code the app shows." %}</li>
+  </ol>
+  <form method="post" action="{% url 'saas-console-2fa' %}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="enrol">
+    <label for="id_code">{% translate "Code" %}</label>
+    <input type="text" name="code" id="id_code" autocomplete="one-time-code" inputmode="numeric" required maxlength="32">
+    <p><button class="btn" type="submit">{% translate "Turn on two-factor" %}</button></p>
+  </form>
+{% else %}
+  <p class="ok">{% translate "Two-factor authentication is on." %}</p>
+  <p>{% blocktranslate count n=remaining %}{{ n }} unused recovery code left.{% plural %}{{ n }} unused recovery codes left.{% endblocktranslate %}</p>
+  <form method="post" action="{% url 'saas-console-2fa' %}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <label for="id_code">{% translate "Current code from your app" %}</label>
+    <input type="text" name="code" id="id_code" autocomplete="one-time-code" inputmode="numeric" required maxlength="32">
+    <p>
+      <button class="btn" type="submit" name="action" value="regenerate">{% translate "New recovery codes" %}</button>
+      {% if not required %}<button class="btn danger" type="submit" name="action" value="disable">{% translate "Turn off two-factor" %}</button>{% endif %}
+    </p>
+  </form>
+  <p class="muted">{% translate "Lost your device? Another administrator can reset it with: manage.py create_console_operator --username NAME --reset-2fa" %}</p>
+{% endif %}
+</div>
+{% endblock %}

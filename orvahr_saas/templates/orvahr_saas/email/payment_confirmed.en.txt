@@ -1,0 +1,10 @@
+{% autoescape off %}Payment received for invoice {{ invoice_number }}
+
+Thank you. We have received {{ amount }} THB for invoice {{ invoice_number }} ({{ tenant_name }}) on {{ payment_date|date:"j F Y" }}.
+{% if receipt_number %}
+Tax invoice / receipt: {{ receipt_number }}
+{% endif %}
+Your documents are on your account page: {{ account_url }}
+
+OrvaHR
+{% endautoescape %}

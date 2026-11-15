@@ -3,9 +3,17 @@ Operator console at /console/ on the public host.
 
 Who: active, staff ``ConsoleOperator`` rows only (``manage.py
 create_console_operator``) -- not tenant users, which live in the tenant
-schemas. The session holds the operator id plus a hash of the password hash,
-so changing a password (or deactivating the operator) ends every session.
-Failed logins are throttled per client IP and per username.
+schemas. The session holds the operator id plus a hash of the password hash
+and TOTP secret, so changing a password, resetting 2FA (or deactivating the
+operator) ends every session. Failed logins are throttled per client IP and
+per username.
+
+Two-factor (orvahr_saas.twofactor): an operator with TOTP is only signed in
+after the second step (/console/login/verify/, code or recovery code). While
+2FA is mandatory (ORVAHR_CONSOLE_REQUIRE_2FA, from
+ORVAHR_CONSOLE_REQUIRE_2FA_FROM) an operator without it can only reach the
+enrolment page (/console/2fa/) after the password step. ``current_operator``
+-- which billing uses too -- returns only fully signed-in operators.
 
 What it shows about a tenant: name, status, plan, domains and counts --
 never an employee's personal data.
@@ -28,12 +36,14 @@ from django.views.decorators.http import require_http_methods, require_POST
 
 from horilla.client_ip import client_ip
 from horilla.tenancy import public_schema_name
-from orvahr_saas import services
+from orvahr_saas import conf, services, totp, twofactor
 from orvahr_saas.forms import (
     ConsoleLoginForm,
+    ExtendTrialForm,
     PlanChangeForm,
     ProvisionForm,
     SuspendForm,
+    TwoFactorCodeForm,
 )
 from orvahr_saas.models import ConsoleOperator, OperatorAction, Tenant, TenantRequest
 from orvahr_saas.operators import operator_password_problems
@@ -41,17 +51,42 @@ from orvahr_saas.views import render_public
 
 SESSION_KEY = "orvahr_console_operator"
 SESSION_HASH_KEY = "orvahr_console_operator_hash"
+# True once the second factor was checked in this session.
+SESSION_MFA_KEY = "orvahr_console_mfa"
+# When the password step succeeded (the second step must follow quickly).
+SESSION_AUTH_AT_KEY = "orvahr_console_auth_at"
+# Secret shown on the enrolment page, waiting for the confirming code.
+SESSION_PENDING_SECRET_KEY = "orvahr_console_totp_pending"
 LOGIN_FAILURES = 5
 LOGIN_LOCK_SECONDS = 15 * 60
+SECOND_STEP_SECONDS = 5 * 60
+ENROL_SECONDS = 15 * 60  # time to install an app and confirm the first code
 
 
 def _session_hash(operator):
+    material = f"{operator.password}|{operator.totp_secret or ''}"
     return salted_hmac(
-        "orvahr_saas.console.session", operator.password, algorithm="sha256"
+        "orvahr_saas.console.session", material, algorithm="sha256"
     ).hexdigest()
 
 
 def current_operator(request):
+    """
+    The fully signed-in operator, or None: password step done and -- when the
+    operator has TOTP or 2FA is mandatory -- the second step too.
+    """
+    operator = session_operator(request)
+    if operator is None:
+        return None
+    if operator.has_totp:
+        return operator if request.session.get(SESSION_MFA_KEY) else None
+    if conf.two_factor_required():
+        return None  # must enrol first
+    return operator
+
+
+def session_operator(request):
+    """The operator whose password step succeeded in this session (or None)."""
     pk = request.session.get(SESSION_KEY)
     if not pk:
         return None
@@ -79,6 +114,11 @@ def operator_required(view):
             raise Http404  # never on a tenant host
         operator = current_operator(request)
         if operator is None:
+            pending = session_operator(request)
+            if pending is not None and pending.has_totp:
+                return HttpResponseRedirect(reverse("saas-console-login-verify"))
+            if pending is not None:
+                return HttpResponseRedirect(reverse("saas-console-2fa"))
             return HttpResponseRedirect(
                 reverse("saas-console-login") + "?next=" + request.path
             )
@@ -166,16 +206,23 @@ def login_view(request):
                 request.session.cycle_key()
                 request.session[SESSION_KEY] = operator.pk
                 request.session[SESSION_HASH_KEY] = _session_hash(operator)
-                operator.last_login = timezone.now()
-                operator.save(update_fields=["last_login"])
-                services.record_action(
-                    "login", operator=operator, ip_address=_ip(request)
-                )
-                if not url_has_allowed_host_and_scheme(
-                    next_url, allowed_hosts={request.get_host()}
-                ) or not next_url.startswith("/console/"):
-                    next_url = reverse("saas-console")
-                return HttpResponseRedirect(next_url)
+                request.session[SESSION_MFA_KEY] = False
+                request.session[SESSION_AUTH_AT_KEY] = int(timezone.now().timestamp())
+                request.session["orvahr_console_next"] = _safe_next(request, next_url)
+                if operator.has_totp:
+                    services.record_action(
+                        "login_password_ok", operator=operator, ip_address=_ip(request)
+                    )
+                    return HttpResponseRedirect(reverse("saas-console-login-verify"))
+                if conf.two_factor_required():
+                    services.record_action(
+                        "login_password_ok",
+                        operator=operator,
+                        ip_address=_ip(request),
+                        enrolment_required=True,
+                    )
+                    return HttpResponseRedirect(reverse("saas-console-2fa"))
+                return _complete_login(request, operator, method="password")
     return render_console(
         request,
         "orvahr_saas/console/login.html",
@@ -184,9 +231,205 @@ def login_view(request):
     )
 
 
+def _safe_next(request, next_url):
+    if not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ) or not (next_url or "").startswith("/console/"):
+        return reverse("saas-console")
+    return next_url
+
+
+def _complete_login(request, operator, *, method):
+    """Final step of a sign-in: mark the session, audit, go where asked."""
+    next_url = request.session.pop("orvahr_console_next", "") or reverse("saas-console")
+    request.session.cycle_key()
+    request.session[SESSION_MFA_KEY] = method != "password"
+    request.session[SESSION_HASH_KEY] = _session_hash(operator)
+    request.session.pop(SESSION_AUTH_AT_KEY, None)
+    operator.last_login = timezone.now()
+    operator.save(update_fields=["last_login"])
+    services.record_action(
+        "login", operator=operator, ip_address=_ip(request), method=method
+    )
+    if method == "password" and conf.require_2fa_enabled():
+        start = conf.require_2fa_from()
+        if start is not None:
+            messages.warning(
+                request,
+                _(
+                    "Two-factor authentication becomes mandatory on %(date)s. "
+                    "Set it up now under Two-factor."
+                )
+                % {"date": start.isoformat()},
+            )
+    return HttpResponseRedirect(_safe_next(request, next_url))
+
+
+def _second_step_expired(request, limit=SECOND_STEP_SECONDS):
+    started = request.session.get(SESSION_AUTH_AT_KEY)
+    if started is None:
+        return False
+    return timezone.now().timestamp() - started > limit
+
+
+@require_http_methods(["GET", "POST"])
+def login_verify(request):
+    """Second sign-in step: TOTP code or a one-time recovery code."""
+    if on_tenant_host(request):
+        raise Http404
+    operator = session_operator(request)
+    if operator is None or not operator.has_totp:
+        return HttpResponseRedirect(reverse("saas-console-login"))
+    if request.session.get(SESSION_MFA_KEY):
+        return HttpResponseRedirect(reverse("saas-console"))
+    if _second_step_expired(request):
+        request.session.flush()
+        return HttpResponseRedirect(reverse("saas-console-login"))
+    form = TwoFactorCodeForm(request.POST or None)
+    error = None
+    if twofactor.is_locked(operator):
+        error = _("Too many wrong codes. Try again in 15 minutes.")
+    elif request.method == "POST" and form.is_valid():
+        ok, method, problem = twofactor.verify_second_factor(
+            operator, form.cleaned_data["code"], ip_address=_ip(request)
+        )
+        if ok:
+            if method == "recovery_code":
+                messages.warning(
+                    request,
+                    _(
+                        "You signed in with a recovery code. %(n)s left: "
+                        "generate new ones under Two-factor."
+                    )
+                    % {"n": twofactor.remaining_recovery_codes(operator)},
+                )
+            return _complete_login(request, operator, method=method)
+        if problem == "locked":
+            error = _("Too many wrong codes. Try again in 15 minutes.")
+        else:
+            error = _("Invalid code.")
+    return render_console(
+        request,
+        "orvahr_saas/console/login_verify.html",
+        {"form": form, "error": error},
+        status=200 if error is None else 403,
+    )
+
+
+@require_http_methods(["GET", "POST"])
+def two_factor(request):
+    """
+    Enrol (password step done, no TOTP yet), or -- fully signed in --
+    regenerate recovery codes / switch 2FA off when it is not mandatory.
+    """
+    if on_tenant_host(request):
+        raise Http404
+    operator = session_operator(request)
+    if operator is None:
+        return HttpResponseRedirect(reverse("saas-console-login"))
+    if operator.has_totp and not request.session.get(SESSION_MFA_KEY):
+        return HttpResponseRedirect(reverse("saas-console-login-verify"))
+    if (
+        not operator.has_totp
+        and current_operator(request) is None
+        and _second_step_expired(request, ENROL_SECONDS)
+    ):
+        request.session.flush()
+        return HttpResponseRedirect(reverse("saas-console-login"))
+    request.operator = operator if current_operator(request) else None
+    form = TwoFactorCodeForm(request.POST or None)
+    error = None
+    codes = None
+    action = request.POST.get("action", "")
+
+    if not operator.has_totp:
+        secret = request.session.get(SESSION_PENDING_SECRET_KEY) or totp.new_secret()
+        request.session[SESSION_PENDING_SECRET_KEY] = secret
+        if request.method == "POST" and form.is_valid():
+            codes = twofactor.enrol(
+                operator, secret, form.cleaned_data["code"], ip_address=_ip(request)
+            )
+            if codes is None:
+                error = _("Invalid code. Check the time on your phone and try again.")
+            else:
+                request.session.pop(SESSION_PENDING_SECRET_KEY, None)
+                was_signed_in = request.session.get(SESSION_MFA_KEY) or (
+                    request.operator is not None
+                )
+                request.session[SESSION_HASH_KEY] = _session_hash(operator)
+                request.session[SESSION_MFA_KEY] = True
+                request.session.pop(SESSION_AUTH_AT_KEY, None)
+                if not was_signed_in:
+                    next_url = request.session.pop("orvahr_console_next", "")
+                    request.session.cycle_key()
+                    operator.last_login = timezone.now()
+                    operator.save(update_fields=["last_login"])
+                    services.record_action(
+                        "login",
+                        operator=operator,
+                        ip_address=_ip(request),
+                        method="enrolment",
+                    )
+                    request.session["orvahr_console_next"] = next_url
+                request.operator = operator
+        context = {
+            "enrolled": False,
+            "secret": secret,
+            "secret_grouped": totp.grouped(secret),
+            "otpauth_uri": totp.provisioning_uri(secret, operator.username),
+        }
+    else:
+        context = {"enrolled": True}
+        if request.method == "POST" and action in ("regenerate", "disable"):
+            if twofactor.is_locked(operator):
+                error = _("Too many wrong codes. Try again in 15 minutes.")
+            elif not form.is_valid() or not twofactor.check_totp(
+                operator, form.cleaned_data["code"]
+            ):
+                twofactor.register_failure(
+                    operator, ip_address=_ip(request), reason=f"totp:{action}"
+                )
+                error = _("Invalid code.")
+            elif action == "regenerate":
+                twofactor.clear_failures(operator)
+                codes = twofactor.new_recovery_codes(operator, ip_address=_ip(request))
+            elif conf.two_factor_required():
+                error = _("Two-factor authentication is mandatory for operators.")
+            else:
+                twofactor.disable(
+                    operator, operator_acting=operator, ip_address=_ip(request)
+                )
+                request.session[SESSION_HASH_KEY] = _session_hash(operator)
+                request.session[SESSION_MFA_KEY] = False
+                messages.success(request, _("Two-factor authentication is off."))
+                return HttpResponseRedirect(reverse("saas-console-2fa"))
+    context.update(
+        {
+            "form": form,
+            "error": error,
+            "codes": codes,
+            "required": conf.two_factor_required(),
+            "remaining": (
+                twofactor.remaining_recovery_codes(operator) if operator.has_totp else 0
+            ),
+            "continue_url": _safe_next(
+                request, request.session.get("orvahr_console_next", "")
+            ),
+        }
+    )
+    response = render_console(
+        request,
+        "orvahr_saas/console/two_factor.html",
+        context,
+        status=200 if error is None else 400,
+    )
+    response["Cache-Control"] = "no-store"
+    return response
+
+
 @require_POST
 def logout_view(request):
-    operator = current_operator(request)
+    operator = session_operator(request)
     if operator is not None:
         services.record_action("logout", operator=operator, ip_address=_ip(request))
     request.session.flush()
@@ -244,6 +487,7 @@ def tenant_detail(request, pk):
                 initial={"plan": tenant.plan, "max_employees": tenant.max_employees}
             ),
             "suspend_form": SuspendForm(),
+            "extend_form": ExtendTrialForm(initial={"until": tenant.trial_ends_on}),
             "actions": OperatorAction.objects.filter(tenant=tenant).select_related(
                 "operator"
             )[:50],
@@ -298,6 +542,43 @@ def tenant_change_plan(request, pk):
         messages.success(request, _("Plan changed."))
     else:
         messages.error(request, _("Please choose a valid plan."))
+    return HttpResponseRedirect(reverse("saas-console-tenant", args=[pk]))
+
+
+@require_POST
+@operator_required
+def tenant_activate(request, pk):
+    tenant = _tenant_or_404(pk)
+    try:
+        services.activate_tenant(
+            tenant, operator=request.operator, ip_address=_ip(request)
+        )
+    except ValidationError as exc:
+        messages.error(request, exc.messages[0])
+    else:
+        messages.success(request, _("Tenant activated."))
+    return HttpResponseRedirect(reverse("saas-console-tenant", args=[pk]))
+
+
+@require_POST
+@operator_required
+def tenant_extend_trial(request, pk):
+    tenant = _tenant_or_404(pk)
+    form = ExtendTrialForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, _("Please enter a valid date."))
+    else:
+        try:
+            services.extend_trial(
+                tenant,
+                form.cleaned_data["until"],
+                operator=request.operator,
+                ip_address=_ip(request),
+            )
+        except ValidationError as exc:
+            messages.error(request, exc.messages[0])
+        else:
+            messages.success(request, _("Trial extended."))
     return HttpResponseRedirect(reverse("saas-console-tenant", args=[pk]))
 
 
@@ -473,6 +754,23 @@ def request_status(request, pk):
             "log": tenant_request.provision_log[-4000:],
             "tenant": tenant_request.tenant_id,
         }
+    )
+
+
+# ------------------------------------------------------------ notifications
+
+
+@operator_required
+def notification_log(request):
+    from orvahr_saas.models import NotificationLog
+
+    qs = NotificationLog.objects.select_related("tenant")
+    event = request.GET.get("event")
+    if event:
+        qs = qs.filter(event=event)
+    page = Paginator(qs, 100).get_page(request.GET.get("page"))
+    return render_console(
+        request, "orvahr_saas/console/notifications.html", {"page": page}
     )
 
 

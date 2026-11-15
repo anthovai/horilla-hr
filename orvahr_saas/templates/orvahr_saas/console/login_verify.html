@@ -1,0 +1,16 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Two-factor sign in" %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:420px;margin:40px auto">
+<h1>{% translate "Two-factor sign in" %}</h1>
+{% if error %}<div class="msg error">{{ error }}</div>{% endif %}
+<form method="post" action="{% url 'saas-console-login-verify' %}">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <label for="id_code">{% translate "Code" %}</label>
+  <input type="text" name="code" id="id_code" autocomplete="one-time-code" required autofocus maxlength="32">
+  <p class="helptext">{{ form.code.help_text }}</p>
+  <p><button class="btn" type="submit">{% translate "Verify" %}</button></p>
+</form>
+<form method="post" action="{% url 'saas-console-logout' %}"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button class="btn ghost" type="submit">{% translate "Cancel" %}</button></form>
+</div>
+{% endblock %}

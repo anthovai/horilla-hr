@@ -197,9 +197,10 @@ python manage.py create_console_operator --username ops --deactivate
 
 Password policy: AUTH_PASSWORD_VALIDATORS + ≥ 12 characters + 3 character
 classes, re-checked at every login. Only `is_staff` + `is_active` operators
-get in; 5 failures per IP or username lock for 15 minutes; a password change
-or deactivation ends existing sessions. 2FA is not implemented — put the
-console behind Cloudflare Access / an IP allow-list as well.
+get in; 5 failures per IP or username lock for 15 minutes; a password change,
+a 2FA reset or deactivation ends existing sessions. Two-factor sign-in is
+described below; still put the console behind Cloudflare Access / an IP
+allow-list as well.
 
 Pages: tenants (status, plan, active employees / limit counted inside each
 schema and cached 5 minutes — counts only, never personal data), tenant
@@ -411,3 +412,96 @@ bucket needs its objects moved from `<NAMESPACE>/` to
 * Automation config changes reach *other* worker processes only through a
   shared cache (Redis) — with the per-process LocMem cache they reload on
   restart, which is how single-tenant mode has always behaved.
+
+
+## Console 2FA, trial lifecycle, notifications
+
+### Two-factor sign-in (TOTP, RFC 6238)
+
+`orvahr_saas/totp.py` implements HOTP/TOTP with `hmac`/`hashlib` (RFC 4226 and
+RFC 6238 test vectors in `tests/test_totp_vectors.py`); no new dependency. No
+QR library is in requirements.txt, so `/console/2fa/` shows the key (groups of
+four) and the `otpauth://` link instead of a QR image.
+
+* **Sign-in**: password → `/console/login/verify/` (6-digit code, ±1 step of
+  drift, a used step is never accepted again, 5 minutes to finish) or a
+  recovery code. Until then `current_operator()` — which billing uses too —
+  returns None.
+* **Mandatory** while `ORVAHR_CONSOLE_REQUIRE_2FA` (default True) and on/after
+  `ORVAHR_CONSOLE_REQUIRE_2FA_FROM` (ISO date; empty = now). An operator
+  without TOTP can then only reach `/console/2fa/` after the password step
+  (15 minutes to enrol). Before the date, sign-in shows a reminder.
+* **Recovery codes**: 10 per enrolment, 80 random bits each, shown once,
+  stored as salted SHA-256, single use; regenerate on `/console/2fa/` (needs a
+  current code).
+* **Lockout**: `ORVAHR_CONSOLE_2FA_FAILURES` (5) wrong codes lock the second
+  step for that operator for `ORVAHR_CONSOLE_2FA_LOCK_SECONDS` (900).
+* **Audit** (`OperatorAction`): `login_password_ok`, `login` (method
+  totp / recovery_code / enrolment / password), `2fa_enrolled`, `2fa_failed`,
+  `2fa_locked`, `2fa_recovery_codes_regenerated`, `2fa_disabled`.
+* **Lost device**: `manage.py create_console_operator --username X --reset-2fa`.
+* The TOTP secret is stored in the public schema in clear (as django-otp
+  does); database backups must be protected accordingly.
+
+### Trial lifecycle
+
+```bash
+python manage.py saas_lifecycle [--date 2026-12-01] [--dry-run]
+```
+
+Also registered with `run_scheduler` as `orvahr_saas_lifecycle` (daily 06:00,
+`per_tenant=False`: it runs once on the public schema). For tenants in
+`trial` with `trial_ends_on`:
+
+* N days before the end (`ORVAHR_SAAS_TRIAL_REMINDER_DAYS`, default 7, 3, 1)
+  → "trial ending" mail to the tenant contact and the operators; each
+  threshold is sent once (a missed day still sends the next one);
+* the day after `trial_ends_on` → status **`trial_expired`** (audit
+  `trial_expired`, `Tenant.trial_expired_at`) + "trial ended" mail.
+
+Nothing is deleted. A `trial_expired` tenant is skipped by background jobs.
+`TenantMiddleware` still activates its schema for the prefixes in
+`ORVAHR_SAAS_ALLOWED_WHEN_LOCKED` (default `/login/`, `/logout/`,
+`/account/`, `/static/`, `/media/`; `/login` without slash and the probes too)
+so an administrator can sign in and subscribe on the orvahr_account pages;
+everything else gets a friendly bilingual "trial ended" page (403; JSON
+`code: trial_expired` under `/api/`). Suspension is unchanged and wins.
+Console tenant page: **Extend trial** (back to `trial`) / **Activate**
+(→ `active`). Resuming a tenant suspended while `trial_expired` returns it to
+`trial_expired`.
+
+### Notifications
+
+`orvahr_saas/notifications.py`, templates
+`templates/orvahr_saas/email/<event>.<th|en>.txt` (first line = subject):
+
+| event | to | trigger |
+|---|---|---|
+| `request_received` | operators (active staff with an e-mail + `ORVAHR_SAAS_OPERATOR_EMAILS`) | sign-up form (company, sub-domain, size — no contact details) |
+| `tenant_provisioned` | applicant (request language) | provisioning done: URL, username, first steps — never the password |
+| `trial_ending` / `trial_ended` | tenant contact + operators | `saas_lifecycle` |
+| `invoice_issued` | invoice buyer e-mail → billing profile → tenant contact | `orvahr_billing.services.issue()` (invoices only) via `orvahr_billing.integration.notify` |
+| `payment_confirmed` | same | `orvahr_billing.services.record_payment()` |
+| `tenant_suspended` / `tenant_resumed` | tenant contact | `services.suspend_tenant` / `resume_tenant` (on change only; the internal reason is not mailed) |
+
+Sent after the surrounding transaction commits, one message per recipient,
+through `public_email_connection()` (`ORVAHR_SAAS_EMAIL_BACKEND` →
+`ORVAHR_BILLING_EMAIL_BACKEND` → `EMAIL_BACKEND`, with Horilla's
+tenant-table backend replaced by plain SMTP) and `build_public_message()`
+(bypasses `base.backends`' patched `EmailMessage.__init__`). From:
+`ORVAHR_SAAS_FROM_EMAIL` → `ORVAHR_BILLING_FROM_EMAIL` → `DEFAULT_FROM_EMAIL`.
+Customer language `ORVAHR_SAAS_CUSTOMER_LANGUAGE` (th), operators
+`ORVAHR_SAAS_OPERATOR_LANGUAGE` (en); links use `ORVAHR_SAAS_URL_SCHEME`
+(https) and `ORVAHR_SAAS_SUPPORT_EMAIL` is quoted when set.
+`ORVAHR_SAAS_NOTIFICATIONS=0` switches everything off,
+`ORVAHR_SAAS_NOTIFICATIONS_DISABLED=["invoice_issued", ...]` single events.
+
+`NotificationLog` (console → Notifications): when, event, recipient address,
+audience, language, tenant/request, object reference, status
+(sent/failed/skipped), short error. No subject or body is stored. A failed
+send is logged and never breaks the caller. Every setting above is read from
+Django settings or, failing that, the environment (`orvahr_saas/conf.py`).
+
+Tests: `test_totp_vectors.py` (both modes), `test_twofactor.py`,
+`test_lifecycle.py`, `test_notifications.py`; flag-off:
+`test_flag_off_lifecycle.py`.

@@ -1,0 +1,8 @@
+{% autoescape off %}Your OrvaHR workspace {{ tenant_name }} is available again
+
+Access to {{ tenant_name }} on OrvaHR has been restored.
+
+Sign in: {{ login_url }}
+
+OrvaHR
+{% endautoescape %}

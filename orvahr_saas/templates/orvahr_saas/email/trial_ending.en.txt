@@ -1,0 +1,16 @@
+{% autoescape off %}{% if for_operator %}Trial ending: {{ tenant_name }} ({{ schema }}) in {{ days_left }} day{{ days_left|pluralize }}{% else %}Your OrvaHR trial ends in {{ days_left }} day{{ days_left|pluralize }}{% endif %}
+
+{% if for_operator %}The trial of {{ tenant_name }} ({{ schema }}) ends on {{ trial_ends_on|date:"j F Y" }}.
+The customer has been reminded.
+{% else %}The free trial of OrvaHR for {{ tenant_name }} ends on {{ trial_ends_on|date:"j F Y" }}.
+
+To keep using OrvaHR without interruption, choose a plan and pay on your
+account page: {{ account_url }}
+
+Your data stays safe: when the trial ends nothing is deleted, and you can
+still sign in to your account page to subscribe.
+{% if support_email %}
+Questions? Write to {{ support_email }}.
+{% endif %}{% endif %}
+OrvaHR
+{% endautoescape %}

@@ -213,10 +213,21 @@ class ConsoleOperatorTests(BillingTestCase):
         self.Operator = ConsoleOperator
 
     def _client_for(self, operator):
+        """A console session that has passed both steps (password, then TOTP),
+        as the console requires once 2FA is mandatory."""
+        from django.utils import timezone
+
+        from orvahr_saas import totp
+
+        if not operator.totp_secret:
+            operator.totp_secret = totp.new_secret()
+            operator.totp_enabled_at = timezone.now()
+            operator.save(update_fields=["totp_secret", "totp_enabled_at"])
         client = Client(HTTP_HOST=PUBLIC_HOST)
         session = client.session
         session[self.console.SESSION_KEY] = operator.pk
         session[self.console.SESSION_HASH_KEY] = self.console._session_hash(operator)
+        session[self.console.SESSION_MFA_KEY] = True
         session.save()
         return client
 

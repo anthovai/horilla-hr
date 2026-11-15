@@ -1,0 +1,8 @@
+{% autoescape off %}พื้นที่ใช้งาน OrvaHR ของ {{ tenant_name }} กลับมาใช้งานได้แล้ว
+
+การเข้าใช้งาน {{ tenant_name }} บน OrvaHR กลับมาใช้งานได้ตามปกติแล้ว
+
+เข้าสู่ระบบ: {{ login_url }}
+
+OrvaHR
+{% endautoescape %}

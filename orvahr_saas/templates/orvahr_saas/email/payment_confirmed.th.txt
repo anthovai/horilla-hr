@@ -1,0 +1,10 @@
+{% autoescape off %}ได้รับชำระเงินสำหรับใบแจ้งหนี้ {{ invoice_number }} แล้ว
+
+ขอบคุณค่ะ เราได้รับชำระเงิน {{ amount }} บาท สำหรับใบแจ้งหนี้ {{ invoice_number }} ({{ tenant_name }}) เมื่อวันที่ {{ payment_date|date:"j F Y" }}
+{% if receipt_number %}
+ใบกำกับภาษี/ใบเสร็จรับเงิน: {{ receipt_number }}
+{% endif %}
+เอกสารของท่านอยู่ที่หน้าบัญชี: {{ account_url }}
+
+OrvaHR
+{% endautoescape %}

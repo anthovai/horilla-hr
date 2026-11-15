@@ -20,7 +20,7 @@
   .wrap{overflow-x:auto}
   .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
   .badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.85rem;background:#e4e7eb}
-  .s-active,.s-provisioned{background:#c6f6d5} .s-trial,.s-approved,.s-provisioning{background:#feebc8} .s-suspended,.s-rejected,.s-failed{background:#fed7d7} .s-pending{background:#bee3f8}
+  .s-active,.s-provisioned{background:#c6f6d5} .s-trial_expired{background:#fed7d7} .s-trial,.s-approved,.s-provisioning{background:#feebc8} .s-suspended,.s-rejected,.s-failed{background:#fed7d7} .s-pending{background:#bee3f8}
   .msg{padding:8px 12px;border-radius:8px;margin-bottom:12px} .msg.success{background:#c6f6d5} .msg.error{background:#fed7d7} .msg.info,.msg.warning{background:#feebc8}
   label{display:block;font-weight:600;margin:8px 0 4px}
   input[type=text],input[type=password],input[type=number],select{padding:7px 9px;border:1px solid var(--line);border-radius:6px;font:inherit;min-width:260px;max-width:100%}
@@ -39,6 +39,8 @@
   <a href="{% url 'saas-console' %}">{% translate "Tenants" %}</a>
   <a href="{% url 'saas-console-requests' %}">{% translate "Sign-up requests" %}</a>
   <a href="{% url 'saas-console-audit' %}">{% translate "Audit trail" %}</a>
+  <a href="{% url 'saas-console-notifications' %}">{% translate "Notifications" %}</a>
+  <a href="{% url 'saas-console-2fa' %}">{% translate "Two-factor" %}</a>
   <span class="sp"></span>
   <span>{{ operator.username }}</span>
   <form method="post" action="{% url 'saas-console-logout' %}"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button type="submit">{% translate "Sign out" %}</button></form>

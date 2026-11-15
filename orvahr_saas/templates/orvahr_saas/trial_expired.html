@@ -1,0 +1,9 @@
+{% extends "orvahr_saas/_base.html" %}
+{% block title %}Trial ended{% endblock %}
+{% block content %}
+<h1>Your free trial has ended</h1>
+<p>The OrvaHR trial for {{ tenant_name }} has ended. Your data is kept safe and nothing has been deleted.</p>
+<p>To continue, an administrator can choose a plan and pay on the <a href="{{ account_url }}">account page</a>{% if support_email %}, or contact us at <a href="mailto:{{ support_email }}">{{ support_email }}</a>{% endif %}.</p>
+<p lang="th">ระยะทดลองใช้ฟรี OrvaHR ของ {{ tenant_name }} สิ้นสุดแล้ว ข้อมูลของท่านยังถูกเก็บรักษาไว้อย่างปลอดภัย ไม่มีการลบข้อมูลใด ๆ หากต้องการใช้งานต่อ ผู้ดูแลระบบสามารถเลือกแพ็กเกจและชำระเงินได้ที่<a href="{{ account_url }}">หน้าบัญชี</a>{% if support_email %} หรือติดต่อเราที่ <a href="mailto:{{ support_email }}">{{ support_email }}</a>{% endif %}</p>
+<p><a href="{{ account_url }}">Account / บัญชี</a> · <a href="{{ login_url }}">Sign in / เข้าสู่ระบบ</a> · <a href="{{ logout_url }}">Sign out / ออกจากระบบ</a></p>
+{% endblock %}

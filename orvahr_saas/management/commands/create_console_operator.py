@@ -8,6 +8,8 @@ The password is read from ORVAHR_CONSOLE_PASSWORD (or a TTY prompt), never
 from the command line, and must pass the operator password policy
 (AUTH_PASSWORD_VALIDATORS + 12 characters + three character classes).
 ``--deactivate`` disables the account (ends its sessions).
+``--reset-2fa`` removes the operator's TOTP and recovery codes (lost
+device; ends its sessions) -- they enrol again at the next sign-in.
 """
 
 import getpass
@@ -26,6 +28,7 @@ class Command(BaseCommand):
         parser.add_argument("--username", required=True)
         parser.add_argument("--email", default="")
         parser.add_argument("--deactivate", action="store_true")
+        parser.add_argument("--reset-2fa", action="store_true")
 
     def handle(self, *args, **options):
         if not getattr(settings, "ORVAHR_MULTI_TENANT", False):
@@ -47,6 +50,17 @@ class Command(BaseCommand):
             operator.save()
             record_action("operator_deactivated", actor_label="cli", username=username)
             self.stdout.write(self.style.SUCCESS(f"Operator {username!r} deactivated."))
+            return
+
+        if options["reset_2fa"]:
+            if operator is None:
+                raise CommandError(f"No operator {username!r}.")
+            from orvahr_saas.twofactor import disable
+
+            disable(operator, actor_label="cli")
+            self.stdout.write(
+                self.style.SUCCESS(f"Two-factor authentication of {username!r} reset.")
+            )
             return
 
         password = os.environ.get(PASSWORD_ENV)

@@ -225,6 +225,8 @@ def issue(doc, by="", *, vat_rate=None, vat_registered=None, vat_amount=None):
         doc.issued_at = timezone.now()
         doc.issued_by = by
         doc.save()
+    if doc.doc_type == DocType.INVOICE:
+        integration.notify("invoice_issued", doc)
     return doc
 
 
@@ -392,6 +394,7 @@ def record_payment(
         payment.receipt = receipt
         invoice.settled_amount = invoice.settled_amount + gross
         _refresh_invoice_status(invoice)
+    integration.notify("payment_confirmed", payment)
     return payment
 
 

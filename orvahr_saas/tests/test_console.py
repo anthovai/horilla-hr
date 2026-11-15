@@ -15,13 +15,30 @@ from orvahr_saas.tests.test_public_site import HOST, PublicSiteTestCase
 STRONG = "Console-Op3rator-Pass!"
 
 
-def make_operator(username="ops", password=STRONG, **extra):
+def make_operator(username="ops", password=STRONG, with_totp=True, **extra):
+    """Operator with TOTP enrolled by default (2FA is mandatory in SaaS mode)."""
+    from django.utils import timezone
+
+    from orvahr_saas import totp
     from orvahr_saas.models import ConsoleOperator
 
     op = ConsoleOperator(username=username, **extra)
     op.set_password(password)
+    if with_totp:
+        op.totp_secret = totp.new_secret()
+        op.totp_enabled_at = timezone.now()
     op.save()
     return op
+
+
+def current_code(op, offset_steps=0):
+    import time
+
+    from orvahr_saas import totp
+
+    return totp.totp(
+        totp.decode_secret(op.totp_secret), time.time() + 30 * offset_steps
+    )
 
 
 class ConsoleTestCase(PublicSiteTestCase):
@@ -31,9 +48,18 @@ class ConsoleTestCase(PublicSiteTestCase):
             "/console/login/", {"username": username, "password": password}
         )
 
+    def verify(self, op, client=None, offset_steps=0):
+        client = client or self.web
+        return client.post(
+            "/console/login/verify/", {"code": current_code(op, offset_steps)}
+        )
+
     def logged_in(self):
-        make_operator()
+        op = make_operator()
         response = self.login()
+        self.assertEqual(response.status_code, 302, response.content[:500])
+        self.assertEqual(response["Location"], "/console/login/verify/")
+        response = self.verify(op)
         self.assertEqual(response.status_code, 302, response.content[:500])
         return self.web
 
@@ -103,11 +129,12 @@ class ConsoleAuthTests(ConsoleTestCase):
         self.assertEqual(self.web.get("/console/").status_code, 302)
 
     def test_open_redirect_after_login_is_ignored(self):
-        make_operator()
-        response = self.web.post(
+        op = make_operator()
+        self.web.post(
             "/console/login/",
             {"username": "ops", "password": STRONG, "next": "https://evil.test/"},
         )
+        response = self.verify(op)
         self.assertEqual(response["Location"], "/console/")
 
     def test_create_console_operator_command(self):

@@ -1,0 +1,14 @@
+{% autoescape off %}{% if for_operator %}Trial ended: {{ tenant_name }} ({{ schema }}){% else %}Your OrvaHR trial has ended{% endif %}
+
+{% if for_operator %}The trial of {{ tenant_name }} ({{ schema }}) ended on {{ trial_ends_on|date:"j F Y" }}.
+The workspace is now limited to sign-in and the account pages until it is
+activated or the trial is extended in the console. No data was deleted.
+{% else %}The free trial of OrvaHR for {{ tenant_name }} ended on {{ trial_ends_on|date:"j F Y" }}.
+
+Your data is kept safe and nothing has been deleted. To continue, sign in
+and choose a plan on your account page: {{ account_url }}
+{% if support_email %}
+Or contact us at {{ support_email }}.
+{% endif %}{% endif %}
+OrvaHR
+{% endautoescape %}

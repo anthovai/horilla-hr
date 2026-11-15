@@ -10,6 +10,7 @@
   <p>{% translate "Active employees" %}: {% if usage.active_employees is None %}?{% else %}{{ usage.active_employees }}{% endif %} / {{ tenant.employee_limit|default:"∞" }}</p>
   <p>{% translate "Contact email" %}: {{ tenant.contact_email|default:"—" }}</p>
   {% if tenant.trial_ends_on %}<p>{% translate "Trial ends on" %}: {{ tenant.trial_ends_on|date:"Y-m-d" }}</p>{% endif %}
+  {% if tenant.trial_expired_at %}<p>{% translate "Trial expired at" %}: {{ tenant.trial_expired_at|date:"Y-m-d H:i" }}</p>{% endif %}
   {% if tenant.is_suspended %}<p>{% translate "Suspended at" %}: {{ tenant.suspended_at|date:"Y-m-d H:i" }} — {{ tenant.suspension_reason }}</p>{% endif %}
   <h2>{% translate "Domains" %}</h2>
   <ul>{% for d in domains %}<li>{{ d.domain }}{% if d.is_primary %} <span class="muted">({% translate "primary" %})</span>{% endif %}</li>{% empty %}<li class="muted">—</li>{% endfor %}</ul>
@@ -32,6 +33,18 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ suspend_form.as_p }}
     <button class="btn danger" type="submit">{% translate "Suspend tenant" %}</button>
+  </form>
+  {% endif %}
+  {% if tenant.status == "trial" or tenant.status == "trial_expired" %}
+  <h2>{% translate "Trial" %}</h2>
+  <form method="post" action="{% url 'saas-console-tenant-extend-trial' tenant.pk %}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    {{ extend_form.as_p }}
+    <button class="btn ghost" type="submit">{% translate "Extend trial" %}</button>
+  </form>
+  <form method="post" action="{% url 'saas-console-tenant-activate' tenant.pk %}" style="margin-top:8px">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <button class="btn" type="submit">{% translate "Activate (paying customer)" %}</button>
   </form>
   {% endif %}
 </div>

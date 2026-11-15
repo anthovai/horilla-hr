@@ -1,0 +1,9 @@
+{% autoescape off %}Your OrvaHR workspace {{ tenant_name }} has been suspended
+
+Access to {{ tenant_name }} on OrvaHR has been suspended.
+
+Your data is kept safe and nothing has been deleted.
+{% if support_email %}Please contact {{ support_email }} to restore access.{% else %}Please contact OrvaHR support to restore access.{% endif %}
+
+OrvaHR
+{% endautoescape %}

@@ -76,7 +76,8 @@ def suspend_tenant(
     reason = (reason or "").strip()[:255]
     with use_schema(public_schema_name()), transaction.atomic():
         tenant = m.Tenant.objects.select_for_update().get(pk=tenant.pk)
-        if tenant.status != m.Tenant.STATUS_SUSPENDED:
+        newly_suspended = tenant.status != m.Tenant.STATUS_SUSPENDED
+        if newly_suspended:
             tenant.status_before_suspension = tenant.status
             tenant.suspended_at = timezone.now()
         tenant.status = m.Tenant.STATUS_SUSPENDED
@@ -97,6 +98,10 @@ def suspend_tenant(
             ip_address=ip_address,
             reason=reason,
         )
+        if newly_suspended:
+            from orvahr_saas import notifications
+
+            notifications.tenant_suspended(tenant)  # sent after commit
     return tenant
 
 
@@ -108,7 +113,12 @@ def resume_tenant(tenant, *, operator=None, actor_label="system", ip_address=Non
         if tenant.status != m.Tenant.STATUS_SUSPENDED:
             return tenant
         previous = tenant.status_before_suspension
-        if previous not in m.Tenant.SCHEDULABLE_STATUSES:
+        # A trial that ended before the suspension stays ended (locked to the
+        # account pages) until it is activated or extended.
+        if previous not in (
+            *m.Tenant.SCHEDULABLE_STATUSES,
+            m.Tenant.STATUS_TRIAL_EXPIRED,
+        ):
             previous = m.Tenant.STATUS_ACTIVE
         tenant.status = previous
         tenant.status_before_suspension = ""
@@ -129,6 +139,91 @@ def resume_tenant(tenant, *, operator=None, actor_label="system", ip_address=Non
             tenant=tenant,
             ip_address=ip_address,
             status=previous,
+        )
+        from orvahr_saas import notifications
+
+        notifications.tenant_resumed(tenant)  # sent after commit
+    return tenant
+
+
+# ------------------------------------------------------------ trial lifecycle
+
+
+def expire_trial(tenant, *, operator=None, actor_label="system", ip_address=None):
+    """
+    Trial over: status ``trial_expired``. Users can still sign in and reach
+    the account pages (TenantMiddleware); background jobs skip the tenant.
+    Nothing is deleted. Returns True when the status changed.
+    """
+    m = _models()
+    with use_schema(public_schema_name()), transaction.atomic():
+        tenant = m.Tenant.objects.select_for_update().get(pk=tenant.pk)
+        if tenant.status != m.Tenant.STATUS_TRIAL:
+            return False
+        tenant.status = m.Tenant.STATUS_TRIAL_EXPIRED
+        tenant.trial_expired_at = timezone.now()
+        tenant.save(update_fields=["status", "trial_expired_at"])
+        record_action(
+            "trial_expired",
+            operator=operator,
+            actor_label=actor_label,
+            tenant=tenant,
+            ip_address=ip_address,
+            trial_ends_on=str(tenant.trial_ends_on or ""),
+        )
+    return True
+
+
+def activate_tenant(tenant, *, operator=None, actor_label="system", ip_address=None):
+    """Trial (running or ended) -> active (a paying customer)."""
+    m = _models()
+    with use_schema(public_schema_name()), transaction.atomic():
+        tenant = m.Tenant.objects.select_for_update().get(pk=tenant.pk)
+        if tenant.status not in (m.Tenant.STATUS_TRIAL, m.Tenant.STATUS_TRIAL_EXPIRED):
+            raise ValidationError(_("Only trial tenants can be activated."))
+        old = tenant.status
+        tenant.status = m.Tenant.STATUS_ACTIVE
+        tenant.save(update_fields=["status"])
+        record_action(
+            "activate",
+            operator=operator,
+            actor_label=actor_label,
+            tenant=tenant,
+            ip_address=ip_address,
+            old_status=old,
+        )
+    return tenant
+
+
+def extend_trial(
+    tenant, until, *, operator=None, actor_label="system", ip_address=None
+):
+    """Move the trial end to ``until``; an ended trial becomes a trial again."""
+    m = _models()
+    if until < timezone.localdate():
+        raise ValidationError(_("The new trial end cannot be in the past."))
+    with use_schema(public_schema_name()), transaction.atomic():
+        tenant = m.Tenant.objects.select_for_update().get(pk=tenant.pk)
+        if tenant.status not in (m.Tenant.STATUS_TRIAL, m.Tenant.STATUS_TRIAL_EXPIRED):
+            raise ValidationError(
+                _("Only trial tenants can have their trial extended.")
+            )
+        old = {
+            "status": tenant.status,
+            "trial_ends_on": str(tenant.trial_ends_on or ""),
+        }
+        tenant.status = m.Tenant.STATUS_TRIAL
+        tenant.trial_ends_on = until
+        tenant.trial_expired_at = None
+        tenant.save(update_fields=["status", "trial_ends_on", "trial_expired_at"])
+        record_action(
+            "extend_trial",
+            operator=operator,
+            actor_label=actor_label,
+            tenant=tenant,
+            ip_address=ip_address,
+            old=old,
+            trial_ends_on=str(until),
         )
     return tenant
 
@@ -371,6 +466,10 @@ def _provision(
             tenant=tenant,
             tenant_request=req,
         )
+        from orvahr_saas import notifications
+
+        req.refresh_from_db()
+        notifications.tenant_provisioned(req, tenant)
     except BaseException as exc:  # noqa: BLE001 - recorded, thread ends here
         logger.exception("Provisioning request %s failed", request_pk)
         connection.set_schema_to_public()

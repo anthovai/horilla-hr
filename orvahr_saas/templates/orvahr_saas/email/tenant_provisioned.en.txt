@@ -1,0 +1,24 @@
+{% autoescape off %}Your OrvaHR workspace for {{ tenant_name }} is ready
+
+Hello {{ contact_name }},
+
+Your OrvaHR workspace for {{ tenant_name }} is ready.
+
+Sign in here: {{ login_url }}
+Username: {{ username }}
+
+For your security this e-mail does not contain a password. Use the password
+your OrvaHR contact gave you separately, and change it after your first
+sign-in (Profile > Change password). Never share it by e-mail.
+{% if is_trial and trial_ends_on %}
+Your free trial runs until {{ trial_ends_on|date:"j F Y" }}.
+{% endif %}
+First steps after signing in:
+1. Check your company details under Settings > Company.
+2. Add your departments, job positions and employees.
+3. Invite your HR team.
+{% if support_email %}
+Questions? Write to {{ support_email }}.
+{% endif %}
+OrvaHR
+{% endautoescape %}

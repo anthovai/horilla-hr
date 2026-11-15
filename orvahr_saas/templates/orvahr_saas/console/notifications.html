@@ -1,0 +1,14 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Notifications" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Notifications" %}</h1>
+<p class="muted">{% translate "E-mails sent by the control plane. Message contents are not stored." %}</p>
+<div class="wrap"><table>
+<tr><th>{% translate "When" %}</th><th>{% translate "Event" %}</th><th>{% translate "Recipient" %}</th><th>{% translate "Audience" %}</th><th>{% translate "Tenant" %}</th><th>{% translate "Status" %}</th></tr>
+{% for n in page %}
+<tr><td>{{ n.created_at|date:"Y-m-d H:i" }}</td><td>{{ n.event }}</td><td>{{ n.recipient }}</td><td>{{ n.audience }}</td><td>{{ n.tenant.schema_name|default:"—" }}</td><td>{{ n.get_status_display }}{% if n.error %} <span class="muted">{{ n.error }}</span>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="6" class="muted">—</td></tr>{% endfor %}
+</table></div>
+{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">&laquo;</a>{% endif %}
+{% if page.has_next %}<a href="?page={{ page.next_page_number }}">&raquo;</a>{% endif %}
+{% endblock %}

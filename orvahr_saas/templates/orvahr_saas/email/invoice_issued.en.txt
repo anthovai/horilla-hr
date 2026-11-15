@@ -1,0 +1,14 @@
+{% autoescape off %}OrvaHR invoice {{ number }} for {{ tenant_name }}
+
+Invoice {{ number }} for {{ tenant_name }} has been issued.
+
+Total: {{ total }} THB
+{% if due_date %}Due date: {{ due_date|date:"j F Y" }}
+{% endif %}
+You can see your invoices and how to pay on your account page:
+{{ account_url }}
+{% if support_email %}
+Questions? Write to {{ support_email }}.
+{% endif %}
+OrvaHR
+{% endautoescape %}

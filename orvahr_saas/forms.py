@@ -146,3 +146,28 @@ class PlanChangeForm(forms.Form):
 
 class SuspendForm(forms.Form):
     reason = forms.CharField(label=_("Reason"), max_length=255)
+
+
+class TwoFactorCodeForm(forms.Form):
+    code = forms.CharField(
+        label=_("Code"),
+        max_length=32,
+        widget=forms.TextInput(
+            attrs={
+                "autocomplete": "one-time-code",
+                "inputmode": "text",
+                "autofocus": True,
+            }
+        ),
+        help_text=_(
+            "The 6-digit code from your authenticator app, or one of your "
+            "recovery codes."
+        ),
+    )
+
+
+class ExtendTrialForm(forms.Form):
+    until = forms.DateField(
+        label=_("Trial ends on"),
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )

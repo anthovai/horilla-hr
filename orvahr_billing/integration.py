@@ -90,3 +90,15 @@ def get_suspend_tenant():
 
 def get_resume_tenant():
     return _lookup("ORVAHR_BILLING_RESUME_FUNC", "resume_tenant")
+
+
+def notify(event, obj):
+    """Tell the control plane about a billing event (e-mail); never raises."""
+    try:
+        from orvahr_saas.notifications import billing_event
+    except ImportError:
+        return
+    try:
+        billing_event(event, obj)
+    except Exception:  # noqa: BLE001 - a notification must not undo billing
+        logger.exception("orvahr_saas notification %s failed", event)
