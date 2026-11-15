@@ -1,0 +1,36 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Documents" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Billing documents" %}</h1>
+<form method="get" class="card filters">
+  {% for field in form %}<div><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+  <div><button class="btn" type="submit">{% translate "Filter" %}</button> <a class="btn ghost" href="{% url 'orvahr_billing:document-list' %}">{% translate "Clear" %}</a></div>
+</form>
+<div class="wrap"><table>
+  <tr><th>{% translate "Number" %}</th><th>{% translate "Type" %}</th><th>{% translate "Customer" %}</th><th>{% translate "Issue date" %}</th><th>{% translate "Due date" %}</th><th class="num">{% translate "Total" %}</th><th>{% translate "Status" %}</th></tr>
+  {% for doc in page %}
+  <tr>
+    <td><a href="{% url 'orvahr_billing:document-detail' doc.pk %}">{{ doc.number|default:_("(draft)") }}</a></td>
+    <td>{{ doc.get_doc_type_display }}</td>
+    <td>{{ doc.buyer_name|default:doc.tenant.name }}</td>
+    <td>{{ doc.issue_date|date:"Y-m-d" }}</td>
+    <td>{{ doc.due_date|date:"Y-m-d" }}</td>
+    <td class="num">{{ doc.total|floatformat:"2g" }}</td>
+    <td>
+      <span class="badge b-{{ doc.status }}">{{ doc.get_status_display }}</span>
+      {% if doc.doc_type == "invoice" and doc.status == "issued" %}
+        <span class="badge b-{{ doc.payment_status }}">{{ doc.get_payment_status_display }}</span>
+        {% if doc.outstanding > 0 and doc.due_date < today %}<span class="badge b-overdue">{% translate "Overdue" %}</span>{% endif %}
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="7" class="muted">{% translate "No documents." %}</td></tr>
+  {% endfor %}
+</table></div>
+<p>
+{% if page.has_previous %}<a href="?{{ query }}&page={{ page.previous_page_number }}">&laquo; {% translate "Previous" %}</a>{% endif %}
+<span class="muted">{{ page.number }} / {{ page.paginator.num_pages }}</span>
+{% if page.has_next %}<a href="?{{ query }}&page={{ page.next_page_number }}">{% translate "Next" %} &raquo;</a>{% endif %}
+</p>
+{% endblock %}

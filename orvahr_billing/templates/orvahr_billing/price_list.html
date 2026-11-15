@@ -1,0 +1,17 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Prices" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Plan prices" %}</h1>
+<p class="muted">{% translate "Per period: base price + price per active employee (counted in the tenant on the invoice date). Excl. VAT. A new row with a later effective date replaces the price from that date." %}</p>
+<div class="wrap"><table>
+  <tr><th>{% translate "Plan code" %}</th><th>{% translate "Billing cycle" %}</th><th class="num">{% translate "Base price" %}</th><th class="num">{% translate "Per employee" %}</th><th>{% translate "Effective from" %}</th><th>{% translate "Line description" %}</th></tr>
+  {% for p in prices %}<tr><td>{{ p.plan_code }}</td><td>{{ p.get_cycle_display }}</td><td class="num">{{ p.base_price|floatformat:"2g" }}</td><td class="num">{{ p.per_employee_price|floatformat:"2g" }}</td><td>{{ p.effective_from|date:"Y-m-d" }}</td><td>{{ p.description }}</td></tr>
+  {% empty %}<tr><td colspan="6" class="muted">{% translate "No prices yet." %}</td></tr>{% endfor %}
+</table></div>
+<h2>{% translate "Add a price" %}</h2>
+<form method="post" class="card">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  {% include "orvahr_billing/_form_fields.html" with form=form %}
+  <p><button class="btn" type="submit">{% translate "Save" %}</button></p>
+</form>
+{% endblock %}

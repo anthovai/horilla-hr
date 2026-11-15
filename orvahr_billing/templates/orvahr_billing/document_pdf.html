@@ -1,0 +1,141 @@
+{% load i18n thai %}<!DOCTYPE html>
+{% comment %}
+  Billing document (invoice, tax invoice/receipt, credit note). Rendered by
+  xhtml2pdf via orvahr_billing.pdf: tables and plain CSS, Sarabun only.
+  Thai copy (th): fixed Thai labels + English msgids; English copy: English.
+  Every particular of Revenue Code s.86/4 and DG notification 199 is printed
+  from the snapshot taken at issue time (see orvahr_billing.models).
+{% endcomment %}
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ doc.number }}</title>
+  <style>
+    {% thai_font_face pdf_engine %}
+    @page { size: A4; margin: 12mm 14mm; }
+    html, body, table, td, th, p, h1, div, span { font-family: 'Sarabun'; }
+    body { font-size: 10.5pt; color: #111; }
+    h1 { font-size: 17pt; margin: 0; text-align: right; }
+    .en { color: #555; font-size: 8.5pt; }
+    table { width: 100%; border-collapse: collapse; }
+    td { vertical-align: top; }
+    .box td { border: 1px solid #888; padding: 4px 6px; }
+    .lines th { background: #eee; border: 1px solid #888; padding: 4px; font-weight: bold; }
+    .lines td { border: 1px solid #888; padding: 4px; }
+    .num { text-align: right; }
+    .center { text-align: center; }
+    .tot td { padding: 3px 6px; }
+    .grand td { font-weight: bold; border-top: 1px solid #333; }
+    .small { font-size: 9pt; color: #333; }
+    .sign td { padding-top: 34px; text-align: center; font-size: 9.5pt; }
+  </style>
+</head>
+<body>
+<table>
+  <tr>
+    <td width="58%">
+      {% if logo %}<img src="{{ logo }}" height="48"><br>{% endif %}
+      <b>{% if th %}{{ doc.seller_name_th }}{% else %}{{ doc.seller_name_en|default:doc.seller_name_th }}{% endif %}</b>
+      {% if th and doc.seller_name_en %}<br><span class="en">{{ doc.seller_name_en }}</span>{% endif %}<br>
+      {% if th %}{{ doc.seller_address_th|linebreaksbr }}{% else %}{{ doc.seller_address_en|default:doc.seller_address_th|linebreaksbr }}{% endif %}<br>
+      {% if th %}เลขประจำตัวผู้เสียภาษีอากร {% else %}{% trans "Tax ID" %} {% endif %}{{ seller_tax_id }} &nbsp; {{ seller_branch }}<br>
+      {% if doc.seller_phone %}{% if th %}โทร {% else %}{% trans "Phone" %} {% endif %}{{ doc.seller_phone }} {% endif %}{% if doc.seller_email %}{{ doc.seller_email }}{% endif %}
+    </td>
+    <td width="42%">
+      <h1>{% if th %}{{ doc.title_th }}{% else %}{{ doc.title_en }}{% endif %}</h1>
+      <div style="text-align:right">{% if th %}<span class="en">{{ doc.title_en }}</span>{% else %}<span class="en">{{ doc.title_th }}</span>{% endif %}</div>
+      <br>
+      <table class="box">
+        <tr><td>{% if th %}เลขที่<br><span class="en">{% endif %}{% trans "Number" %}{% if th %}</span>{% endif %}</td><td><b>{{ doc.number|default:"DRAFT" }}</b></td></tr>
+        <tr><td>{% if th %}วันที่<br><span class="en">{% endif %}{% trans "Date" %}{% if th %}</span>{% endif %}</td><td>{% if th %}{{ doc.issue_date|be_date }}{% else %}{{ doc.issue_date|date:"j F Y" }}{% endif %}</td></tr>
+        {% if is_invoice and doc.due_date %}
+        <tr><td>{% if th %}ครบกำหนดชำระ<br><span class="en">{% endif %}{% trans "Due date" %}{% if th %}</span>{% endif %}</td><td>{% if th %}{{ doc.due_date|be_date }}{% else %}{{ doc.due_date|date:"j F Y" }}{% endif %}</td></tr>
+        {% endif %}
+        {% if related %}
+        <tr><td>{% if is_credit_note %}{% if th %}อ้างอิงเอกสารเดิม<br><span class="en">{% endif %}{% trans "Original document" %}{% else %}{% if th %}อ้างอิงใบแจ้งหนี้<br><span class="en">{% endif %}{% trans "Invoice" %}{% endif %}{% if th %}</span>{% endif %}</td>
+            <td>{{ related.number }}<br>{% if th %}{{ related.issue_date|be_date }}{% else %}{{ related.issue_date|date:"j F Y" }}{% endif %}</td></tr>
+        {% endif %}
+        {% if doc.period_start %}
+        <tr><td>{% if th %}รอบบริการ<br><span class="en">{% endif %}{% trans "Service period" %}{% if th %}</span>{% endif %}</td><td>{{ doc.period_start|date:"d/m/Y" }} - {{ doc.period_end|date:"d/m/Y" }}</td></tr>
+        {% endif %}
+      </table>
+    </td>
+  </tr>
+</table>
+<br>
+<table class="box">
+  <tr><td>
+    <b>{% if th %}ลูกค้า / {% endif %}{% trans "Customer" %}</b><br>
+    {{ doc.buyer_name }}<br>
+    {{ doc.buyer_address|linebreaksbr }}<br>
+    {% if buyer_tax_id %}{% if th %}เลขประจำตัวผู้เสียภาษีอากร {% else %}{% trans "Tax ID" %} {% endif %}{{ buyer_tax_id }} &nbsp; {{ buyer_branch }}{% endif %}
+  </td></tr>
+</table>
+<br>
+<table class="lines">
+  <tr>
+    <th width="6%">{% if th %}ลำดับ<br>{% endif %}#</th>
+    <th width="46%">{% if th %}รายการ<br><span class="en">{% endif %}{% trans "Description" %}{% if th %}</span>{% endif %}</th>
+    <th width="12%">{% if th %}จำนวน<br><span class="en">{% endif %}{% trans "Quantity" %}{% if th %}</span>{% endif %}</th>
+    <th width="16%">{% if th %}ราคาต่อหน่วย<br><span class="en">{% endif %}{% trans "Unit price" %}{% if th %}</span>{% endif %}</th>
+    <th width="20%">{% if th %}จำนวนเงิน (บาท)<br><span class="en">{% endif %}{% trans "Amount (THB)" %}{% if th %}</span>{% endif %}</th>
+  </tr>
+  {% for line in lines %}
+  <tr>
+    <td class="center">{{ forloop.counter }}</td>
+    <td>{{ line.description }}</td>
+    <td class="num">{{ line.quantity|floatformat:"-2g" }} {{ line.unit }}</td>
+    <td class="num">{{ line.unit_price|floatformat:"2g" }}</td>
+    <td class="num">{{ line.amount|floatformat:"2g" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<table>
+  <tr>
+    <td width="52%" class="small">
+      <br>
+      {% if th %}({{ doc.amount_in_words }}){% else %}{% trans "Amount in words (Thai)" %}: {{ doc.amount_in_words }}{% endif %}
+      {% if is_credit_note %}
+        <br><br><b>{% if th %}เหตุผลในการลดหนี้ / {% endif %}{% trans "Reason" %}:</b> {{ doc.cn_reason }}
+      {% endif %}
+      {% if doc.notes %}<br><br>{{ doc.notes|linebreaksbr }}{% endif %}
+    </td>
+    <td width="48%">
+      <table class="tot">
+        {% if is_credit_note %}
+        <tr><td>{% if th %}มูลค่าตามเอกสารเดิม / {% endif %}{% trans "Original value" %}</td><td class="num">{{ doc.cn_original_value|floatformat:"2g" }}</td></tr>
+        <tr><td>{% if th %}มูลค่าที่ถูกต้อง / {% endif %}{% trans "Correct value" %}</td><td class="num">{{ doc.cn_correct_value|floatformat:"2g" }}</td></tr>
+        <tr><td>{% if th %}ผลต่าง / {% endif %}{% trans "Difference" %}</td><td class="num">{{ doc.subtotal|floatformat:"2g" }}</td></tr>
+        {% else %}
+        <tr><td>{% if th %}มูลค่าบริการ (ไม่รวมภาษีมูลค่าเพิ่ม) / {% endif %}{% trans "Value excl. VAT" %}</td><td class="num">{{ doc.subtotal|floatformat:"2g" }}</td></tr>
+        {% endif %}
+        {% if doc.seller_vat_registered %}
+        <tr><td>{% if th %}ภาษีมูลค่าเพิ่ม / {% endif %}{% trans "VAT" %} {{ doc.vat_rate|floatformat:"-2" }}%</td><td class="num">{{ doc.vat_amount|floatformat:"2g" }}</td></tr>
+        {% endif %}
+        <tr class="grand"><td>{% if th %}จำนวนเงินรวมทั้งสิ้น / {% endif %}{% trans "Total" %}</td><td class="num">{{ doc.total|floatformat:"2g" }}</td></tr>
+        {% if is_receipt and doc.wht_amount %}
+        <tr><td>{% if th %}หัก ภาษี ณ ที่จ่าย / {% endif %}{% trans "Less withholding tax" %}<br><span class="en">{% if th %}หนังสือรับรอง (50 ทวิ) เลขที่ {% else %}{% trans "WHT certificate no." %} {% endif %}{{ doc.wht_certificate_no }}</span></td><td class="num">{{ doc.wht_amount|floatformat:"2g" }}</td></tr>
+        <tr class="grand"><td>{% if th %}รับชำระสุทธิ / {% endif %}{% trans "Net received" %}</td><td class="num">{{ doc.net_received|floatformat:"2g" }}</td></tr>
+        {% endif %}
+      </table>
+    </td>
+  </tr>
+</table>
+{% if is_invoice and doc.bank_accounts %}
+<br>
+<div class="small"><b>{% if th %}ชำระโดยโอนเงินเข้าบัญชี / {% endif %}{% trans "Pay by bank transfer to" %}</b></div>
+<table class="box small">
+  {% for acct in doc.bank_accounts %}
+  <tr><td>{{ acct.bank_name }}{% if acct.branch %} ({{ acct.branch }}){% endif %}</td><td>{{ acct.account_name }}</td><td>{{ acct.account_number }}</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% if doc.footer %}<br><div class="small">{{ doc.footer|linebreaksbr }}</div>{% endif %}
+<table class="sign">
+  <tr>
+    <td width="50%">.................................................<br>{% if is_receipt %}{% if th %}ผู้รับเงิน / {% endif %}{% trans "Received by" %}{% else %}{% if th %}ผู้จัดทำ / {% endif %}{% trans "Prepared by" %}{% endif %}</td>
+    <td width="50%">.................................................<br>{% if th %}ผู้มีอำนาจลงนาม / {% endif %}{% trans "Authorised signature" %}</td>
+  </tr>
+</table>
+</body>
+</html>

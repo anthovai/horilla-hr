@@ -1,0 +1,52 @@
+{% load i18n %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{% block title %}{% translate "Billing" %}{% endblock %} — OrvaHR</title>
+<style>
+  :root{--ink:#1f2933;--muted:#52606d;--line:#e4e7eb;--bg:#f6f7f9;--brand:#334e68;--ok:#2f855a;--bad:#c53030;--warn:#b7791f}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Thai",sans-serif;background:var(--bg);color:var(--ink);margin:0;font-size:15px}
+  header{background:var(--brand);color:#fff;padding:10px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  header a{color:#fff;text-decoration:none} header .sp{flex:1}
+  main{max-width:1200px;margin:0 auto;padding:16px}
+  h1{font-size:1.4rem} h2{font-size:1.1rem;margin-top:28px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line)}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f0f4f8;font-weight:600} td.num,th.num{text-align:right}
+  .wrap{overflow-x:auto}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+  .badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.85rem;background:#e4e7eb}
+  .b-paid,.b-issued{background:#c6f6d5} .b-partial,.b-draft{background:#feebc8} .b-unpaid{background:#bee3f8} .b-overdue{background:#fed7d7} .b-credited{background:#e9d8fd}
+  .msg{padding:8px 12px;border-radius:8px;margin-bottom:12px} .msg.success{background:#c6f6d5} .msg.error{background:#fed7d7} .msg.info,.msg.warning{background:#feebc8}
+  label{display:block;font-weight:600;margin:8px 0 4px}
+  input,select,textarea{padding:6px 8px;border:1px solid var(--line);border-radius:6px;font:inherit;max-width:100%}
+  input[type=checkbox]{width:auto}
+  .btn{background:var(--brand);color:#fff;border:0;border-radius:6px;padding:7px 14px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.danger{background:var(--bad)} .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .muted,.helptext{color:var(--muted);font-size:.9rem} .errorlist{color:var(--bad);padding-left:18px}
+  .row{display:flex;gap:16px;flex-wrap:wrap} .row>.card{flex:1;min-width:280px}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end} .filters label{font-weight:400;margin:0}
+  .inline{display:inline}
+</style>
+</head>
+<body>
+<header>
+  <strong>OrvaHR {% translate "Billing" %}</strong>
+  <a href="{% url 'orvahr_billing:document-list' %}">{% translate "Documents" %}</a>
+  <a href="{% url 'orvahr_billing:invoice-create' %}">{% translate "New invoice" %}</a>
+  <a href="{% url 'orvahr_billing:tenant-list' %}">{% translate "Customers" %}</a>
+  <a href="{% url 'orvahr_billing:price-list' %}">{% translate "Prices" %}</a>
+  <a href="{% url 'orvahr_billing:seller-settings' %}">{% translate "Seller settings" %}</a>
+  <span class="sp"></span>
+  {% url 'saas-console' as console_url %}{% if console_url %}<a href="{{ console_url }}">{% translate "Console" %}</a>{% endif %}
+  <span>{{ operator.username }}</span>
+</header>
+<main>
+{% for m in messages %}<div class="msg {{ m.level_tag }}">{{ m }}</div>{% endfor %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{{ tenant.name }}{% endblock %}
+{% block content %}
+<h1>{{ tenant.name }} <span class="muted">{{ tenant.schema_name }}</span></h1>
+<p><a class="btn" href="{% url 'orvahr_billing:invoice-create' %}?tenant={{ tenant.pk }}">{% translate "New invoice" %}</a></p>
+<div class="row">
+  <form method="post" class="card">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><input type="hidden" name="form" value="profile">
+    <h2>{% translate "Billing profile" %}</h2>
+    <p class="muted">{% translate "Copied onto each document when it is issued (tax ID and branch are required for a VAT-registered customer)." %}</p>
+    {% include "orvahr_billing/_form_fields.html" with form=profile_form %}
+    <p><button class="btn" type="submit">{% translate "Save profile" %}</button></p>
+  </form>
+  <form method="post" class="card">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><input type="hidden" name="form" value="subscription">
+    <h2>{% translate "Subscription" %}</h2>
+    {% include "orvahr_billing/_form_fields.html" with form=sub_form %}
+    <p><button class="btn" type="submit">{% translate "Save subscription" %}</button></p>
+  </form>
+</div>
+<h2>{% translate "Documents" %}</h2>
+<div class="wrap"><table>
+  <tr><th>{% translate "Number" %}</th><th>{% translate "Type" %}</th><th>{% translate "Issue date" %}</th><th class="num">{% translate "Total" %}</th><th>{% translate "Status" %}</th></tr>
+  {% for doc in docs %}<tr><td><a href="{% url 'orvahr_billing:document-detail' doc.pk %}">{{ doc }}</a></td><td>{{ doc.get_doc_type_display }}</td><td>{{ doc.issue_date|date:"Y-m-d" }}</td><td class="num">{{ doc.total|floatformat:"2g" }}</td><td>{{ doc.get_status_display }}{% if doc.doc_type == "invoice" and doc.status == "issued" %} · {{ doc.get_payment_status_display }}{% endif %}</td></tr>
+  {% empty %}<tr><td colspan="5" class="muted">{% translate "No documents." %}</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

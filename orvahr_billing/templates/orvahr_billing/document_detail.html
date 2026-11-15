@@ -1,0 +1,77 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{{ doc }}{% endblock %}
+{% block content %}
+<h1>{{ doc.title_en }} {{ doc.number|default:_("(draft)") }}
+  <span class="badge b-{{ doc.status }}">{{ doc.get_status_display }}</span>
+  {% if doc.doc_type == "invoice" and doc.status == "issued" %}<span class="badge b-{{ doc.payment_status }}">{{ doc.get_payment_status_display }}</span>{% if doc.overdue_since %} <span class="badge b-overdue">{% translate "Overdue since" %} {{ doc.overdue_since|date:"Y-m-d" }}</span>{% endif %}{% endif %}
+</h1>
+<p>
+  <a class="btn ghost" href="{% url 'orvahr_billing:document-pdf' doc.pk %}?lang=th">PDF ไทย</a>
+  <a class="btn ghost" href="{% url 'orvahr_billing:document-pdf' doc.pk %}?lang=en">PDF English</a>
+  {% if doc.status == "draft" %}
+    <form class="inline" method="post" action="{% url 'orvahr_billing:document-issue' doc.pk %}"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button class="btn" type="submit">{% translate "Issue" %}</button></form>
+    <form class="inline" method="post" action="{% url 'orvahr_billing:document-delete' doc.pk %}"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button class="btn danger" type="submit">{% translate "Delete draft" %}</button></form>
+  {% else %}
+    {% if doc.doc_type == "invoice" and doc.outstanding > 0 %}<a class="btn" href="{% url 'orvahr_billing:payment-create' doc.pk %}">{% translate "Record payment" %}</a>{% endif %}
+    {% if doc.doc_type != "credit_note" %}<a class="btn ghost" href="{% url 'orvahr_billing:credit-note-create' doc.pk %}">{% translate "Credit note" %}</a>{% endif %}
+  {% endif %}
+</p>
+<div class="row">
+  <div class="card">
+    <b>{% translate "Customer" %}</b><br>
+    {% if doc.status == "issued" %}{{ doc.buyer_name }}<br>{{ doc.buyer_address|linebreaksbr }}<br>{% if doc.buyer_tax_id %}{% translate "Tax ID" %} {{ doc.buyer_tax_id }} ({{ doc.buyer_branch_code|default:"-" }}){% endif %}
+    {% else %}{{ doc.tenant.name }} <span class="muted">{% translate "(details are taken from the billing profile when issued)" %}</span>{% endif %}
+    <br><a href="{% url 'orvahr_billing:tenant-billing' doc.tenant_id %}">{% translate "Billing profile" %}</a>
+  </div>
+  <div class="card">
+    {% translate "Issue date" %}: {{ doc.issue_date|date:"Y-m-d" }}<br>
+    {% if doc.due_date %}{% translate "Due date" %}: {{ doc.due_date|date:"Y-m-d" }}<br>{% endif %}
+    {% if doc.period_start %}{% translate "Service period" %}: {{ doc.period_start|date:"Y-m-d" }} – {{ doc.period_end|date:"Y-m-d" }}<br>{% endif %}
+    {% if doc.related_document %}{% translate "Related document" %}: <a href="{% url 'orvahr_billing:document-detail' doc.related_document.pk %}">{{ doc.related_document }}</a><br>{% endif %}
+    {% if doc.issued_by %}<span class="muted">{% translate "Issued by" %} {{ doc.issued_by }} {{ doc.issued_at|date:"Y-m-d H:i" }}</span><br>{% endif %}
+    {% if doc.emailed_at %}<span class="muted">{% translate "E-mailed" %} {{ doc.emailed_at|date:"Y-m-d H:i" }}</span>{% endif %}
+  </div>
+</div>
+<div class="wrap"><table>
+  <tr><th>#</th><th>{% translate "Description" %}</th><th class="num">{% translate "Quantity" %}</th><th class="num">{% translate "Unit price" %}</th><th class="num">{% translate "Amount" %}</th></tr>
+  {% for line in lines %}<tr><td>{{ forloop.counter }}</td><td>{{ line.description }}</td><td class="num">{{ line.quantity|floatformat:"-2" }} {{ line.unit }}</td><td class="num">{{ line.unit_price|floatformat:"2g" }}</td><td class="num">{{ line.amount|floatformat:"2g" }}</td></tr>{% endfor %}
+  <tr><td colspan="4" class="num">{% translate "Subtotal" %}</td><td class="num">{{ doc.subtotal|floatformat:"2g" }}</td></tr>
+  <tr><td colspan="4" class="num">{% translate "VAT" %} {{ doc.vat_rate|floatformat:"-2" }}%</td><td class="num">{{ doc.vat_amount|floatformat:"2g" }}</td></tr>
+  <tr><td colspan="4" class="num"><b>{% translate "Total" %}</b></td><td class="num"><b>{{ doc.total|floatformat:"2g" }}</b></td></tr>
+  {% if doc.doc_type == "receipt" and doc.wht_amount %}
+  <tr><td colspan="4" class="num">{% translate "Less withholding tax" %} ({{ doc.wht_certificate_no }})</td><td class="num">{{ doc.wht_amount|floatformat:"2g" }}</td></tr>
+  <tr><td colspan="4" class="num">{% translate "Net received" %}</td><td class="num">{{ doc.net_received|floatformat:"2g" }}</td></tr>
+  {% endif %}
+  {% if doc.doc_type == "invoice" and doc.status == "issued" %}
+  <tr><td colspan="4" class="num">{% translate "Paid (incl. WHT)" %}</td><td class="num">{{ doc.settled_amount|floatformat:"2g" }}</td></tr>
+  <tr><td colspan="4" class="num">{% translate "Credited" %}</td><td class="num">{{ doc.credited_amount|floatformat:"2g" }}</td></tr>
+  <tr><td colspan="4" class="num"><b>{% translate "Outstanding" %}</b></td><td class="num"><b>{{ doc.outstanding|floatformat:"2g" }}</b></td></tr>
+  {% endif %}
+</table></div>
+{% if doc.amount_in_words %}<p class="muted">({{ doc.amount_in_words }})</p>{% endif %}
+{% if doc.cn_reason %}<p><b>{% translate "Reason" %}:</b> {{ doc.cn_reason }}</p>{% endif %}
+{% if doc.notes %}<p>{{ doc.notes|linebreaksbr }}</p>{% endif %}
+{% if expected_wht %}<p class="muted">{% blocktranslate with wht=expected_wht|floatformat:"2g" %}If the customer withholds 3% tax on this service, the expected withholding is {{ wht }} THB.{% endblocktranslate %}</p>{% endif %}
+
+{% if payments %}
+<h2>{% translate "Payments" %}</h2>
+<div class="wrap"><table>
+  <tr><th>{% translate "Date" %}</th><th class="num">{% translate "Received" %}</th><th class="num">{% translate "WHT" %}</th><th>{% translate "50 ทวิ no." %}</th><th>{% translate "Reference" %}</th><th>{% translate "Receipt" %}</th><th>{% translate "Slip" %}</th></tr>
+  {% for p in payments %}<tr><td>{{ p.payment_date|date:"Y-m-d" }}</td><td class="num">{{ p.amount_received|floatformat:"2g" }}</td><td class="num">{{ p.wht_amount|floatformat:"2g" }}</td><td>{{ p.wht_certificate_no }}</td><td>{{ p.reference }}</td>
+    <td>{% if p.receipt %}<a href="{% url 'orvahr_billing:document-detail' p.receipt.pk %}">{{ p.receipt.number }}</a>{% endif %}</td>
+    <td>{% if p.slip %}<a href="{% url 'orvahr_billing:payment-slip' p.pk %}">{% translate "Download" %}</a>{% endif %}</td></tr>{% endfor %}
+</table></div>
+{% endif %}
+{% if derived %}
+<h2>{% translate "Related documents" %}</h2>
+<ul>{% for d in derived %}<li><a href="{% url 'orvahr_billing:document-detail' d.pk %}">{{ d.title_en }} {{ d }}</a> — {{ d.total|floatformat:"2g" }}</li>{% endfor %}</ul>
+{% endif %}
+{% if doc.status == "issued" %}
+<h2>{% translate "Send by e-mail" %}</h2>
+<form method="post" action="{% url 'orvahr_billing:document-email' doc.pk %}" class="card filters">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  {% for field in email_form %}<div><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+  <div><button class="btn" type="submit">{% translate "Send PDF" %}</button></div>
+</form>
+{% endif %}
+{% endblock %}

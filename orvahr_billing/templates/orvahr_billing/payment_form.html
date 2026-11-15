@@ -1,0 +1,13 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Record payment" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Record payment" %} — {{ invoice.number }}</h1>
+<p>{% translate "Outstanding" %}: <b>{{ invoice.outstanding|floatformat:"2g" }}</b> THB.
+  <span class="muted">{% blocktranslate with wht=expected_wht|floatformat:"2g" %}A customer withholding 3% on the service would deduct {{ wht }} THB.{% endblocktranslate %}</span></p>
+<p class="muted">{% translate "Amount received + withholding tax settles the invoice. A tax invoice/receipt is issued automatically, dated on the payment date." %}</p>
+<form method="post" enctype="multipart/form-data" class="card">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  {% include "orvahr_billing/_form_fields.html" with form=form %}
+  <p><button class="btn" type="submit">{% translate "Record payment and issue receipt" %}</button></p>
+</form>
+{% endblock %}

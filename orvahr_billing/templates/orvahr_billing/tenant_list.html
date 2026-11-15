@@ -1,0 +1,15 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Customers" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Customers" %}</h1>
+<div class="wrap"><table>
+  <tr><th>{% translate "Tenant" %}</th><th>{% translate "Status" %}</th><th>{% translate "Billing profile" %}</th><th>{% translate "Plan" %}</th><th>{% translate "Next invoice" %}</th></tr>
+  {% for tenant, profile, sub in rows %}<tr>
+    <td><a href="{% url 'orvahr_billing:tenant-billing' tenant.pk %}">{{ tenant.name }}</a> <span class="muted">{{ tenant.schema_name }}</span></td>
+    <td>{{ tenant.get_status_display }}</td>
+    <td>{% if profile %}{{ profile.legal_name }}{% else %}<span class="bad">{% translate "Missing" %}</span>{% endif %}</td>
+    <td>{% if sub %}{{ sub.plan_code }} / {{ sub.get_cycle_display }} ({{ sub.get_status_display }}){% else %}-{% endif %}</td>
+    <td>{% if sub %}{{ sub.next_invoice_date|date:"Y-m-d" }}{% endif %}</td>
+  </tr>{% empty %}<tr><td colspan="5" class="muted">{% translate "No tenants." %}</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

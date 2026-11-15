@@ -1,0 +1,20 @@
+{% extends "orvahr_billing/_base.html" %}{% load i18n %}
+{% block title %}{% translate "New invoice" %}{% endblock %}
+{% block content %}
+<h1>{% translate "New invoice (draft)" %}</h1>
+<p class="muted">{% translate "Prices excl. VAT. VAT is added from the seller settings when the invoice is issued." %}</p>
+<form method="post" class="card">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  {% include "orvahr_billing/_form_fields.html" with form=form %}
+  <h2>{% translate "Lines" %}</h2>
+  {{ lines.management_form }}
+  {% if lines.non_form_errors %}<ul class="errorlist">{% for e in lines.non_form_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  <div class="wrap"><table>
+    <tr><th>{% translate "Description" %}</th><th>{% translate "Quantity" %}</th><th>{% translate "Unit" %}</th><th>{% translate "Unit price" %}</th></tr>
+    {% for lf in lines %}<tr>
+      <td>{{ lf.description }}{{ lf.description.errors }}</td><td>{{ lf.quantity }}{{ lf.quantity.errors }}</td><td>{{ lf.unit }}</td><td>{{ lf.unit_price }}{{ lf.unit_price.errors }}</td>
+    </tr>{% endfor %}
+  </table></div>
+  <p><button class="btn" type="submit">{% translate "Save draft" %}</button></p>
+</form>
+{% endblock %}
