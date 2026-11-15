@@ -1,0 +1,19 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="บัญชีธนาคารของบริษัทที่ใช้โอนเงินเดือน เลขบัญชีจะแสดงแบบปิดบางส่วนทุกที่ หมายเหตุ: ไฟล์โอนเงินเดือนที่ระบบสร้างเป็นรูปแบบกลาง (CSV) ไม่ใช่รูปแบบเฉพาะของธนาคารใด เพราะธนาคารไทยไม่เปิดเผยสเปกไฟล์ ตรวจกับธนาคารก่อนใช้" en=_("The company account salaries are paid from. The account number is masked wherever it is shown. Note: the transfer file OrvaHR produces is a generic list (CSV), not any bank's own upload format, since Thai banks do not publish theirs. Check with your bank before using it.") %}
+{% if accounts %}
+    <ul class="text-sm mb-4">
+        {% for account in accounts %}
+            <li>&#10003; {{ account.name }} &middot; {{ account.get_bank_code_display }} &middot; <span class="font-mono">{{ account.masked_account }}</span></li>
+        {% endfor %}
+    </ul>
+    {% if accounts|length > 1 %}<p class="text-xs text-gray-500 mb-3">{% trans "The form below edits the first account." %}</p>{% endif %}
+{% endif %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML" autocomplete="off">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for field in form %}{% include "orvahr_th/setup/_field.html" %}{% endfor %}
+    </div>
+    {% if accounts_url %}<p class="text-xs mt-3"><a class="underline" href="{{ accounts_url }}">{% trans "Manage all company bank accounts" %}</a></p>{% endif %}
+    {% include "orvahr_th/setup/_actions.html" %}
+</form>

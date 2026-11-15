@@ -1,0 +1,16 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="เพิ่มพนักงาน: ดาวน์โหลดไฟล์ Excel ตัวอย่างภาษาไทย กรอกข้อมูลแล้วนำเข้าทีเดียว หรือเพิ่มทีละคน หลังนำเข้าให้กรอกเลขบัตรประชาชนและเลขประกันสังคมในโปรไฟล์ไทยของพนักงาน" en=_("Add your people: download the Thai Excel template, fill it in and import everyone at once, or add them one by one. After importing, enter each employee's national ID and social security number in their Thai profile.") %}
+<p class="text-sm mb-4">
+    {% blocktrans count counter=employee_count %}{{ counter }} employee in this company so far (not counting you).{% plural %}{{ counter }} employees in this company so far (not counting you).{% endblocktrans %}
+</p>
+<div class="flex flex-wrap gap-2 mb-2">
+    <a class="oh-btn oh-btn--light" href="{{ template_url }}">{% trans "Download the Thai employee template (Excel)" %}</a>
+    {% if import_url %}<a class="oh-btn oh-btn--secondary" href="{{ import_url }}">{% trans "Import employees from Excel" %}</a>{% endif %}
+    {% if add_employee_url %}<a class="oh-btn oh-btn--light" href="{{ add_employee_url }}">{% trans "Add an employee" %}</a>{% endif %}
+</div>
+<p class="text-xs text-gray-500">{% trans "These open in this window; come back to this setup from the dashboard to continue." %}</p>
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    {% trans "Continue" as continue_label %}
+    {% include "orvahr_th/setup/_actions.html" with save_action="continue" save_label=continue_label %}
+</form>

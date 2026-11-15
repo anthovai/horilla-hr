@@ -228,6 +228,37 @@ def _get_setup_checklist_context(request):
         },
     ]
 
+    # 4b. Thai company setup wizard (orvahr_th), first: it covers the Thai
+    # specifics (tax IDs, SSO, holidays, PDPA). Optional, so installs that
+    # finished the other steps do not get the banner back for it.
+    thai_setup_url = None
+    try:
+        from django.apps import apps as django_apps
+
+        if django_apps.is_installed("orvahr_th"):
+            from orvahr_th.setup_wizard import can_run_setup, is_complete
+
+            if can_run_setup(request.user):
+                thai_setup_url = _safe_url(
+                    "orvahr-th-setup", f"?company={company_pk}" if company_pk else ""
+                )
+                steps.insert(
+                    0,
+                    {
+                        "key": "thai_setup",
+                        "title": _("Thai setup"),
+                        "description": _(
+                            "Guided setup for a Thai company: tax and SSO numbers, "
+                            "payroll, bank, holidays, PDPA and people."
+                        ),
+                        "url": thai_setup_url,
+                        "done": is_complete(company_pk),
+                        "optional": True,
+                    },
+                )
+    except Exception:
+        thai_setup_url = None
+
     # 5. Preview mode overrides all done flags to False
     if preview_mode:
         for s in steps:
@@ -256,6 +287,7 @@ def _get_setup_checklist_context(request):
         "setup_progress_pct": progress_pct,
         "setup_dismiss_url": _safe_url("dashboard-dismiss-setup-checklist"),
         "setup_company_pk": company_pk,
+        "setup_thai_url": thai_setup_url,
     }
 
 

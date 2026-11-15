@@ -1,6 +1,6 @@
 from django.urls import path
 
-from orvahr_th import certificate_views, views
+from orvahr_th import certificate_views, setup_views, views
 
 urlpatterns = [
     # Employee database id and year only: the tax ID never goes in a URL.
@@ -44,5 +44,22 @@ urlpatterns = [
         "certificates/<uuid:token>/pdf/",
         certificate_views.certificate_pdf,
         name="orvahr-th-certificate-pdf",
+    ),
+    # Thai company setup wizard: company database id and step key only.
+    path("setup/", setup_views.setup_start, name="orvahr-th-setup"),
+    path(
+        "setup/<int:company_id>/employees-template.xlsx",
+        setup_views.import_template,
+        name="orvahr-th-setup-import-template",
+    ),
+    path(
+        "setup/<int:company_id>/lunar-holidays.csv",
+        setup_views.lunar_csv,
+        name="orvahr-th-setup-lunar-csv",
+    ),
+    path(
+        "setup/<int:company_id>/<slug:step>/",
+        setup_views.setup_step,
+        name="orvahr-th-setup-step",
     ),
 ]

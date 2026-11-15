@@ -191,6 +191,13 @@
                     <p class="hcl-subtitle">
                         {% trans "Finish setup to unlock your full HR system" %}
                     </p>
+                    {% if setup_thai_url %}
+                        <p class="hcl-subtitle">
+                            <a href="{{ setup_thai_url }}" style="color: var(--primary-600, #e54f38); font-weight: 600;">
+                                ตั้งค่าบริษัทไทย &middot; {% trans "Thai company setup, step by step" %} &rarr;
+                            </a>
+                        </p>
+                    {% endif %}
                 </div>
             </div>
 

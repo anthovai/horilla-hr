@@ -1,0 +1,33 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="ตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 บริษัทต้องแจ้งพนักงานว่าเก็บและใช้ข้อมูลอะไร เพื่ออะไร และติดต่อใคร กรอกผู้ติดต่อด้านข้อมูลส่วนบุคคล (DPO) แล้วเผยแพร่ประกาศความเป็นส่วนตัวจากแบบร่าง ประกาศจะมีข้อความ ร่าง กำกับไว้จนกว่าที่ปรึกษากฎหมายตรวจและแก้ไข" en=_("Under the Personal Data Protection Act B.E. 2562 the company must tell employees what data it keeps, why, and whom to contact. Enter the data protection contact (DPO), then publish a privacy notice from the template. It stays marked DRAFT until counsel has reviewed and edited it.") %}
+{% if notices %}
+    <ul class="text-sm mb-4">
+        {% for item in notices %}
+            <li>
+                {{ item.notice.title }} &middot; v{{ item.notice.version }}
+                {% if item.notice.published %}&middot; {% trans "published" %}{% endif %}
+                {% if item.draft %}<span class="ms-1 rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-800">{% trans "Draft: have counsel review" %}</span>{% endif %}
+                {% if item.edit_url %}<a class="underline text-xs ms-1" href="{{ item.edit_url }}">{% trans "Edit" %}</a>{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% include "orvahr_th/setup/_field.html" with field=form.dpo_name %}
+        {% include "orvahr_th/setup/_field.html" with field=form.dpo_email %}
+        {% include "orvahr_th/setup/_field.html" with field=form.dpo_phone %}
+        {% include "orvahr_th/setup/_field.html" with field=form.dpo_address field_class="md:col-span-2" %}
+    </div>
+    <fieldset class="mt-4">
+        <legend class="oh-label">{{ notice_form.audiences.label }}</legend>
+        {% for choice in notice_form.audiences %}
+            <label class="flex items-center gap-2 text-sm">{{ choice.tag }} {{ choice.choice_label }}</label>
+        {% endfor %}
+        <p class="text-xs text-gray-500 mt-1">{% trans "Skipped for an audience that already has a published notice of this company." %}</p>
+    </fieldset>
+    {% if pdpa_settings_url %}<p class="text-xs mt-3"><a class="underline" href="{{ pdpa_settings_url }}">{% trans "All PDPA settings" %}</a></p>{% endif %}
+    {% include "orvahr_th/setup/_actions.html" %}
+</form>

@@ -1,0 +1,14 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="ไม่บังคับ: ถ้าบริษัทมีกองทุนสำรองเลี้ยงชีพ ให้กรอกชื่อกองทุน บริษัทจัดการ และอัตราเงินสะสม/สมทบ (กฎหมายให้ลูกจ้างสะสม 2–15% และนายจ้างสมทบไม่น้อยกว่าลูกจ้าง) ตารางสิทธิรับเงินสมทบตามอายุงานเพิ่มได้ในหน้ากองทุน ถ้าไม่มีกองทุน กดข้ามได้" en=_("Optional: if the company has a provident fund, enter the fund, its manager and the contribution rates (employees contribute 2-15%, and the employer at least as much). The vesting schedule is added on the fund's page. Skip this step if there is no fund.") %}
+{% if plans %}
+    <p class="text-sm mb-3">&#10003; {% blocktrans with name=plans.0.name %}Plan on file: {{ name }}. The form edits it.{% endblocktrans %}
+        {% if plan_edit_url %}<a class="underline" href="{{ plan_edit_url }}">{% trans "Add the vesting schedule" %}</a>{% endif %}</p>
+{% endif %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for field in form %}{% include "orvahr_th/setup/_field.html" %}{% endfor %}
+    </div>
+    {% include "orvahr_th/setup/_actions.html" %}
+</form>

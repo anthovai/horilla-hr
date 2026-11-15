@@ -1,0 +1,62 @@
+{% load i18n %}
+<div class="oh-wrapper" id="thai-setup-body">
+    <div class="flex flex-wrap items-center justify-between gap-3 my-5">
+        <div>
+            <h2 class="text-base font-semibold"><span lang="th">ตั้งค่าบริษัทไทย</span> / {% trans "Thai company setup" %}</h2>
+            <p class="text-xs text-gray-500">
+                {{ company.company }} &middot;
+                {% blocktrans with done=done_count total=step_count %}{{ done }} of {{ total }} steps done{% endblocktrans %}
+                &middot; {% trans "Progress is saved: you can leave and come back at any time." %}
+            </p>
+        </div>
+        {% if companies|length > 1 %}
+            <form method="get" action="{% url 'orvahr-th-setup' %}" class="flex gap-2 items-end">
+                <label class="sr-only" for="thai-setup-company">{% trans "Company" %}</label>
+                <select name="company" id="thai-setup-company" class="oh-select" onchange="this.form.submit()">
+                    {% for c in companies %}
+                        <option value="{{ c.pk }}" {% if c.pk == company.pk %}selected{% endif %}>{{ c.company }}</option>
+                    {% endfor %}
+                </select>
+                <noscript><button type="submit" class="oh-btn oh-btn--light">{% trans "Show" %}</button></noscript>
+            </form>
+        {% endif %}
+    </div>
+
+    <ol class="flex flex-wrap gap-2 mb-5" aria-label="{% trans 'Setup steps' %}">
+        {% for s in steps %}
+            <li>
+                <a href="{{ s.url }}" hx-get="{{ s.url }}" hx-target="#thai-setup" hx-swap="innerHTML" hx-push-url="true"
+                   class="flex items-center gap-2 rounded-full border px-3 py-1 text-xs
+                          {% if s.key == step.key %}border-[#e54f38] bg-[#fef4f2] font-semibold{% elif s.status == 'done' %}border-green-300 bg-green-50{% else %}border-[#e5e7eb]{% endif %}"
+                   {% if s.key == step.key %}aria-current="step"{% endif %}>
+                    <span class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px]
+                                 {% if s.status == 'done' %}bg-green-600 text-white{% elif s.status == 'skipped' %}bg-gray-300 text-gray-700{% else %}bg-gray-100 text-gray-700{% endif %}">
+                        {% if s.status == 'done' %}&#10003;{% else %}{{ s.number }}{% endif %}
+                    </span>
+                    <span><span lang="th">{{ s.title_th }}</span> &middot; {{ s.title }}</span>
+                    {% if s.status == 'skipped' %}<span class="text-gray-500">({% trans "skipped" %})</span>{% elif s.optional and s.status != 'done' %}<span class="text-gray-500">({% trans "optional" %})</span>{% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ol>
+
+    {% if carried_results %}
+        <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 mb-4 text-sm" role="status">
+            <ul class="list-disc ps-5">
+                {% for line in carried_results %}<li>{{ line }}</li>{% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <section class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333] flex flex-wrap items-center gap-2">
+            <span>{% blocktrans with n=step_number total=step_count %}Step {{ n }} of {{ total }}{% endblocktrans %}:</span>
+            <span lang="th">{{ step.title_th }}</span> &middot; <span>{{ step.title }}</span>
+            {% if step.optional %}<span class="text-xs font-normal text-gray-500">({% trans "optional" %})</span>{% endif %}
+            {% if step_status == 'done' %}<span class="text-xs font-normal text-green-700">&#10003; {% trans "done" %}</span>{% elif step_status == 'skipped' %}<span class="text-xs font-normal text-gray-500">{% trans "skipped" %}</span>{% endif %}
+        </h3>
+        <div class="p-4">
+            {% include step_template %}
+        </div>
+    </section>
+</div>

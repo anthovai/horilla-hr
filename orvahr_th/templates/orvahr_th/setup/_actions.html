@@ -1,0 +1,16 @@
+{% load i18n %}
+{# Footer of a step form: back, skip, save. Context: save_label (optional), no_skip. #}
+<div class="flex flex-wrap items-center justify-between gap-2 mt-5 pt-4 border-t border-[#ebebeb]">
+    <div>
+        {% if previous_url %}
+            <a class="oh-btn oh-btn--light" href="{{ previous_url }}"
+               hx-get="{{ previous_url }}" hx-target="#thai-setup" hx-swap="innerHTML" hx-push-url="true">{% trans "Back" %}</a>
+        {% endif %}
+    </div>
+    <div class="flex gap-2">
+        {% if not no_skip %}
+            <button type="submit" name="action" value="skip" class="oh-btn oh-btn--light" formnovalidate>{% trans "Skip for now" %}</button>
+        {% endif %}
+        <button type="submit" name="action" value="{{ save_action|default:'save' }}" class="oh-btn oh-btn--secondary">{{ save_label|default:_("Save and continue") }}</button>
+    </div>
+</div>

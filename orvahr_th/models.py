@@ -11,6 +11,7 @@ database id or the employee's.
 
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -161,3 +162,52 @@ class CertificateSequence(models.Model):
                 name="orvahr_th_cert_seq_unique_no_company",
             ),
         ]
+
+
+class ThaiSetupProgress(models.Model):
+    """
+    Where a company is in the Thai company setup wizard (orvahr_th.setup_wizard).
+
+    ``steps`` maps a step key to "done" or "skipped"; whatever the wizard can
+    see in the data itself (a tax profile, a bank account...) also counts as
+    done, so this only has to remember what the data cannot show: a step
+    someone skipped, or confirmed without changing anything.
+    """
+
+    company = models.OneToOneField(
+        "base.Company",
+        on_delete=models.CASCADE,
+        related_name="thai_setup_progress",
+        verbose_name=_("Company"),
+    )
+    steps = models.JSONField(default=dict, blank=True)
+    current_step = models.CharField(max_length=30, blank=True, default="")
+    # The filing status (tax pack) a new contract of this company gets when
+    # it is saved without one (see setup_wizard.default_contract_tax_pack).
+    default_filing_status = models.ForeignKey(
+        "payroll.FilingStatus",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        verbose_name=_("Tax pack for new contracts"),
+    )
+    completed_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+
+    objects = HorillaCompanyManager("company")
+    all_objects = models.Manager()  # what the wizard uses (it names the company)
+
+    class Meta:
+        verbose_name = _("Thai company setup progress")
+        verbose_name_plural = _("Thai company setup progress")
+
+    def __str__(self):
+        return str(self.company)

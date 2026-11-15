@@ -1,0 +1,40 @@
+{% load i18n %}
+{% if just_finished or progress.completed_at %}
+    <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 mb-4 text-sm" role="status">
+        <span lang="th">ตั้งค่าบริษัทเสร็จแล้ว</span> &middot; {% trans "Thai company setup is finished. You can come back to any step at any time." %}
+    </div>
+{% endif %}
+<h4 class="text-sm font-semibold mb-2"><span lang="th">สรุป</span> / {% trans "Summary" %}</h4>
+<ul class="text-sm mb-5">
+    {% for item in summary %}
+        <li class="py-1">
+            {% if item.status == 'done' %}<span class="text-green-700">&#10003;</span>{% elif item.status == 'skipped' %}<span class="text-gray-500">&ndash;</span>{% else %}<span class="text-amber-700">!</span>{% endif %}
+            <a class="underline" href="{{ item.url }}" hx-get="{{ item.url }}" hx-target="#thai-setup" hx-swap="innerHTML" hx-push-url="true"><span lang="th">{{ item.title_th }}</span> &middot; {{ item.title }}</a>:
+            {% if item.status == 'done' %}{% trans "done" %}{% elif item.status == 'skipped' %}{% trans "skipped" %}{% else %}{% trans "not done yet" %}{% endif %}
+            {% if item.optional %}<span class="text-xs text-gray-500">({% trans "optional" %})</span>{% endif %}
+        </li>
+    {% endfor %}
+</ul>
+{% if draft_notices %}
+    <p class="text-sm text-amber-800 mb-4">{% blocktrans count counter=draft_notices|length %}{{ counter }} privacy notice is still a draft.{% plural %}{{ counter }} privacy notices are still drafts.{% endblocktrans %}</p>
+{% endif %}
+<h4 class="text-sm font-semibold mb-2"><span lang="th">ให้นักบัญชี/ที่ปรึกษาตรวจ</span> / {% trans "For your accountant to verify" %}</h4>
+<p class="text-xs text-gray-500 mb-2">{% trans "Every statutory figure loaded here is a starting point, not advice. Have these confirmed against current law before the first payroll:" %}</p>
+<ol class="list-decimal ps-5 text-sm space-y-2 mb-4">
+    {% for th, en in checks %}
+        <li><span lang="th">{{ th }}</span><br><span class="text-gray-600">{{ en }}</span></li>
+    {% endfor %}
+</ol>
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    <div class="flex flex-wrap items-center justify-between gap-2 mt-5 pt-4 border-t border-[#ebebeb]">
+        <a class="oh-btn oh-btn--light" href="{{ previous_url }}" hx-get="{{ previous_url }}" hx-target="#thai-setup" hx-swap="innerHTML" hx-push-url="true">{% trans "Back" %}</a>
+        <div class="flex gap-2">
+            {% if progress.completed_at %}
+                <a class="oh-btn oh-btn--secondary" href="{{ dashboard_url }}">{% trans "Go to the dashboard" %}</a>
+            {% else %}
+                <button type="submit" name="action" value="finish" class="oh-btn oh-btn--secondary">{% trans "Finish setup" %}</button>
+            {% endif %}
+        </div>
+    </div>
+</form>

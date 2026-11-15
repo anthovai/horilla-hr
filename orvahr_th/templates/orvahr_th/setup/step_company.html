@@ -1,0 +1,33 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="กรอกชื่อนิติบุคคลภาษาไทยตามหนังสือรับรองบริษัท เลขประจำตัวผู้เสียภาษี 13 หลัก (ระบบตรวจเลขหลักสุดท้ายให้) เลขสาขา (สำนักงานใหญ่ = 00000) ที่อยู่ และเลขที่บัญชีนายจ้างประกันสังคม ข้อมูลนี้จะพิมพ์บน ภ.ง.ด.1 ภ.ง.ด.1ก สปส.1-10 และหนังสือรับรองการหักภาษี ณ ที่จ่าย (50 ทวิ)" en=_("Enter the Thai legal name as on the company certificate, the 13-digit tax ID (its check digit is verified), the branch number (head office is 00000), the address and the Social Security employer account. They are printed on PND 1, PND 1 Kor, SSO 1-10 and the 50 Tawi certificate.") %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML" autocomplete="off">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.th_subdistrict_code }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% include "orvahr_th/setup/_field.html" with field=form.legal_name_th field_class="md:col-span-2" %}
+        {% include "orvahr_th/setup/_field.html" with field=form.tax_id %}
+        {% include "orvahr_th/setup/_field.html" with field=form.branch_no %}
+        {% include "orvahr_th/setup/_field.html" with field=form.sso_account_no %}
+        {% include "orvahr_th/setup/_field.html" with field=form.sso_branch_no %}
+    </div>
+    <h4 class="text-sm font-semibold mt-5 mb-2"><span lang="th">ที่อยู่</span> / {% trans "Address" %}</h4>
+    <div class="row">
+        {% include "orvahr_geo/address_picker.html" with picker_key="ThaiSetup" %}
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% include "orvahr_th/setup/_field.html" with field=form.address_line field_class="md:col-span-2" %}
+        {% include "orvahr_th/setup/_field.html" with field=form.subdistrict %}
+        {% include "orvahr_th/setup/_field.html" with field=form.district %}
+        {% include "orvahr_th/setup/_field.html" with field=form.province %}
+        {% include "orvahr_th/setup/_field.html" with field=form.postcode %}
+        {% include "orvahr_th/setup/_field.html" with field=form.phone %}
+    </div>
+    {% if full_profile_url %}
+        <p class="text-xs text-gray-500 mt-3">
+            {% trans "RD filing details (VAT branch type, filing channel, e-Filing user ID) can be added later in the full company tax profile." %}
+            <a class="underline" href="{{ full_profile_url }}">{% trans "Open the company tax profile" %}</a>
+        </p>
+    {% endif %}
+    {% include "orvahr_th/setup/_actions.html" %}
+</form>

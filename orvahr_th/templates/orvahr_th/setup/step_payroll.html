@@ -1,0 +1,63 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="ตั้งค่าพื้นฐานการจ่ายเงินเดือน: แสดงเงินเป็นบาท วันที่จ่ายเงินเดือน ชุดคำนวณภาษีเงินได้บุคคลธรรมดาสำหรับสัญญาจ้างใหม่ รายการหักเงินสมทบประกันสังคม และอัตราค่าล่วงเวลาตามพระราชบัญญัติคุ้มครองแรงงาน ทุกรายการสร้างเป็นรายการเงินเดือนธรรมดาที่แก้ไขได้ภายหลัง และกดซ้ำได้โดยไม่สร้างซ้ำ" en=_("Payroll basics: show pay in baht, the pay day, the Thai income tax pack for new contracts, the social security deduction and the Labour Protection Act overtime rates. Each one becomes an ordinary payroll item you can edit later, and running this again never creates duplicates.") %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="space-y-5">
+        <div>
+            {% include "orvahr_th/setup/_field.html" with field=form.use_baht %}
+            <p class="text-xs text-gray-500 ms-6">
+                {% if currency %}{% blocktrans with symbol=currency.currency_symbol %}Currently: {{ symbol }}{% endblocktrans %}{% else %}{% trans "No currency set for this company yet." %}{% endif %}
+            </p>
+        </div>
+        <div class="max-w-xs">
+            {% include "orvahr_th/setup/_field.html" with field=form.pay_day %}
+            <p class="text-xs text-gray-500 mt-1">
+                <span lang="th">กฎหมายกำหนดให้จ่ายค่าจ้างอย่างน้อยเดือนละครั้ง ส่วนใหญ่จ่ายวันสิ้นเดือนหรือวันที่ 25</span><br>
+                {% trans "Wages must be paid at least once a month; many companies pay on the last day or the 25th." %}
+                {% if pay_period_url %}<a class="underline" href="{{ pay_period_url }}">{% trans "More pay period options" %}</a>{% endif %}
+            </p>
+        </div>
+        <div>
+            {% include "orvahr_th/setup/_field.html" with field=form.thai_tax_pack %}
+            <div class="ms-6">
+                {% include "orvahr_th/setup/_field.html" with field=form.apply_to_active %}
+                <p class="text-xs text-gray-500 mt-1">
+                    <span lang="th">อัตราภาษีขั้นบันได 0–35% หักค่าใช้จ่ายและค่าลดหย่อนส่วนตัวรวม 160,000 บาท ค่าลดหย่อนอื่น (คู่สมรส บุตร ประกัน กองทุน) กรอกรายคน สัญญาที่มีชุดภาษีอยู่แล้วจะไม่ถูกเปลี่ยน</span><br>
+                    {% trans "Progressive 0-35% bands with the 160,000 baht expense and personal allowance. Other allowances (spouse, children, insurance, funds) are entered per employee. Contracts that already have a tax setting are never changed." %}
+                    {% if default_filing_status %}<br><strong>{% trans "Currently on." %}</strong>{% endif %}
+                </p>
+            </div>
+        </div>
+        <div>
+            {% include "orvahr_th/setup/_field.html" with field=form.load_sso %}
+            <p class="text-xs text-gray-500 ms-6 mt-1">
+                <span lang="th">หัก 5% ของค่าจ้าง ฐานค่าจ้างขั้นต่ำ 1,650 สูงสุด 17,500 บาท (82.50–875 บาทต่อเดือน) นายจ้างสมทบเท่ากัน กำหนดให้หักเฉพาะพนักงานที่ขึ้นทะเบียนประกันสังคมแล้ว</span><br>
+                {% trans "5% of wages on a base held between 1,650 and 17,500 baht (82.50 to 875 a month); the employer pays the same. Assign it only to employees registered with the Social Security Office." %}
+                {% if sso %}<br><strong>{% trans "Already loaded." %}</strong>{% endif %}
+            </p>
+        </div>
+        <fieldset>
+            <legend class="oh-label">{{ form.ot_keys.label }}</legend>
+            <p class="text-xs text-gray-500 mb-2">
+                <span lang="th">ค่าล่วงเวลาวันทำงาน 1.5 เท่า ทำงานในวันหยุด: รายเดือนได้เพิ่ม 1 เท่า รายวันได้ 2 เท่า ล่วงเวลาในวันหยุด 3 เท่า เลือกเฉพาะที่ใช้กับพนักงานของบริษัท</span><br>
+                {% trans "Overtime on a working day is 1.5x. Work on a holiday earns 1x more for monthly-paid staff and 2x for daily-paid staff; overtime on a holiday is 3x. Pick the ones that apply to your staff." %}
+            </p>
+            <div class="space-y-2">
+                {% for option in ot_options %}
+                    <label class="flex items-start gap-2 text-sm">
+                        <input type="checkbox" name="ot_keys" value="{{ option.key }}" class="mt-1" {% if option.checked %}checked{% endif %}>
+                        <span>
+                            {{ option.label }}
+                            {% if option.row.already_loaded %}<span class="text-xs text-green-700">({% trans "already loaded" %})</span>{% endif %}
+                            <span class="block text-xs text-gray-500">{{ option.row.summary }}</span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+            {% for error in form.ot_keys.errors %}<p class="text-xs text-red-600 mt-1">{{ error }}</p>{% endfor %}
+            {% if component_library_url %}<p class="text-xs mt-2"><a class="underline" href="{{ component_library_url }}">{% trans "See the full component library" %}</a></p>{% endif %}
+        </fieldset>
+    </div>
+    {% include "orvahr_th/setup/_actions.html" %}
+</form>

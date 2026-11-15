@@ -1,0 +1,84 @@
+{% load i18n %}
+{% include "orvahr_th/setup/_explain.html" with th="โหลดวันหยุดราชการที่วันที่ตายตัว (ปีใหม่ จักรี สงกรานต์ ฯลฯ) ส่วนวันหยุดทางจันทรคติ (มาฆบูชา วิสาขบูชา อาสาฬหบูชา เข้าพรรษา) และวันหยุดชดเชยเปลี่ยนทุกปี ระบบไม่เดาให้ ให้กรอกจากประกาศคณะรัฐมนตรีลงไฟล์ CSV แล้วอัปโหลด จากนั้นตรวจรายการประเภทการลาก่อนสร้าง วันหยุดและประเภทการลาใช้ร่วมกันทุกบริษัท" en=_("Load the fixed-date public holidays (New Year, Chakri, Songkran...). Lunar holidays (Makha, Visakha and Asarnha Bucha, Khao Phansa) and substitution days change every year and are never guessed: copy them from the Cabinet announcement into the CSV and upload it. Then review the leave types before creating them. Holidays and leave types are shared by all companies.") %}
+
+<h4 class="text-sm font-semibold mb-2"><span lang="th">วันหยุด</span> / {% trans "Public holidays" %}</h4>
+<p class="text-sm mb-2">
+    {% blocktrans count counter=holidays|length with year=this_year %}{{ counter }} holiday in {{ year }} so far.{% plural %}{{ counter }} holidays in {{ year }} so far.{% endblocktrans %}
+    {% if next_year_holiday_count %}{% blocktrans with count=next_year_holiday_count %}{{ count }} next year.{% endblocktrans %}{% endif %}
+    {% if holidays_url %}<a class="underline" href="{{ holidays_url }}">{% trans "View holidays" %}</a>{% endif %}
+</p>
+{% if holiday_result %}
+    <div class="rounded-md border {% if holiday_result.errors %}border-red-200 bg-red-50{% else %}border-green-200 bg-green-50{% endif %} px-4 py-3 mb-3 text-sm" role="status">
+        {% if holiday_result.errors %}
+            <p class="font-semibold">{% trans "The file was not loaded; nothing was written. Fix these rows and upload it again:" %}</p>
+            <ul class="list-disc ps-5">{% for line in holiday_result.errors %}<li>{{ line }}</li>{% endfor %}</ul>
+        {% else %}
+            <p>{% blocktrans with count=holiday_result.created year=holiday_year %}{{ count }} holiday(s) added for {{ year }}.{% endblocktrans %}</p>
+            {% for line in holiday_result.warnings %}<p class="text-amber-700">{{ line }}</p>{% endfor %}
+            {% if holiday_result.missing_lunar %}
+                <p class="text-amber-700">{% trans "Lunar holidays are still missing: add them with the CSV below." %}</p>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endif %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML" hx-encoding="multipart/form-data" enctype="multipart/form-data" class="mb-6">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        {% include "orvahr_th/setup/_field.html" with field=holiday_form.year %}
+        {% include "orvahr_th/setup/_field.html" with field=holiday_form.lunar_csv field_class="md:col-span-2" %}
+    </div>
+    <p class="text-xs text-gray-500 mt-2">
+        {% blocktrans with names=lunar_labels|join:", " %}CSV columns: date,name[,department], dates as YYYY-MM-DD (Christian era), one holiday per date, names up to 30 characters. To look up: {{ names }}, and any substitution or special days.{% endblocktrans %}
+        <a class="underline" href="{{ lunar_template_url }}">{% trans "Download the CSV template" %}</a>
+    </p>
+    <button type="submit" name="action" value="holidays" class="oh-btn oh-btn--light mt-3">{% trans "Load holidays" %}</button>
+</form>
+
+<h4 class="text-sm font-semibold mb-2"><span lang="th">ประเภทการลา</span> / {% trans "Leave types" %}</h4>
+<p class="text-xs text-gray-500 mb-2">
+    <span lang="th">ตามพระราชบัญญัติคุ้มครองแรงงาน บางค่าเป็นค่าเริ่มต้นตามนโยบายบริษัท ตรวจและแก้ไขได้ภายหลัง</span><br>
+    {% trans "Based on the Labour Protection Act; some figures are company-policy placeholders. Review them, and edit them later if needed." %}
+</p>
+{% if leave_saved %}
+    <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 mb-3 text-sm" role="status">
+        {% if leave_created %}{% blocktrans with names=leave_created|join:", " %}Created: {{ names }}.{% endblocktrans %}{% else %}{% trans "Nothing new to create." %}{% endif %}
+    </div>
+{% endif %}
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left">
+                    <th class="p-2"></th>
+                    <th class="p-2">{% trans "Leave type" %}</th>
+                    <th class="p-2">{% trans "Days" %}</th>
+                    <th class="p-2">{% trans "Paid" %}</th>
+                    <th class="p-2">{% trans "Notes" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in leave_rows %}
+                    <tr class="border-t border-[#ebebeb] align-top">
+                        <td class="p-2">
+                            {% if row.exists %}<span class="text-green-700" title="{% trans 'Already exists' %}">&#10003;</span>
+                            {% else %}<input type="checkbox" name="leave_types" value="{{ row.name }}" aria-label="{{ row.name }}" {% if row.name in leave_form.leave_types.value %}checked{% endif %}>{% endif %}
+                        </td>
+                        <td class="p-2">{{ row.name }}{% if row.exists %} <span class="text-xs text-green-700">({% trans "already exists" %})</span>{% endif %}</td>
+                        <td class="p-2">{{ row.days|default:"-" }}</td>
+                        <td class="p-2">{% if row.paid %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                        <td class="p-2 text-xs text-gray-600">{{ row.note }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button type="submit" name="action" value="leave_types" class="oh-btn oh-btn--light mt-3">{% trans "Create the selected leave types" %}</button>
+    {% if leave_types_url %}<a class="underline text-xs ms-2" href="{{ leave_types_url }}">{% trans "View leave types" %}</a>{% endif %}
+</form>
+
+<form method="post" action="{{ step_url }}" hx-post="{{ step_url }}" hx-target="#thai-setup" hx-swap="innerHTML">
+    {% csrf_token %}
+    {% trans "Continue" as continue_label %}
+    {% include "orvahr_th/setup/_actions.html" with save_action="continue" save_label=continue_label %}
+</form>

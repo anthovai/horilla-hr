@@ -16,4 +16,16 @@ class OrvahrThConfig(AppConfig):
         urlpatterns.append(path("orvahr-th/", include("orvahr_th.urls")))
 
         from orvahr_th import sidebar  # noqa: F401  (adds a submenu)
+
+        # Setup wizard: a new contract saved without a tax setting gets the
+        # tax pack its company chose there.
+        from django.db.models.signals import pre_save
+
+        from orvahr_th.setup_wizard import default_contract_tax_pack
+
+        pre_save.connect(
+            default_contract_tax_pack,
+            sender="payroll.Contract",
+            dispatch_uid="orvahr_th_default_contract_tax_pack",
+        )
         return super().ready()
