@@ -99,6 +99,15 @@
                 </li>
             {% endif %}
         {% endif %}
+        {# SaaS mode only: the URL is not mounted otherwise, so this resolves to "" #}
+        {% url 'orvahr_account:overview' as subscription_url %}
+        {% if subscription_url and perms.orvahr_account.manage_subscription %}
+            <li>
+                <button class="py-1.5 hover:text-primary-600 transition duration-300 text-sm gap-4 items-center flex w-full">
+                    <a class="text-[13px]" href="{{ subscription_url }}">{% trans "Subscription & billing" %}</a>
+                </button>
+            </li>
+        {% endif %}
 
         <hr class="text-[#1c1c1c] my-2">
         <li>

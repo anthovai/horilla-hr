@@ -1,0 +1,97 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    {% include "orvahr_account/_tabs.html" with tab="overview" %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+        <div class="border border-[#ebebeb] rounded-md overflow-hidden">
+            <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Plan" %}</h3>
+            <div class="p-4 text-sm">
+                {% if plan %}
+                    <div class="text-lg font-semibold">{{ plan.name_th|default:plan.name_en }}</div>
+                    {% if plan.name_th and plan.name_en %}<div class="text-gray-500">{{ plan.name_en }}</div>{% endif %}
+                {% else %}
+                    <div class="text-lg font-semibold">{% trans "No plan assigned" %}</div>
+                {% endif %}
+                <dl class="mt-3 grid grid-cols-2 gap-y-2">
+                    <dt class="text-gray-500">{% trans "Status" %}</dt>
+                    <dd id="accountStatus">
+                        {% if status.code == "overdue" %}
+                            <span class="text-red-600 font-semibold">{% trans "Payment overdue" %}</span>
+                        {% elif status.code == "trial" %}
+                            {% if status.days_left is not None %}
+                                {% blocktrans count days=status.days_left %}Trial, {{ days }} day left{% plural %}Trial, {{ days }} days left{% endblocktrans %}
+                            {% else %}{% trans "Trial" %}{% endif %}
+                        {% elif status.code == "suspended" %}{% trans "Suspended" %}
+                        {% else %}{% trans "Active" %}{% endif %}
+                    </dd>
+                    <dt class="text-gray-500">{% trans "Active employees" %}</dt>
+                    <dd>{{ active_employees }} / {% if employee_limit is None %}{% trans "unlimited" %}{% else %}{{ employee_limit }}{% endif %}</dd>
+                    <dt class="text-gray-500">{% trans "Billing cycle" %}</dt>
+                    <dd>{% if subscription %}{{ subscription.get_cycle_display }}{% else %}-{% endif %}</dd>
+                    <dt class="text-gray-500">{% trans "Next invoice date" %}</dt>
+                    <dd>{% if subscription and subscription.status == "active" %}{{ subscription.next_invoice_date|date:"d/m/Y" }}{% else %}-{% endif %}</dd>
+                </dl>
+                <div class="mt-3">
+                    <div class="text-gray-500 mb-1">{% trans "Included modules" %}</div>
+                    <div class="flex flex-wrap gap-1">
+                        {% for label in modules %}<span class="px-2 py-0.5 rounded bg-[#f3f3f3] text-xs">{{ label }}</span>{% empty %}<span class="text-xs">-</span>{% endfor %}
+                    </div>
+                </div>
+                {% if pending_plan_request %}
+                    <div class="mt-3 text-xs text-amber-700">{% trans "Plan change request pending." %}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="border border-[#ebebeb] rounded-md overflow-hidden">
+            <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Open invoices" %}</h3>
+            <div class="p-4 text-sm">
+                {% for doc in open_invoices %}
+                    <div class="flex justify-between items-center border-b py-2">
+                        <div>
+                            <div class="font-medium">{{ doc.number }}</div>
+                            <div class="text-xs text-gray-500">{% trans "Due" %} {{ doc.due_date|date:"d/m/Y"|default:"-" }}{% if doc in status.overdue %} · <span class="text-red-600">{% trans "Overdue" %}</span>{% endif %}</div>
+                        </div>
+                        <div class="text-right">
+                            <div>{{ doc.outstanding|floatformat:"2g" }} THB</div>
+                            <a class="text-xs text-primary-600" href="{% url 'orvahr_account:payment-notify' %}?invoice={{ doc.number|urlencode }}">{% trans "I have paid" %}</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div>{% trans "Nothing to pay." %}</div>
+                {% endfor %}
+                {% if pending_notices %}
+                    <div class="mt-3 text-xs">{% blocktrans count n=pending_notices %}{{ n }} payment waiting for confirmation.{% plural %}{{ n }} payments waiting for confirmation.{% endblocktrans %}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Billing details for tax invoices" %}</h3>
+        <div class="p-4 text-sm">
+            {% if profile and not edit_profile %}
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-y-2">
+                    <dt class="text-gray-500">{% trans "Legal name" %}</dt><dd>{{ profile.legal_name }}</dd>
+                    <dt class="text-gray-500">{% trans "Tax ID" %}</dt><dd>{{ profile.tax_id|default:"-" }}</dd>
+                    <dt class="text-gray-500">{% trans "Branch number" %}</dt><dd>{% if profile.branch_code == "00000" %}{% trans "Head office" %} (00000){% else %}{{ profile.branch_code|default:"-" }}{% endif %}</dd>
+                    <dt class="text-gray-500">{% trans "Address" %}</dt><dd class="whitespace-pre-line">{{ profile.address }}</dd>
+                    <dt class="text-gray-500">{% trans "Invoice e-mail" %}</dt><dd>{{ profile.email|default:"-" }}</dd>
+                </dl>
+                <a class="oh-btn oh-btn--light-bkg mt-3" href="?edit=1">{% trans "Edit" %}</a>
+            {% else %}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for error in form.non_field_errors %}<div class="text-red-600 mb-2">{{ error }}</div>{% endfor %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+                        {% for field in form %}{% include "orvahr_account/_field.html" %}{% endfor %}
+                    </div>
+                    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Save" %}</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

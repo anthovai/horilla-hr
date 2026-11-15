@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    {% include "orvahr_account/_tabs.html" with tab="documents" %}
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5 max-w-3xl">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Notify a payment" %}</h3>
+        <div class="p-4 text-sm">
+            {% if invoices %}
+                <p class="mb-3 text-gray-600">{% trans "Upload the bank transfer slip. OrvaHR will check the transfer and issue the tax invoice / receipt." %}</p>
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% for error in form.non_field_errors %}<div class="text-red-600 mb-2">{{ error }}</div>{% endfor %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+                        {% for field in form %}{% include "orvahr_account/_field.html" %}{% endfor %}
+                    </div>
+                    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Send" %}</button>
+                    <a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_account:documents' %}">{% trans "Cancel" %}</a>
+                </form>
+            {% else %}
+                <p>{% trans "There is no unpaid invoice." %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

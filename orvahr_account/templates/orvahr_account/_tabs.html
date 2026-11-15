@@ -1,0 +1,16 @@
+{% load i18n %}
+<div class="flex items-center justify-between my-5">
+    <h2 class="text-base font-semibold">{% trans "Subscription & billing" %}</h2>
+    <div class="flex gap-2">
+        <a class="oh-btn {% if tab == 'overview' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="{% url 'orvahr_account:overview' %}">{% trans "Overview" %}</a>
+        <a class="oh-btn {% if tab == 'documents' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="{% url 'orvahr_account:documents' %}">{% trans "Invoices & receipts" %}</a>
+        <a class="oh-btn {% if tab == 'plan' %}oh-btn--secondary{% else %}oh-btn--light-bkg{% endif %}" href="{% url 'orvahr_account:plan-change' %}">{% trans "Change plan" %}</a>
+    </div>
+</div>
+{% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+            <div class="oh-alert oh-alert--animated {% if message.tags == 'error' %}oh-alert--danger{% elif message.tags == 'success' %}oh-alert--success{% else %}oh-alert--info{% endif %} mb-2">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}

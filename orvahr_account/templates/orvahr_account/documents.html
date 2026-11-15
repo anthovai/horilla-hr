@@ -1,0 +1,84 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    {% include "orvahr_account/_tabs.html" with tab="documents" %}
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Documents" %}</h3>
+        <div class="p-4 overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left">
+                        <th class="p-2">{% trans "Number" %}</th>
+                        <th class="p-2">{% trans "Type" %}</th>
+                        <th class="p-2">{% trans "Issue date" %}</th>
+                        <th class="p-2">{% trans "Due date" %}</th>
+                        <th class="p-2 text-right">{% trans "Total" %}</th>
+                        <th class="p-2">{% trans "Status" %}</th>
+                        <th class="p-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                        <tr class="border-t">
+                            <td class="p-2">{{ doc.number }}{% if doc.related_document %}<div class="text-xs text-gray-500">{% trans "for" %} {{ doc.related_document.number }}</div>{% endif %}</td>
+                            <td class="p-2">{{ doc.title_en }}</td>
+                            <td class="p-2">{{ doc.issue_date|date:"d/m/Y" }}</td>
+                            <td class="p-2">{{ doc.due_date|date:"d/m/Y"|default:"-" }}</td>
+                            <td class="p-2 text-right">{{ doc.total|floatformat:"2g" }}</td>
+                            <td class="p-2">
+                                {% if doc.doc_type == "invoice" %}
+                                    {{ doc.get_payment_status_display }}
+                                    {% if doc.number in pending_numbers %}<div class="text-xs text-amber-700">{% trans "Payment waiting for confirmation" %}</div>{% endif %}
+                                {% else %}{% trans "Issued" %}{% endif %}
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_account:document-pdf' doc.number %}?lang=th">PDF (TH)</a>
+                                <a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_account:document-pdf' doc.number %}?lang=en">PDF (EN)</a>
+                                {% if doc.number in payable_numbers %}
+                                    <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_account:payment-notify' %}?invoice={{ doc.number|urlencode }}">{% trans "I have paid" %}</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="p-2" colspan="7">{% trans "No documents yet." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Payment notifications" %}</h3>
+        <div class="p-4 overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left">
+                        <th class="p-2">{% trans "Invoice" %}</th>
+                        <th class="p-2">{% trans "Transfer date" %}</th>
+                        <th class="p-2 text-right">{% trans "Amount" %}</th>
+                        <th class="p-2 text-right">{% trans "Withholding tax" %}</th>
+                        <th class="p-2">{% trans "Status" %}</th>
+                        <th class="p-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notice in notices %}
+                        <tr class="border-t">
+                            <td class="p-2">{{ notice.invoice_number }}</td>
+                            <td class="p-2">{{ notice.transfer_date|date:"d/m/Y" }}</td>
+                            <td class="p-2 text-right">{{ notice.amount|floatformat:"2g" }}</td>
+                            <td class="p-2 text-right">{{ notice.wht_amount|floatformat:"2g" }}{% if notice.wht_certificate_no %}<div class="text-xs text-gray-500">50 ทวิ {{ notice.wht_certificate_no }}</div>{% endif %}</td>
+                            <td class="p-2">{{ notice.get_status_display }}{% if notice.receipt_number %}<div class="text-xs">{{ notice.receipt_number }}</div>{% endif %}{% if notice.review_note %}<div class="text-xs text-gray-500">{{ notice.review_note }}</div>{% endif %}</td>
+                            <td class="p-2">{% if notice.slip %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_account:payment-notice-slip' notice.token %}">{% trans "Slip" %}</a>{% endif %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="p-2" colspan="6">{% trans "No payment notifications yet." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

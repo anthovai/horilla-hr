@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    {% include "orvahr_account/_tabs.html" with tab="plan" %}
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+        {% for row in rows %}
+            <div class="border {% if row.is_current %}border-primary-600{% else %}border-[#ebebeb]{% endif %} rounded-md p-4 text-sm">
+                <div class="text-base font-semibold">{{ row.plan.name_th|default:row.plan.name_en }}</div>
+                {% if row.plan.name_th %}<div class="text-gray-500">{{ row.plan.name_en }}</div>{% endif %}
+                {% if row.is_current %}<div class="text-xs text-primary-600 mt-1">{% trans "Current plan" %}</div>{% endif %}
+                <div class="mt-2">{{ row.price|default:_("Contact us") }}</div>
+                <div class="mt-2">{% trans "Active employees" %}: {% if row.plan.max_employees is None %}{% trans "unlimited" %}{% else %}{{ row.plan.max_employees }}{% endif %}</div>
+                <div class="mt-2 flex flex-wrap gap-1">{% for label in row.modules %}<span class="px-2 py-0.5 rounded bg-[#f3f3f3] text-xs">{{ label }}</span>{% endfor %}</div>
+                {% if row.plan.display_description %}<p class="mt-2 text-gray-600">{{ row.plan.display_description }}</p>{% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5 max-w-3xl">
+        <h3 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3 text-[#333]">{% trans "Request a plan change" %}</h3>
+        <div class="p-4 text-sm">
+            {% if pending %}
+                <p id="planChangePending">
+                    {% trans "Pending" %}:
+                    {% if pending_plan %}{{ pending_plan.display_name }}{% else %}{{ pending.requested_plan_code }}{% endif %}
+                    ({{ pending.requested_at|date:"d/m/Y" }})
+                </p>
+                <form method="post" action="{% url 'orvahr_account:plan-change-cancel' pending.token %}" class="mt-2">
+                    {% csrf_token %}
+                    <button type="submit" class="oh-btn oh-btn--light-bkg">{% trans "Cancel request" %}</button>
+                </form>
+            {% elif form.fields.plan.choices %}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}{% include "orvahr_account/_field.html" %}{% endfor %}
+                    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Send request" %}</button>
+                </form>
+            {% else %}
+                <p>{% trans "No other plan is available." %}</p>
+            {% endif %}
+            {% if history %}
+                <div class="mt-4 text-xs text-gray-600">
+                    {% for item in history %}
+                        <div>{{ item.requested_at|date:"d/m/Y" }}: {{ item.requested_plan_code }} - {{ item.get_status_display }}{% if item.decision_note %} ({{ item.decision_note }}){% endif %}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
