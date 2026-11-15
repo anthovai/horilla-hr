@@ -3534,6 +3534,7 @@ class SalaryStructure(HorillaModel):
         default="gross_up",
         verbose_name=_("Structure mode"),
         help_text=_(
+            # Translators: xgettext:no-python-format
             "Gross Up: the contract wage IS basic pay, and allowances are added "
             "on top of it to reach gross. Gross is therefore only known once "
             "every component has run, so nothing can be defined as a "

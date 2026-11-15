@@ -330,6 +330,7 @@ def source_quality(filters: ReportFilters) -> dict:
                 "title": _("Hire rate by source"),
                 "categories": [r["source"] for r in rows],
                 "series": [
+                    # Translators: xgettext:no-python-format
                     {"name": _("% hired"), "data": [r["rate_num"] for r in rows]}
                 ],
             }

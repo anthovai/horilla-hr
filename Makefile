@@ -2,7 +2,12 @@
 
 COMPOSE ?= docker compose
 COMPOSE_PROD ?= $(COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml
-I18N_EXCLUDES ?= --ignore=static/build/* --ignore=static/images/ionicons/*
+I18N_EXCLUDES ?= --ignore=static/build/* --ignore=static/images/ionicons/* --ignore=staticfiles/* --ignore=media/* --ignore=web/* --ignore=services/*
+# The i18n targets need Django and GNU gettext. Use the host's Python when it
+# has Django; otherwise run inside the web container (a Mac usually has
+# neither `python` nor Django, only Docker). Override for a stack started
+# under another project name, e.g. MANAGE="docker exec orvahr-web-1 python manage.py".
+MANAGE ?= $(shell python3 -c 'import django' >/dev/null 2>&1 && echo python3 manage.py || echo $(COMPOSE) exec -T web python manage.py)
 
 help: ## Show help
 	@echo 'Available commands:'
@@ -40,10 +45,10 @@ restart: ## Restart all services
 	$(COMPOSE) restart
 
 makemessages: ## Refresh catalogs without extracting vendored JavaScript identifiers
-	python manage.py makemessages -a $(I18N_EXCLUDES)
+	$(MANAGE) makemessages -a $(I18N_EXCLUDES)
 
 compilemessages: ## Compile all gettext catalogs
-	python manage.py compilemessages
+	$(MANAGE) compilemessages
 
 clean: ## Clean up (removes volumes — data loss!)
 	$(COMPOSE_PROD) down -v

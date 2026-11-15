@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 16:00+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Mark selected notifications as unread"
+msgstr "ทำเครื่องหมายการแจ้งเตือนที่เลือกว่ายังไม่ได้อ่าน"
+
+msgid "Notifications"
+msgstr "การแจ้งเตือน"
+
+msgid "level"
+msgstr "ระดับ"
+
+msgid "recipient"
+msgstr "ผู้รับ"
+
+msgid "unread"
+msgstr "ยังไม่ได้อ่าน"
+
+msgid "actor content type"
+msgstr "ประเภทเนื้อหาของผู้ดำเนินการ"
+
+msgid "actor object id"
+msgstr "รหัสออบเจ็กต์ของผู้ดำเนินการ"
+
+msgid "actor"
+msgstr "ผู้ดำเนินการ"
+
+msgid "verb"
+msgstr "การกระทำ"
+
+msgid "description"
+msgstr "คำอธิบาย"
+
+msgid "target content type"
+msgstr "ประเภทเนื้อหาของเป้าหมาย"
+
+msgid "target object id"
+msgstr "รหัสออบเจ็กต์ของเป้าหมาย"
+
+msgid "target"
+msgstr "เป้าหมาย"
+
+msgid "action object content type"
+msgstr "ประเภทเนื้อหาของออบเจ็กต์การกระทำ"
+
+msgid "action object object id"
+msgstr "รหัสออบเจ็กต์ของออบเจ็กต์การกระทำ"
+
+msgid "action object"
+msgstr "ออบเจ็กต์การกระทำ"
+
+msgid "timestamp"
+msgstr "เวลาที่เกิดขึ้น"
+
+msgid "public"
+msgstr "สาธารณะ"
+
+msgid "deleted"
+msgstr "ลบแล้ว"
+
+msgid "emailed"
+msgstr "ส่งอีเมลแล้ว"
+
+msgid "data"
+msgstr "ข้อมูล"
+
+msgid "Notification"
+msgstr "การแจ้งเตือน"
+
+#, python-format
+msgid "%(actor)s %(verb)s %(action_object)s on %(target)s %(timesince)s ago"
+msgstr ""
+"%(actor)s %(verb)s %(action_object)s ที่ %(target)s เมื่อ %(timesince)s "
+"ที่แล้ว"
+
+#, python-format
+msgid "%(actor)s %(verb)s %(target)s %(timesince)s ago"
+msgstr "%(actor)s %(verb)s %(target)s เมื่อ %(timesince)s ที่แล้ว"
+
+#, python-format
+msgid "%(actor)s %(verb)s %(action_object)s %(timesince)s ago"
+msgstr "%(actor)s %(verb)s %(action_object)s เมื่อ %(timesince)s ที่แล้ว"
+
+#, python-format
+msgid "%(actor)s %(verb)s %(timesince)s ago"
+msgstr "%(actor)s %(verb)s เมื่อ %(timesince)s ที่แล้ว"

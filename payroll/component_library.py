@@ -34,6 +34,7 @@ COMPONENT_LIBRARY = [
         "group": _("India"),
         "kind": EARNING,
         "name": "Basic Pay",
+        # Translators: xgettext:no-python-format
         "summary": _("50% of CTC. Marked as basic pay, for a CTC Down structure."),
         "note": _(
             "Only needed when the structure divides a CTC. In a Gross Up "
@@ -54,8 +55,10 @@ COMPONENT_LIBRARY = [
         "group": _("India"),
         "kind": EARNING,
         "name": "House Rent Allowance (HRA)",
+        # Translators: xgettext:no-python-format
         "summary": _("50% of basic pay."),
         "note": _(
+            # Translators: xgettext:no-python-format
             "50% is the usual figure for the metro cities and 40% elsewhere; "
             "it is a convention, not a fixed rule."
         ),
@@ -74,6 +77,7 @@ COMPONENT_LIBRARY = [
         "name": "Dearness Allowance (DA)",
         "summary": _("A percentage of basic pay, revised with inflation."),
         "note": _(
+            # Translators: xgettext:no-python-format
             "The rate is set periodically by the employer or by government "
             "notification; 20% here is only a placeholder."
         ),
@@ -121,6 +125,7 @@ COMPONENT_LIBRARY = [
         "group": _("India"),
         "kind": DEDUCTION,
         "name": "Provident Fund (PF)",
+        # Translators: xgettext:no-python-format
         "summary": _("12% of basic pay, before tax. The employer matches it."),
         "note": _(
             "Statutory contributions are commonly capped at a wage ceiling of "
@@ -140,6 +145,7 @@ COMPONENT_LIBRARY = [
         "group": _("India"),
         "kind": DEDUCTION,
         "name": "Employee State Insurance (ESI)",
+        # Translators: xgettext:no-python-format
         "summary": _("0.75% of gross, only while gross is at or under 21,000."),
         "note": _(
             "The ceiling is the point of this one: above it the employee is "
@@ -182,8 +188,10 @@ COMPONENT_LIBRARY = [
         "group": _("United States"),
         "kind": DEDUCTION,
         "name": "401(k) Contribution",
+        # Translators: xgettext:no-python-format
         "summary": _("5% of gross, before tax."),
         "note": _(
+            # Translators: xgettext:no-python-format
             "The rate is whatever the employee elected, so 5% is only a "
             "starting point. Annual IRS limits are not modelled here."
         ),
@@ -200,6 +208,7 @@ COMPONENT_LIBRARY = [
         "group": _("United States"),
         "kind": DEDUCTION,
         "name": "Social Security",
+        # Translators: xgettext:no-python-format
         "summary": _("6.2% of gross, matched by the employer."),
         "note": _(
             "Applies up to an annual wage base that is raised most years; "
@@ -219,6 +228,7 @@ COMPONENT_LIBRARY = [
         "group": _("United States"),
         "kind": DEDUCTION,
         "name": "Medicare",
+        # Translators: xgettext:no-python-format
         "summary": _("1.45% of gross, matched by the employer."),
         "fields": {
             "sequence": 120,
@@ -235,6 +245,7 @@ COMPONENT_LIBRARY = [
         "group": _("Gulf"),
         "kind": EARNING,
         "name": "Housing Allowance",
+        # Translators: xgettext:no-python-format
         "summary": _("25% of basic pay."),
         "fields": {
             "sequence": 20,
@@ -249,6 +260,7 @@ COMPONENT_LIBRARY = [
         "group": _("Gulf"),
         "kind": EARNING,
         "name": "Transport Allowance",
+        # Translators: xgettext:no-python-format
         "summary": _("10% of basic pay."),
         "fields": {
             "sequence": 30,

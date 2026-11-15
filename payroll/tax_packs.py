@@ -41,6 +41,7 @@ TAX_PACKS = [
         "name": "India — New Regime (FY 2025-26)",
         "based_on": "taxable_gross_pay",
         "description": _(
+            # Translators: xgettext:no-python-format
             "Default regime under Budget 2025. Standard deduction of 75,000, "
             "section 87A rebate cancelling up to 60,000 of tax at or below "
             "12,00,000 of taxable income, and 4% health and education cess. "
@@ -66,6 +67,7 @@ TAX_PACKS = [
         "name": "India — Old Regime (FY 2025-26)",
         "based_on": "taxable_gross_pay",
         "description": _(
+            # Translators: xgettext:no-python-format
             "The regime retaining chapter VI-A deductions. Standard deduction "
             "of 50,000, section 87A rebate up to 12,500 at or below 5,00,000, "
             "and 4% cess. Investment-linked deductions (80C, 80D and the like) "

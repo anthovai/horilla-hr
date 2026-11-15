@@ -762,6 +762,7 @@ def finish(progress, user=None):
 ACCOUNTANT_CHECKS = [
     (
         "อัตราเงินสมทบประกันสังคม 5% และฐานค่าจ้าง 1,650–17,500 บาท (ปี 2569–2571) และกำหนดให้หักเฉพาะพนักงานที่ขึ้นทะเบียนประกันสังคมแล้ว",
+        # Translators: xgettext:no-python-format
         _("Social security: the 5% rate and the 1,650-17,500 baht wage base (2026-2028), and that the deduction is assigned only to employees registered with the SSO."),
     ),
     (
