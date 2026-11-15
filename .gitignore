@@ -168,3 +168,7 @@ CLAUDE.md
 
 # OrvaHR billing private files (transfer slips, seller logo) - never commit
 /private/
+
+# Single-tenant server deployment (generated / sensitive)
+/backups/
+/docker/nginx.server.conf
