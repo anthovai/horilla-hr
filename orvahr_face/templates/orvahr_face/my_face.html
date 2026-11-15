@@ -1,0 +1,64 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden my-5 p-4" style="max-width: 720px" id="orvahr-face-home">
+        <h2 class="text-base font-semibold mb-3">{% trans "Face Check-in" %}</h2>
+
+        {% if not enabled %}
+            <p>{% trans "Face check-in is not enabled for your company." %}</p>
+        {% elif not pdpa %}
+            <p>{% trans "Face check-in needs the PDPA module to record consent." %}</p>
+        {% else %}
+            <p class="mb-2">
+                {% trans "Biometric consent" %}:
+                {% if consented %}<strong>{% trans "Given" %}</strong> ({{ consent_record.created_at|date:"d/m/Y H:i" }})
+                {% else %}<strong>{% trans "Not given" %}</strong>{% endif %}
+            </p>
+            <p class="mb-2">
+                {% trans "Face enrolment" %}:
+                {% if template_count %}<strong>{% trans "Enrolled" %}</strong> ({{ last_enrolled|date:"d/m/Y H:i" }})
+                {% else %}<strong>{% trans "Not enrolled" %}</strong>{% endif %}
+            </p>
+
+            {% if not consented %}
+                <h3 class="text-sm font-semibold mt-4">{% trans "Consent to use your face for check-in" %}</h3>
+                {% include 'orvahr_face/_consent_text.html' %}
+                <p class="text-xs text-gray-500 mb-2">{% trans "Consent is voluntary. If you do not consent, keep using the normal check-in button." %}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="grant" />
+                    <label class="flex items-start gap-2 text-sm mb-3">
+                        <input type="checkbox" name="agree" value="yes" required />
+                        <span>{% trans "I have read the text above and I explicitly consent to the collection and use of my biometric (face) data for check-in." %}</span>
+                    </label>
+                    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "I consent" %}</button>
+                </form>
+            {% else %}
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_face:enrol' %}">
+                        {% if template_count %}{% trans "Enrol again" %}{% else %}{% trans "Enrol my face" %}{% endif %}
+                    </a>
+                    {% if template_count %}
+                        <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_face:check-in' %}">{% trans "Face check-in" %}</a>
+                    {% endif %}
+                </div>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    {% if template_count %}
+                        <form method="post" onsubmit="return confirm('{{ _("Delete your face templates? You can enrol again later.")|escapejs }}')">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete" />
+                            <button type="submit" class="oh-btn oh-btn--light-bkg">{% trans "Delete my face data" %}</button>
+                        </form>
+                    {% endif %}
+                    <form method="post" onsubmit="return confirm('{{ _("Withdraw biometric consent? Your face templates are deleted at once.")|escapejs }}')">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="withdraw" />
+                        <button type="submit" class="oh-btn oh-btn--light-bkg">{% trans "Withdraw consent" %}</button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

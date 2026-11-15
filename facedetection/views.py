@@ -17,6 +17,29 @@ from horilla.http.response import HorillaRedirect
 
 from .serializers import *
 
+# PDPA risk: this legacy flow stores one raw photo per employee in MEDIA_ROOT
+# (biometric data, PDPA s.26) with no consent record and no retention rule,
+# and trusts the mobile app's own match result. orvahr_face replaces it with
+# consented, encrypted templates verified server-side. The upload refuses
+# (HTTP 410) in SaaS mode and for companies that enabled orvahr_face; other
+# single-tenant companies keep the old behaviour. Stored photos are removed
+# with ``manage.py purge_legacy_face_photos``.
+LEGACY_RETIRED_MESSAGE = _(
+    "The legacy face photo upload is retired. Use Face Check-in in OrvaHR instead."
+)
+
+
+def legacy_upload_refused(company):
+    from django.apps import apps
+
+    from horilla.tenancy import is_multi_tenant
+
+    if not apps.is_installed("orvahr_face"):
+        return is_multi_tenant()
+    from orvahr_face.hooks import legacy_upload_refused as refused
+
+    return refused(company)
+
 
 class FaceDetectionConfigAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -103,6 +126,12 @@ class EmployeeFaceDetectionGetPostAPIView(APIView):
             raise serializers.ValidationError(e)
 
     def post(self, request):
+        employee = getattr(request.user, "employee_get", None)
+        company = employee.get_company() if employee is not None else None
+        if legacy_upload_refused(company):
+            return Response(
+                {"error": str(LEGACY_RETIRED_MESSAGE)}, status=status.HTTP_410_GONE
+            )
         if self.get_facedetection(request).start:
             employee_id = request.user.employee_get.id
             data = request.data
@@ -180,6 +209,9 @@ def enable_disable_face_detection(request):
         company = None
         if selected_company and selected_company != "all":
             company = Company.objects.filter(id=selected_company).first()
+        if request.POST.get("start") and legacy_upload_refused(company):
+            messages.error(request, LEGACY_RETIRED_MESSAGE)
+            return HorillaRedirect(request)
         instance, _created = FaceDetection.objects.get_or_create(company_id=company)
         instance.start = bool(request.POST.get("start"))
         instance.save()

@@ -14,6 +14,7 @@ from horilla.http.response import HorillaRedirect
 logger = logging.getLogger(__name__)
 from datetime import date, datetime, timedelta
 
+from django.apps import apps
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponse
@@ -45,6 +46,20 @@ from base.context_processors import (
 from base.models import AttendanceAllowedIP, Company, EmployeeShiftDay
 from horilla.decorators import hx_request_required, login_required
 from horilla.horilla_middlewares import _thread_locals
+
+
+def face_check_in_denial(request, company):
+    """
+    orvahr_face: when the company requires face check-in on the web, an
+    enrolled, consenting employee must punch through /face/check-in/, which
+    calls these same views with the request marked face-verified (so every
+    rule here still applies). Returns an error message or None.
+    """
+    if not apps.is_installed("orvahr_face"):
+        return None
+    from orvahr_face.hooks import web_punch_denial
+
+    return web_punch_denial(request, company)
 
 
 def late_come_create(attendance):
@@ -268,6 +283,10 @@ def clock_in(request):
             geofence_error = geofence_denial_web(request, company)
             if geofence_error:
                 messages.error(request, geofence_error)
+                return HorillaRedirect(request)
+            face_error = face_check_in_denial(request, company)
+            if face_error:
+                messages.error(request, face_error)
                 return HorillaRedirect(request)
 
         employee, work_info = employee_exists(request)
@@ -532,6 +551,10 @@ def clock_out(request):
             geofence_error = geofence_denial_web(request, company)
             if geofence_error:
                 messages.error(request, geofence_error)
+                return HorillaRedirect(request)
+            face_error = face_check_in_denial(request, company)
+            if face_error:
+                messages.error(request, face_error)
                 return HorillaRedirect(request)
 
         datetime_now = timezone.localtime()

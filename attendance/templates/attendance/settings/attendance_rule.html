@@ -312,6 +312,12 @@
                                     <p class="text-xs text-gray-500 mt-1">
                                         {% trans "By enabling this, employees can mark their attendance using face detection." %}
                                     </p>
+                                    {% if "orvahr_face"|app_installed %}
+                                        <p class="text-xs text-red-600 mt-1">
+                                            {% trans "Legacy: stores a raw photo of each employee without a PDPA consent record. Use Face Check-in instead; enabling Face Check-in retires this upload." %}
+                                            <a href="{% url 'orvahr_face:settings' %}">{% trans "Face check-in settings" %}</a>
+                                        </p>
+                                    {% endif %}
                                 </div>
                                 <label class="toggle-label">
                                     <input

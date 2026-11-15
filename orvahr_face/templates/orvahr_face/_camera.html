@@ -1,0 +1,44 @@
+{% load i18n static %}
+{% comment %}
+Camera widget. Context: mode ("enrol" | "verify"), post_url, done_url, frames_wanted, strings,
+and for verify: direction; for HR-assisted enrolment: employee_id.
+Frames are posted as base64 JSON to Django only; nothing is kept in the browser after sending.
+{% endcomment %}
+<div class="orvahr-face" id="orvahr-face-camera"
+    data-mode="{{ mode }}"
+    data-post-url="{{ post_url }}"
+    data-done-url="{{ done_url }}"
+    data-frames="{{ frames_wanted|default:1 }}"
+    data-direction="{{ direction|default:'' }}"
+    data-employee-id="{{ employee_id|default:'' }}"
+    data-geo="{% if mode == 'verify' %}1{% endif %}">
+    {% csrf_token %}
+    <div class="orvahr-face__stage">
+        <video class="orvahr-face__video" autoplay muted playsinline></video>
+        <div class="orvahr-face__oval" aria-hidden="true"></div>
+    </div>
+    <p class="orvahr-face__guide text-sm mt-2" role="status" aria-live="polite"></p>
+    <div class="flex gap-2 mt-2">
+        <button type="button" class="oh-btn oh-btn--secondary orvahr-face__start">
+            {% if mode == 'enrol' %}{% trans "Start enrolment" %}{% elif direction == 'out' %}{% trans "Scan face to check out" %}{% else %}{% trans "Scan face to check in" %}{% endif %}
+        </button>
+    </div>
+    <ul class="orvahr-face__frames text-sm mt-2"></ul>
+</div>
+<style>
+    .orvahr-face { max-width: 420px; }
+    .orvahr-face__stage { position: relative; width: 100%; aspect-ratio: 3 / 4; background: #111; border-radius: 8px; overflow: hidden; }
+    .orvahr-face__video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .orvahr-face__oval { position: absolute; left: 20%; top: 14%; width: 60%; height: 64%; border: 3px dashed rgba(255,255,255,.8); border-radius: 50%; pointer-events: none; }
+    .orvahr-face__frames li.ok { color: #15803d; }
+    .orvahr-face__frames li.bad { color: #b91c1c; }
+    .orvahr-face__guide.error { color: #b91c1c; }
+    .orvahr-face__guide.success { color: #15803d; font-weight: 600; }
+</style>
+<script>
+    window.ORVAHR_FACE_STRINGS = {
+        {% for key, value in strings.items %}"{{ key|escapejs }}": "{{ value|escapejs }}"{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    };
+</script>
+<script src="{% static 'orvahr_face/face_capture.js' %}"></script>

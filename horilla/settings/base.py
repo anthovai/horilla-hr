@@ -433,6 +433,13 @@ ORVAHR_PAYROLL_ENGINE_FILING_STATUSES = [
     if name.strip()
 ]
 
+# Face check-in service (services/face-verify). Django talks to it server to
+# server; the browser never does. The token must equal the service's
+# FACE_SERVICE_TOKEN. Empty URL falls back to the client's default
+# (http://face-verify:8092); an empty token makes the service answer 401.
+ORVAHR_FACE_SERVICE_URL = env("ORVAHR_FACE_SERVICE_URL", default="")
+ORVAHR_FACE_SERVICE_TOKEN = env("ORVAHR_FACE_SERVICE_TOKEN", default="")
+
 # ========================================
 # LOGGING, MESSAGES, OTHER GLOBALS
 # ========================================

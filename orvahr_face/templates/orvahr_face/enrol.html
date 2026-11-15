@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden my-5 p-4" style="max-width: 720px" id="orvahr-face-enrol">
+        <h2 class="text-base font-semibold mb-1">{% trans "Face enrolment" %}</h2>
+        {% if assisted %}<p class="text-sm mb-3">{% trans "Employee" %}: <strong>{{ employee }}</strong> &middot; {% trans "HR-assisted: the employee must be present in front of the camera." %}</p>{% endif %}
+
+        {% if not enabled %}
+            <p>{% trans "Face check-in is not enabled for your company." %}</p>
+        {% elif not consented %}
+            <p class="mb-2">{% trans "Biometric consent is needed before using face check-in." %}</p>
+            {% if assisted %}
+                {% include 'orvahr_face/_consent_text.html' %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="hr_consent" />
+                    <label class="flex items-start gap-2 text-sm mb-3">
+                        <input type="checkbox" name="agree" value="yes" required />
+                        <span>{% trans "The employee read this text and explicitly agreed in person. (Never record consent the employee did not give.)" %}</span>
+                    </label>
+                    <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Record the employee's consent" %}</button>
+                </form>
+            {% else %}
+                <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_face:my-face' %}">{% trans "Read and give consent" %}</a>
+            {% endif %}
+        {% else %}
+            <ol class="text-sm mb-3" style="list-style: decimal; padding-left: 1.25rem">
+                <li>{% trans "Find good, even light. Remove sunglasses and masks." %}</li>
+                <li>{% trans "Hold the phone at eye level and keep your face inside the oval." %}</li>
+                <li>{% trans "Follow the instructions; 5 pictures are taken automatically." %}</li>
+            </ol>
+            <p class="text-xs text-gray-500 mb-3">{% trans "Pictures are only used to create an encrypted face template and are not stored." %}</p>
+            {% if assisted %}{% url 'orvahr_face:enrolments' as done_url %}{% else %}{% url 'orvahr_face:my-face' as done_url %}{% endif %}
+            {% url 'orvahr_face:api-enrol' as post_url %}
+            {% if assisted %}
+                {% include 'orvahr_face/_camera.html' with mode='enrol' post_url=post_url done_url=done_url frames_wanted=frames_wanted employee_id=employee.pk %}
+            {% else %}
+                {% include 'orvahr_face/_camera.html' with mode='enrol' post_url=post_url done_url=done_url frames_wanted=frames_wanted %}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

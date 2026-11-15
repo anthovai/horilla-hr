@@ -1,0 +1,76 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper" id="orvahr-face-enrolments">
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden my-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% trans "Face enrolments" %}</h2>
+        <div class="p-4">
+            <p class="text-xs text-gray-500 mb-3">{% trans "No biometric data is shown here. To re-enrol, delete the templates and enrol again with the employee present." %}</p>
+            <div class="oh-sticky-table">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="p-2">{% trans "Employee" %}</th>
+                            <th class="p-2">{% trans "Templates" %}</th>
+                            <th class="p-2">{% trans "Last enrolled" %}</th>
+                            <th class="p-2">{% trans "Biometric consent" %}</th>
+                            <th class="p-2">{% blocktrans %}Failures ({{ days }} days){% endblocktrans %}</th>
+                            <th class="p-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in enrolled %}
+                            <tr class="border-t">
+                                <td class="p-2">{{ row.employee }}</td>
+                                <td class="p-2">{{ row.count }}</td>
+                                <td class="p-2">{{ row.last|date:"d/m/Y H:i" }}</td>
+                                <td class="p-2">{% if row.consented %}{% trans "Given" %}{% else %}{% trans "Not given" %}{% endif %}</td>
+                                <td class="p-2">{{ row.failures }}</td>
+                                <td class="p-2 whitespace-nowrap">
+                                    {% if can_enrol %}<a class="oh-btn oh-btn--light-bkg" href="{% url 'orvahr_face:enrol-employee' row.employee.pk %}">{% trans "Enrol again" %}</a>{% endif %}
+                                    {% if can_delete %}
+                                        <form method="post" action="{% url 'orvahr_face:enrolment-delete' row.employee.pk %}" style="display:inline"
+                                            onsubmit="return confirm('{{ _("Delete this employee's face templates?")|escapejs }}')">
+                                            {% csrf_token %}
+                                            <button class="oh-btn oh-btn--danger" type="submit">{% trans "Delete" %}</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td class="p-2" colspan="6">{% trans "Nobody is enrolled yet." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if can_enrol %}
+                <form class="flex flex-wrap gap-2 mt-3" method="get"
+                    data-base="{% url 'orvahr_face:enrol-employee' 0 %}"
+                    onsubmit="var v=this.querySelector('select').value; if(v){window.location.href=this.dataset.base.replace('/0/','/'+encodeURIComponent(v)+'/');} return false;">
+                    <select class="oh-select" aria-label="{% trans 'Employee' %}">
+                        <option value="">{% trans "Choose an employee" %}</option>
+                        {% for e in candidates %}<option value="{{ e.pk }}">{{ e }}</option>{% endfor %}
+                    </select>
+                    <button class="oh-btn oh-btn--secondary" type="submit">{% trans "Enrol an employee (HR-assisted)" %}</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden mb-5">
+        <h2 class="text-sm font-semibold bg-[#f3f3f3] px-4 py-3">{% blocktrans %}Face check results, last {{ days }} days{% endblocktrans %}</h2>
+        <div class="p-4">
+            <p class="text-sm mb-2">{% trans "Attempts" %}: {{ totals.total }} &middot; {% trans "Successful" %}: {{ totals.ok }}</p>
+            <table class="w-full text-sm">
+                <tbody>
+                    {% for s in stats %}
+                        <tr class="border-t"><td class="p-2">{{ s.outcome }}</td><td class="p-2">{{ s.n }}</td></tr>
+                    {% empty %}
+                        <tr><td class="p-2">{% trans "No attempts yet." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

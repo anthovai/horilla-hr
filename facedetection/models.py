@@ -1,3 +1,15 @@
+"""
+Legacy Horilla face detection: one raw photo per employee (EmployeeFaceDetection.image)
+plus a per-company on/off switch; the mobile app does the matching itself.
+
+PDPA risk: the photo is biometric (sensitive) data under PDPA s.26, stored as a
+plain file with no consent record and no retention rule, and the match result
+is trusted from the client. Prefer orvahr_face (consented, encrypted templates,
+server-side verification with liveness). The upload refuses with HTTP 410 in
+SaaS mode and for companies that enabled orvahr_face; remove stored photos with
+``manage.py purge_legacy_face_photos [--dry-run]``.
+"""
+
 import os
 
 from django.core.exceptions import ValidationError

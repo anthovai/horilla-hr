@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div class="oh-wrapper">
+    <div class="border border-[#ebebeb] rounded-md overflow-hidden my-5 p-4" style="max-width: 720px" id="orvahr-face-check-in">
+        <h2 class="text-base font-semibold mb-1">{% if direction == 'out' %}{% trans "Face check-out" %}{% else %}{% trans "Face check-in" %}{% endif %}</h2>
+        {% if not enabled %}
+            <p>{% trans "Face check-in is not enabled for your company." %}</p>
+        {% elif not consented %}
+            <p class="mb-2">{% trans "Biometric consent is needed before using face check-in." %}</p>
+            <p class="text-sm mb-3">{% trans "Consent is voluntary. If you do not consent, keep using the normal check-in button." %}</p>
+            <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_face:my-face' %}">{% trans "Read and give consent" %}</a>
+        {% elif not enrolled %}
+            <p class="mb-2">{% trans "You have not enrolled your face yet." %}</p>
+            <a class="oh-btn oh-btn--secondary" href="{% url 'orvahr_face:enrol' %}">{% trans "Enrol my face" %}</a>
+        {% else %}
+            <p class="text-xs text-gray-500 mb-3">{% trans "Your location is checked when the company uses a geo-fence. The picture is not stored." %}</p>
+            {% url 'orvahr_face:api-check-in' as post_url %}
+            {% url 'orvahr_face:my-face' as done_url %}
+            {% include 'orvahr_face/_camera.html' with mode='verify' post_url=post_url done_url=done_url frames_wanted=1 direction=direction %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

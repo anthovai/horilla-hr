@@ -81,6 +81,21 @@ SUBMENUS = [
 ]
 
 
+if apps.is_installed("orvahr_face"):
+    SUBMENUS += [
+        {
+            "menu": _("Face Check-in"),
+            "redirect": reverse_lazy("orvahr_face:my-face"),
+            "accessibility": "orvahr_face.sidebar.check_in_accessibility",
+        },
+        {
+            "menu": _("Face Enrolments"),
+            "redirect": reverse_lazy("orvahr_face:enrolments"),
+            "accessibility": "orvahr_face.sidebar.enrolments_accessibility",
+        },
+    ]
+
+
 def attendances_accessibility(request, submenu, user_perms, *args, **kwargs):
     """
     Check if the user has permission to view attendance or is a reporting manager.

@@ -32,6 +32,8 @@ services:
       # payroll/methods/orvahr_engine.py for shadow and active.
       ORVAHR_PAYROLL_ENGINE_URL: ${ORVAHR_PAYROLL_ENGINE_URL:-http://payroll-engine:8090}
       ORVAHR_PAYROLL_ENGINE_MODE: ${ORVAHR_PAYROLL_ENGINE_MODE:-off}
+      # Face check-in service; must equal face-verify FACE_SERVICE_TOKEN.
+      ORVAHR_FACE_SERVICE_TOKEN: ${FACE_SERVICE_TOKEN:?Set FACE_SERVICE_TOKEN in .env}
     volumes: !override
       - staticfiles:/app/staticfiles
       - media:/app/media
@@ -62,6 +64,8 @@ services:
       # payroll/methods/orvahr_engine.py for shadow and active.
       ORVAHR_PAYROLL_ENGINE_URL: ${ORVAHR_PAYROLL_ENGINE_URL:-http://payroll-engine:8090}
       ORVAHR_PAYROLL_ENGINE_MODE: ${ORVAHR_PAYROLL_ENGINE_MODE:-off}
+      # Face check-in service; must equal face-verify FACE_SERVICE_TOKEN.
+      ORVAHR_FACE_SERVICE_TOKEN: ${FACE_SERVICE_TOKEN:?Set FACE_SERVICE_TOKEN in .env}
     volumes: !override
       - media:/app/media
     deploy:
@@ -89,3 +93,8 @@ services:
     # Clear the "production" profile so nginx starts with `make prod`
     # without requiring --profile production.
     profiles: !reset
+
+  # Never run with the base file's dev token in production.
+  face-verify:
+    environment:
+      FACE_SERVICE_TOKEN: ${FACE_SERVICE_TOKEN:?Set FACE_SERVICE_TOKEN in .env}
