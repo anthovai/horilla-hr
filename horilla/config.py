@@ -15,6 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 def get_apps_in_base_dir():
+    from horilla.tenancy import is_multi_tenant
+
+    if is_multi_tenant():
+        # SaaS: hide modules the tenant's plan does not include.
+        from orvahr_saas.plans import filter_enabled_apps
+
+        return filter_enabled_apps(settings.SIDEBARS)
     return settings.SIDEBARS
 
 

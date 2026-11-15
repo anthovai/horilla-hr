@@ -1,0 +1,22 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Sign-up requests" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Sign-up requests" %}</h1>
+<p class="filters">{% for code, label in statuses %}<a href="?status={{ code }}">{{ label }}</a>{% endfor %}<a href="?status=all">{% translate "All" %}</a></p>
+<div class="wrap"><table>
+<thead><tr><th>{% translate "Received" %}</th><th>{% translate "Company" %}</th><th>{% translate "Sub-domain" %}</th><th>{% translate "Employees" %}</th><th>{% translate "Plan" %}</th><th>{% translate "Status" %}</th></tr></thead>
+<tbody>
+{% for r in page.object_list %}
+<tr>
+  <td>{{ r.created_at|date:"Y-m-d H:i" }}</td>
+  <td><a href="{% url 'saas-console-request' r.pk %}">{{ r.company_name }}</a></td>
+  <td>{{ r.slug }}</td><td>{{ r.employee_count }}</td>
+  <td>{{ r.plan.display_name|default:"—" }}</td>
+  <td><span class="badge s-{{ r.status }}">{{ r.get_status_display }}</span></td>
+</tr>
+{% empty %}<tr><td colspan="6" class="muted">{% translate "No requests." %}</td></tr>
+{% endfor %}
+</tbody></table></div>
+<p>{% if page.has_previous %}<a href="?status={{ status }}&amp;page={{ page.previous_page_number }}">&laquo;</a>{% endif %}
+{% if page.has_next %}<a href="?status={{ status }}&amp;page={{ page.next_page_number }}">&raquo;</a>{% endif %}</p>
+{% endblock %}

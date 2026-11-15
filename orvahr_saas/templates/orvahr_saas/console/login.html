@@ -1,0 +1,17 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Sign in" %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:420px;margin:40px auto">
+<h1>{% translate "Operator sign in" %}</h1>
+{% if error %}<div class="msg error">{{ error }}</div>{% endif %}
+<form method="post" action="{% url 'saas-console-login' %}">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="hidden" name="next" value="{{ next }}">
+  <label for="id_username">{% translate "Username" %}</label>
+  <input type="text" name="username" id="id_username" autocomplete="username" required value="{{ form.username.value|default:'' }}">
+  <label for="id_password">{% translate "Password" %}</label>
+  <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+  <p><button class="btn" type="submit">{% translate "Sign in" %}</button></p>
+</form>
+</div>
+{% endblock %}

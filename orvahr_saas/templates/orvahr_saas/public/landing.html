@@ -1,0 +1,32 @@
+{% extends "orvahr_saas/public/_base.html" %}{% load i18n %}
+{% block title %}OrvaHR — {% translate "HR and payroll for Thai businesses" %}{% endblock %}
+{% block content %}
+<section>
+  <h1>{% translate "HR and payroll for Thai businesses" %}</h1>
+  <p>{% translate "Employees, attendance, leave and Thai payroll (social security, withholding tax, PDPA) in one place." %}</p>
+  <p><a class="btn" href="{% url 'saas-signup' %}">{% translate "Start a free trial" %}</a></p>
+  <p class="help">{% blocktranslate with domain=base_domain|default:"orvahr" %}Already a customer? Sign in at your company's address, e.g. yourcompany.{{ domain }}{% endblocktranslate %}</p>
+</section>
+
+<h2>{% translate "Plans" %}</h2>
+{% if plan_rows %}
+<div class="grid">
+  {% for row in plan_rows %}
+  <div class="card">
+    <h3>{{ row.plan.display_name }}</h3>
+    <p>{{ row.plan.display_description }}</p>
+    <div class="price">{% if row.price %}{{ row.price }}{% else %}{% translate "Contact us" %}{% endif %}</div>
+    <ul class="features">
+      <li>{% if row.plan.max_employees %}{% blocktranslate with n=row.plan.max_employees %}Up to {{ n }} employees{% endblocktranslate %}{% else %}{% translate "Unlimited employees" %}{% endif %}</li>
+      <li>{% translate "Employee records, reports and PDPA tools" %}</li>
+      {% for name in row.modules %}<li>{{ name }}</li>{% endfor %}
+      {% if row.plan.trial_days %}<li>{% blocktranslate with n=row.plan.trial_days %}{{ n }}-day free trial{% endblocktranslate %}</li>{% endif %}
+    </ul>
+    <a class="btn ghost" href="{% url 'saas-signup' %}?plan={{ row.plan.code|urlencode }}">{% translate "Request a trial" %}</a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>{% translate "Contact us for pricing." %}</p>
+{% endif %}
+{% endblock %}

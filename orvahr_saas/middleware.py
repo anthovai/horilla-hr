@@ -19,6 +19,7 @@ from django.conf import settings
 from django.db import connection
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.template.loader import render_to_string
+from django.utils.translation import get_language
 from django_tenants.middleware.main import TenantMainMiddleware
 
 PROBE_PATHS = ("/health/", "/ready/")
@@ -46,3 +47,86 @@ class TenantMiddleware(TenantMainMiddleware):
             self.setup_url_routing(request=request, force_public=True)
             return None
         return HttpResponseNotFound(render_to_string("orvahr_saas/not_found.html"))
+
+
+def _is_api(request):
+    return request.path_info.startswith("/api/")
+
+
+class PlanGateMiddleware:
+    """
+    Plan enforcement inside a tenant (SaaS mode only; listed right after
+    TenantMiddleware):
+
+    * a URL of an optional module the tenant's plan lacks (``/payroll/...``,
+      ``/api/v1/payroll/...``, or a view living in that app) answers 403 with
+      a friendly page (JSON for the API) instead of running the view;
+    * ``EmployeeLimitReached`` escaping a view (an ``Employee.save()`` outside
+      a form: REST API, onboarding conversion, un-archive, import) becomes a
+      403 JSON answer for the API and a "back where you were" redirect with an
+      error message for the web UI.
+
+    The public host (``request.tenant is None``) and tenants without a plan
+    pass straight through.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        tenant = getattr(request, "tenant", None)
+        if tenant is None or not getattr(tenant, "plan_id", None):
+            return None
+        from orvahr_saas.plans import (
+            MODULE_CATALOG,
+            module_enabled,
+            module_for_path,
+            module_for_view,
+        )
+
+        label = module_for_path(request.path_info) or module_for_view(view_func)
+        if label is None or module_enabled(label, tenant):
+            return None
+        module_name = str(MODULE_CATALOG[label])
+        if _is_api(request):
+            from django.http import JsonResponse
+            from django.utils.translation import gettext as _
+
+            return JsonResponse(
+                {
+                    "detail": _("%(module)s is not included in your plan.")
+                    % {"module": module_name},
+                    "code": "module_not_in_plan",
+                    "module": label,
+                },
+                status=403,
+            )
+        return HttpResponseForbidden(
+            render_to_string(
+                "orvahr_saas/module_disabled.html",
+                {
+                    "module_name": module_name,
+                    "fragment": bool(request.headers.get("HX-Request")),
+                    "LANGUAGE_CODE": get_language(),
+                },
+            )
+        )
+
+    def process_exception(self, request, exception):
+        from orvahr_saas.limits import is_limit_error, limit_error_text
+
+        if getattr(request, "tenant", None) is None or not is_limit_error(exception):
+            return None
+        message = limit_error_text(exception)
+        if _is_api(request):
+            from django.http import JsonResponse
+
+            return JsonResponse(
+                {"detail": message, "code": "employee_limit_reached"}, status=403
+            )
+        from horilla.http.response import HorillaRedirect
+
+        return HorillaRedirect(request, message=message)

@@ -1,0 +1,9 @@
+{% extends "orvahr_saas/public/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Thank you" %} — OrvaHR{% endblock %}
+{% block content %}
+<div class="card" style="max-width:640px;margin:24px auto">
+<h1>{% translate "Thank you — we received your request" %}</h1>
+<p>{% translate "Our team reviews every request, usually within one business day. We will contact you by email or phone when your account is ready." %}</p>
+<p><a href="/">{% translate "Back to the home page" %}</a></p>
+</div>
+{% endblock %}

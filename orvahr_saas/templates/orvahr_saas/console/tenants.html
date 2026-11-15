@@ -1,0 +1,28 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Tenants" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Tenants" %}</h1>
+{% if pending_requests %}<p><a href="{% url 'saas-console-requests' %}">{% blocktranslate count n=pending_requests %}{{ n }} sign-up request waiting for review{% plural %}{{ n }} sign-up requests waiting for review{% endblocktranslate %}</a></p>{% endif %}
+<p class="filters">
+  <a href="?">{% translate "All" %}</a>
+  {% for code, label in statuses %}<a href="?status={{ code }}">{{ label }}</a>{% endfor %}
+  · <a href="?{% if status %}status={{ status }}&amp;{% endif %}refresh=1">{% translate "Recount usage" %}</a>
+</p>
+<div class="wrap"><table>
+<thead><tr><th>{% translate "Tenant" %}</th><th>{% translate "Status" %}</th><th>{% translate "Plan" %}</th><th>{% translate "Active employees" %}</th><th>{% translate "Domain" %}</th><th>{% translate "Created on" %}</th></tr></thead>
+<tbody>
+{% for row in rows %}
+<tr>
+  <td><a href="{% url 'saas-console-tenant' row.tenant.pk %}">{{ row.tenant.name }}</a><div class="muted">{{ row.tenant.schema_name }}</div></td>
+  <td><span class="badge s-{{ row.tenant.status }}">{{ row.tenant.get_status_display }}</span></td>
+  <td>{{ row.tenant.plan.display_name|default:"—" }}</td>
+  <td>{% if row.usage.active_employees is None %}?{% else %}{{ row.usage.active_employees }}{% endif %} / {{ row.limit|default:"∞" }}</td>
+  <td>{{ row.domain }}</td>
+  <td>{{ row.tenant.created_on|date:"Y-m-d" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="6" class="muted">{% translate "No tenants yet." %}</td></tr>
+{% endfor %}
+</tbody></table></div>
+<p class="muted">{% translate "Usage is counted inside each tenant and cached for five minutes. Only counts are shown here, never personal data." %}</p>
+{% endblock %}

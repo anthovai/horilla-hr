@@ -1,0 +1,8 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Audit trail" %}{% endblock %}
+{% block content %}
+<h1>{% translate "Audit trail" %}</h1>
+{% include "orvahr_saas/console/_actions.html" with actions=page.object_list %}
+<p>{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">&laquo; {% translate "Newer" %}</a>{% endif %}
+{% if page.has_next %}<a href="?page={{ page.next_page_number }}">{% translate "Older" %} &raquo;</a>{% endif %}</p>
+{% endblock %}

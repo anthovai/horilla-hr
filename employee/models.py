@@ -793,6 +793,12 @@ class Employee(models.Model):
     def clean(self):
         super().clean()
 
+        # SaaS plan ceiling on active employees; a no-op (no query) unless
+        # ORVAHR_MULTI_TENANT is on and the tenant's plan has a limit.
+        from orvahr_saas.limits import check_employee_limit
+
+        check_employee_limit(self)
+
         file = self.employee_profile
         if not file:
             return

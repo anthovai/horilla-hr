@@ -1,0 +1,55 @@
+{% extends "orvahr_saas/console/_base.html" %}{% load i18n %}
+{% block title %}{{ req.company_name }}{% endblock %}
+{% block content %}
+<h1>{{ req.company_name }} <span class="badge s-{{ req.status }}" id="req-status">{{ req.get_status_display }}</span></h1>
+<div class="row">
+<div class="card">
+  <h2>{% translate "Request" %}</h2>
+  <p>{% translate "Sub-domain" %}: <strong>{{ req.slug }}</strong>{% if available is not None %} — <span class="{% if available %}ok{% else %}bad{% endif %}">{{ availability }}</span>{% endif %}</p>
+  <p>{% translate "Contact" %}: {{ req.contact_name }} · {{ req.contact_email }} · {{ req.contact_phone }}</p>
+  <p>{% translate "Employees" %}: {{ req.employee_count }} · {% translate "Plan" %}: {{ req.plan.display_name|default:"—" }}</p>
+  <p>{% translate "Consent to be contacted" %}: {{ req.consent_to_contact|yesno }} ({{ req.consent_at|date:"Y-m-d H:i" }})</p>
+  <p class="muted">{% translate "Received" %}: {{ req.created_at|date:"Y-m-d H:i" }} · IP {{ req.ip_address|default:"—" }} · {{ req.language }}</p>
+  {% if req.reviewed_by %}<p class="muted">{% translate "Reviewed by" %} {{ req.reviewed_by }} · {{ req.reviewed_at|date:"Y-m-d H:i" }}</p>{% endif %}
+  {% if req.tenant_id %}<p><a href="{% url 'saas-console-tenant' req.tenant_id %}">{% translate "Open tenant" %}</a></p>{% endif %}
+  <p>
+  {% if req.status == "pending" or req.status == "failed" %}
+  <form method="post" action="{% url 'saas-console-request-approve' req.pk %}" style="display:inline"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button class="btn" type="submit">{% translate "Approve" %}</button></form>
+  {% endif %}
+  {% if req.status == "pending" or req.status == "approved" or req.status == "failed" %}
+  <form method="post" action="{% url 'saas-console-request-reject' req.pk %}" style="display:inline"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button class="btn ghost" type="submit">{% translate "Reject" %}</button></form>
+  {% endif %}
+  </p>
+</div>
+{% if form %}
+<div class="card">
+  <h2>{% translate "Create tenant" %}</h2>
+  <form method="post" action="{% url 'saas-console-request-provision' req.pk %}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    {{ form.as_p }}
+    <p class="muted">{% blocktranslate with email=req.contact_email %}The administrator account will be {{ email }}.{% endblocktranslate %}</p>
+    <button class="btn" type="submit">{% translate "Create tenant" %}</button>
+  </form>
+</div>
+{% endif %}
+</div>
+{% if req.provision_log or running %}
+<h2>{% translate "Provisioning log" %}</h2>
+<pre class="log" id="prov-log">{{ req.provision_log }}</pre>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if running %}
+<script>
+(function(){
+  var url="{% url 'saas-console-request-status' req.pk %}",log=document.getElementById("prov-log");
+  function poll(){
+    fetch(url,{headers:{"Accept":"application/json"},credentials:"same-origin"}).then(function(r){return r.json();}).then(function(d){
+      if(log){log.textContent=d.log;log.scrollTop=log.scrollHeight;}
+      if(d.status==="provisioning"){setTimeout(poll,3000);}else{window.location.reload();}
+    }).catch(function(){setTimeout(poll,5000);});
+  }
+  setTimeout(poll,2000);
+})();
+</script>
+{% endif %}{% endblock %}

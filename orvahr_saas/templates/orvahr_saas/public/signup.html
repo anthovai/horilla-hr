@@ -1,0 +1,54 @@
+{% extends "orvahr_saas/public/_base.html" %}{% load i18n %}
+{% block title %}{% translate "Request a free trial" %} — OrvaHR{% endblock %}
+{% block content %}
+<div class="card" style="max-width:640px;margin:24px auto">
+<h1>{% translate "Request a free trial" %}</h1>
+<p>{% translate "Tell us about your company. We review every request and email you the sign-in details once your account is ready." %}</p>
+<form method="post" action="{% url 'saas-signup' %}" novalidate>
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="hidden" name="ts" value="{{ form_ts }}">
+  {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  <div class="field">
+    <label for="id_company_name">{{ form.company_name.label }}</label>{{ form.company_name }}{{ form.company_name.errors }}
+  </div>
+  <div class="field">
+    <label for="id_slug">{{ form.slug.label }}</label>
+    <div class="slug-row">{{ form.slug }}<span>.{{ base_domain|default:"orvahr" }}</span></div>
+    <div id="slug-status" class="help" aria-live="polite">{% translate "Lower-case letters, digits and hyphens; starts with a letter." %}</div>
+    {{ form.slug.errors }}
+  </div>
+  <div class="field"><label for="id_contact_name">{{ form.contact_name.label }}</label>{{ form.contact_name }}{{ form.contact_name.errors }}</div>
+  <div class="field"><label for="id_contact_email">{{ form.contact_email.label }}</label>{{ form.contact_email }}{{ form.contact_email.errors }}</div>
+  <div class="field"><label for="id_contact_phone">{{ form.contact_phone.label }}</label>{{ form.contact_phone }}{{ form.contact_phone.errors }}</div>
+  <div class="field"><label for="id_employee_count">{{ form.employee_count.label }}</label>{{ form.employee_count }}{{ form.employee_count.errors }}</div>
+  <div class="field"><label for="id_plan">{{ form.plan.label }}</label>{{ form.plan }}{{ form.plan.errors }}</div>
+  <div class="hp" aria-hidden="true"><label for="id_website">Website</label>{{ form.website }}</div>
+  <div class="field">
+    <label style="font-weight:400">{{ form.consent_to_contact }} {{ form.consent_to_contact.label }}</label>
+    {{ form.consent_to_contact.errors }}
+  </div>
+  <button class="btn" type="submit">{% translate "Send request" %}</button>
+</form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  var input=document.getElementById("id_slug"),out=document.getElementById("slug-status"),timer=null,last="";
+  if(!input||!out)return;
+  var checking="{{ _('Checking...')|escapejs }}";
+  function check(){
+    var v=input.value.trim().toLowerCase();
+    if(!v||v===last)return; last=v; out.textContent=checking; out.className="help";
+    fetch("{% url 'saas-signup-check' %}?slug="+encodeURIComponent(v),{headers:{"Accept":"application/json"}})
+      .then(function(r){return r.json();})
+      .then(function(d){ if(d.slug!==input.value.trim().toLowerCase())return;
+        out.textContent=d.available?(d.message+" — "+d.domain):d.message;
+        out.className="help "+(d.available?"ok":"bad");})
+      .catch(function(){out.textContent="";});
+  }
+  input.addEventListener("input",function(){input.value=input.value.toLowerCase();clearTimeout(timer);timer=setTimeout(check,400);});
+  if(input.value)check();
+})();
+</script>
+{% endblock %}

@@ -29,6 +29,7 @@ from base.models import (
 from employee.models import Employee, EmployeeWorkInformation
 from horilla_auth.methods import generate_random_password
 from horilla_auth.models import HorillaUser
+from orvahr_saas.limits import check_bulk_employee_limit
 
 logger = logging.getLogger(__name__)
 
@@ -502,6 +503,10 @@ def bulk_create_user_import(success_lists):
         if (row.get("Username") or row["Email"]) not in existing_usernames
     ]
 
+    # SaaS plan ceiling, checked before any account is created (no-op
+    # unless ORVAHR_MULTI_TENANT is on and the plan has a limit).
+    check_bulk_employee_limit(len(users_to_create))
+
     created_users = []
     if users_to_create:
         with transaction.atomic():
@@ -545,6 +550,8 @@ def bulk_create_employee_import(success_lists):
         for row in success_lists
         if (row.get("Username") or row["Email"]) in existing_users
     ]
+
+    check_bulk_employee_limit(len(employees_to_create))
 
     created_employees = []
     if employees_to_create:
