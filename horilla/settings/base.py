@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     "orvahr_benefits",
     "orvahr_pdpa",
     "orvahr_geo",
+    "orvahr_account",
     "accessibility",
     "horilla_audit",
     "horilla_widgets",
