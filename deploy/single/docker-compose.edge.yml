@@ -12,6 +12,9 @@ services:
     image: caddy:2-alpine
     container_name: edge-caddy
     restart: unless-stopped
+    environment:
+      # The first Caddyfile block is {$AQG_DOMAIN}; empty makes it a bad global block.
+      AQG_DOMAIN: aqg.168.144.107.180.sslip.io
     ports:
       - "80:80"
       - "443:443"
