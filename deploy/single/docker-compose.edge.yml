@@ -1,0 +1,34 @@
+# Shared HTTPS front door for this server (ports 80/443). Reads /opt/aqg/Caddyfile
+# so every site on the box (cctech, orvadocs, orvahr, aqg) is routed.
+#
+# It is named edge-caddy, not aqg-caddy, on purpose: AQG's own
+# docker-compose.caddy.yml (`deploy-uat.ps1 -Caddy`) starts a single-site Caddy
+# named aqg-caddy that ignores the Caddyfile and took every other site offline
+# once. With this one running, that deploy fails on the busy ports instead.
+#
+#   docker compose -f deploy/single/docker-compose.edge.yml up -d
+services:
+  edge-caddy:
+    image: caddy:2-alpine
+    container_name: edge-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - /opt/aqg/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [aqg_default]
+volumes:
+  # Same volumes the old aqg-caddy used, so issued certificates are kept.
+  caddy-data:
+    name: aqg_caddy-data
+    external: true
+  caddy-config:
+    name: aqg_caddy-config
+    external: true
+networks:
+  aqg_default:
+    external: true
